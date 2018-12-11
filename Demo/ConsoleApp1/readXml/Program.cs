@@ -22,11 +22,12 @@ namespace readXml
         //读取xml
         public static void readXml()
         {
-
+            //gdklsf(广东快乐十分)
             string htmlCode;
+            var gameCode = "gdklsf";
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             string date = DateTime.Now.AddDays(-2).ToString("yyyyMMdd");
-            string Url = "http://kaijiang.500.com/static/info/kaijiang/xml/gdklsf/" + date + ".xml";
+            string Url = "http://kaijiang.500.com/static/info/kaijiang/xml/"+ gameCode + "/" + date + ".xml";
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(Url);
             request.Method = "GET";
             request.ContentType = "text/xml";
@@ -37,8 +38,6 @@ namespace readXml
             {
                 System.IO.Stream streamReceive = response.GetResponseStream();
                 var zipStream = new System.IO.Compression.GZipStream(streamReceive, System.IO.Compression.CompressionMode.Decompress);
-
-
                 StreamReader sr = new System.IO.StreamReader(zipStream, Encoding.GetEncoding("GB2312"));
                 htmlCode = sr.ReadToEnd();
             }
