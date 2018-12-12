@@ -46,26 +46,175 @@ namespace Consoletest.Controllers
         /// 大乐透开奖信息
         /// </summary>
         /// <returns></returns>
+          List<dlt> dltLists = new List<dlt>();
         [HttpGet]
-        public List<jq4> GetDlt()
+        public List<dlt> GetDlt()
         {
             var anode = CommonHelper.GetExpect("http://kaijiang.500.com/dlt.shtml");
-            DataModel jq4 = new DataModel();
-            List<jq4> jq4Lists = new List<jq4>();
             foreach (HtmlNode item in anode)
             {
-                jq4.expect = item.InnerText;
-                var list = GetByRule(item.InnerText);
-                jq4Lists.AddRange(list);
-
+                dltLists = GetDltByRule(item.InnerText);
             }
-            return jq4Lists;
+            return dltLists;
         }
+
+        public List<dlt> GetDltByRule(string urlNumber)
+        {
+           
+            if (Convert.ToInt32(urlNumber) > 18144)
+            {
+                var html = "http://kaijiang.500.com/shtml/dlt/" + urlNumber + ".shtml";
+                HtmlWeb web = new HtmlWeb();
+                CommonHelper.Gzip(web);
+                var htmlDoc = web.Load(html);
+
+                var firstTableNode = htmlDoc.DocumentNode.SelectNodes("//table[@class='kj_tablelist02']")[0];//第一个table
+                var firstTable_trnode = firstTableNode.SelectNodes("tr");
+                int k = 1;
+                dlt dlt = new dlt();
+                foreach (var item in firstTable_trnode)//遍历第一个table下的tr
+                {
+                    switch (k)
+                    {
+                        case 1:
+                            var Date = item.SelectSingleNode("//span[@class='span_right']").InnerHtml;
+                            string openTime = Date.Split('：')[1].Split('兑')[0];
+                            string EndTime = Date.Split('：')[2];
+
+                            dlt.expect = urlNumber;
+                            dlt.openTime = openTime;
+                            dlt.endTime = EndTime;
+                            dltLists.Add(dlt);
+                            break;
+                        case 2:
+                            int j = 1;
+                            foreach (var item2 in item.SelectSingleNode("td").SelectSingleNode("table").SelectNodes("tr"))
+                            {
+                                switch (j)
+                                {
+                                    case 1:
+                                        var lilist = item2.SelectNodes("td")[1].SelectSingleNode("div").SelectSingleNode("ul").SelectNodes("li");
+                                        foreach (var item3 in lilist)
+                                        {
+                                            dlt.OpenCode += item3.InnerHtml + ",";
+
+                                        }
+                                        dlt.OpenCode.Trim(',');
+                                        break;
+                                    case 2:
+                                        dlt.OutOfOrder = item2.SelectNodes("td")[1].InnerHtml;
+                                        break;
+
+                                }
+                                j++;
+                            }
+
+                            break;
+                        case 3:
+                            dlt.SalesVolume = item.SelectSingleNode("td").SelectNodes("span")[0].InnerHtml;
+                            dlt.PoolRolling = item.SelectSingleNode("td").SelectNodes("span")[1].InnerHtml;
+                            break;
+
+                    }
+                    k = k + 1;
+                }
+                var dltList = new List<dltList>();
+                var SecondTableNode = htmlDoc.DocumentNode.SelectNodes("//table[@class='kj_tablelist02']")[1].SelectNodes("tr").Skip(2);//第二个table
+
+                int index = 0;
+                foreach (var item in SecondTableNode)
+                {
+                    if (item.SelectNodes("td")[0].InnerHtml == "派奖")
+                    {
+                        continue;
+                    }
+                    index++;
+                    if (index % 2 != 0 && index<12)
+                    {
+                        int j = 0;
+                        var model = new dltList();
+                        for (int i = 0; i < item.SelectNodes("td").Count; i++)
+                        {
+                            j++;
+
+                            if (j == 1)
+                            {
+                                var hhh = item.SelectNodes("td")[i].InnerHtml;
+                                model.openPrize = item.SelectNodes("td")[i].InnerHtml;
+                                dltList.Add(model);
+                            }
+                            if (j == 2)
+                            {
+                                model.openPrizeType = openPrizeType.basic;
+                            }
+                            if (j == 3)
+                            {
+                                model.openWinNumber = item.SelectNodes("td")[i].InnerHtml;
+                            }
+                            if (j == 4)
+                            {
+                                model.openSingleBonus = Convert.ToDecimal(item.SelectNodes("td")[i].InnerHtml);
+                            }
+                            if (j == 5)
+                            {
+                                model.openSumBonus = item.SelectNodes("td")[i].InnerHtml;
+                                dlt.dltLists.Add(model);
+                            }
+                        }
+                    }
+                    if (index % 2 == 0 && index < 12)
+                    {
+                        int j = 0;
+                        int indexPrize = 0;
+                        var model = new dltList();
+                        for (int i = 0; i < item.SelectNodes("td").Count; i++)
+                        {
+                            j++;
+                        
+                            foreach (var itemPrize in dlt.dltLists)
+                            {
+                                indexPrize++;
+                                if (indexPrize == dlt.dltLists.Count)
+                                {
+                                    model.openPrize = itemPrize.openPrize;
+                                }
+                               
+                            }
+                            if (j == 1)
+                            {
+                                model.openPrizeType = openPrizeType.Append;
+                            }
+                            if (j == 2)
+                            {
+                                model.openWinNumber = item.SelectNodes("td")[i].InnerHtml;
+                            }
+                            if (j == 3)
+                            {
+                                model.openSingleBonus = Convert.ToDecimal(item.SelectNodes("td")[i].InnerHtml);
+                            }
+                            if (j == 4)
+                            {
+                                model.openSumBonus = item.SelectNodes("td")[i].InnerHtml;
+                                dlt.dltLists.Add(model);
+                            }
+                        
+                        }
+                    }
+                    if (index == 12)
+                    {
+                        dlt.TotalBonus = Convert.ToDecimal(item.SelectNodes("td")[3].InnerHtml);
+                     
+                    }
+                }
+            }
+            return dltLists;
+        }
+
 
 
         public static List<jq4> GetByRule(string urlNumber)
         {
-            List<jq4> jq4Lists = new List<jq4>();
+             List<jq4> jq4Lists = new List<jq4>();
             if (Convert.ToInt32(urlNumber) > 18171)
             {
                 var html = "http://kaijiang.500.com/shtml/jq4/" + urlNumber + ".shtml";
@@ -83,10 +232,9 @@ namespace Consoletest.Controllers
                     switch (k)
                     {
                         case 1:
-                            var Date = item.SelectSingleNode("//span[@class='span_right']");
-                            string Gametime = Date.InnerHtml;
-                            string openTime = Gametime.Split('：')[1].Split('兑')[0];
-                            string EndTime = Gametime.Split('：')[2];
+                            var Date = item.SelectSingleNode("//span[@class='span_right']").InnerHtml;
+                            string openTime = Date.Split('：')[1].Split('兑')[0];
+                            string EndTime = Date.Split('：')[2];
 
                             jq4.expect = urlNumber;
                             jq4.openTime = openTime;
@@ -398,6 +546,7 @@ namespace Consoletest.Controllers
         }
 
    
+
 
     }
 }
