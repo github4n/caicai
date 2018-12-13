@@ -63,16 +63,13 @@ namespace Consoletest.Controllers
            
             if (Convert.ToInt32(urlNumber) > 18144)
             {
-                var html = "http://kaijiang.500.com/shtml/dlt/" + urlNumber + ".shtml";
                 HtmlWeb web = new HtmlWeb();
                 CommonHelper.Gzip(web);
-                var htmlDoc = web.Load(html);
-
-                var firstTableNode = htmlDoc.DocumentNode.SelectNodes("//table[@class='kj_tablelist02']")[0];//第一个table
-                var firstTable_trnode = firstTableNode.SelectNodes("tr");
+                var htmlDoc = web.Load("http://kaijiang.500.com/shtml/dlt/" + urlNumber + ".shtml");
+                var FirstTableTrNode= htmlDoc.DocumentNode.SelectNodes("//table[@class='kj_tablelist02']")[0].SelectNodes("tr");
                 int k = 1;
                 dlt dlt = new dlt();
-                foreach (var item in firstTable_trnode)//遍历第一个table下的tr
+                foreach (var item in FirstTableTrNode)//遍历第一个table下的tr
                 {
                     switch (k)
                     {
@@ -119,10 +116,10 @@ namespace Consoletest.Controllers
                     k = k + 1;
                 }
                 var dltList = new List<dltList>();
-                var SecondTableNode = htmlDoc.DocumentNode.SelectNodes("//table[@class='kj_tablelist02']")[1].SelectNodes("tr").Skip(2);//第二个table
+                var SecondTableTrNode = htmlDoc.DocumentNode.SelectNodes("//table[@class='kj_tablelist02']")[1].SelectNodes("tr").Skip(2);//第二个table
 
                 int index = 0;
-                foreach (var item in SecondTableNode)
+                foreach (var item in SecondTableTrNode)
                 {
                     if (item.SelectNodes("td")[0].InnerHtml == "派奖")
                     {
@@ -153,7 +150,7 @@ namespace Consoletest.Controllers
                             }
                             if (j == 4)
                             {
-                                model.openSingleBonus = Convert.ToDecimal(item.SelectNodes("td")[i].InnerHtml);
+                                model.openSingleBonus = item.SelectNodes("td")[i].InnerHtml;
                             }
                             if (j == 5)
                             {
@@ -190,7 +187,7 @@ namespace Consoletest.Controllers
                             }
                             if (j == 3)
                             {
-                                model.openSingleBonus = Convert.ToDecimal(item.SelectNodes("td")[i].InnerHtml);
+                                model.openSingleBonus = item.SelectNodes("td")[i].InnerHtml;
                             }
                             if (j == 4)
                             {
@@ -219,7 +216,6 @@ namespace Consoletest.Controllers
             {
                 var html = "http://kaijiang.500.com/shtml/jq4/" + urlNumber + ".shtml";
                 HtmlWeb web = new HtmlWeb();
-
                 CommonHelper.Gzip(web);
                 var htmlDoc = web.Load(html);
 
@@ -307,7 +303,7 @@ namespace Consoletest.Controllers
 
                         IEnumerable<HtmlNode> getTdList = item.SelectNodes("td");
                         int tdIndex = 1;
-                        var jq4LotteryDetails = new jq4LotteryDetails();
+                        var jq4LotteryDetails = new LotteryDetails();
                         foreach (var tdItem in getTdList)
                         {
                             switch (tdIndex)
@@ -338,8 +334,6 @@ namespace Consoletest.Controllers
             return jq4Lists;
 
         }
-
-
 
         /// <summary>
         /// 竞彩足球赛果开奖
@@ -399,25 +393,25 @@ namespace Consoletest.Controllers
                             jczq.rQSPF.FruitColor = strText;
                             break;
                         case 9:
-                            jczq.rQSPF.Bonus = Convert.ToDecimal(strText);
+                            jczq.rQSPF.Bonus = strText;
                             break;
                         case 10:
                             jczq.sPF.FruitColor = strText;
                             break;
                         case 11:
-                            jczq.sPF.Bonus = Convert.ToDecimal(strText);
+                            jczq.sPF.Bonus = strText;
                             break;
                         case 12:
                             jczq.zJQS.FruitColor = strText;
                             break;
                         case 13:
-                            jczq.zJQS.Bonus = Convert.ToDecimal(strText);
+                            jczq.zJQS.Bonus = strText;
                             break;
                         case 14:
                             jczq.bQC.FruitColor = strText;
                             break;
                         case 15:
-                            jczq.bQC.Bonus = Convert.ToDecimal(strText);
+                            jczq.bQC.Bonus =strText;
                             break;
 
                     }
