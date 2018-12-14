@@ -4,9 +4,10 @@ using System.Text;
 
 namespace EntityModel.Model
 {
-     public class jq4: LotteryBase
+   public class zc6: LotteryBase
     {
-        public jq4() {
+        public zc6()
+        {
             teams = new List<Team>();
             openLotteryDetails = new List<LotteryDetails>();
         }
@@ -16,6 +17,6 @@ namespace EntityModel.Model
         /// 开奖详情
         /// </summary>
         public List<LotteryDetails> openLotteryDetails { get; set; }
-      
+
     }
 }

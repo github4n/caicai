@@ -62,4 +62,28 @@ namespace EntityModel.Model
         /// </summary>
         public string openSingleBonus { get; set; }
     }
+
+    public class Team
+    {
+
+        public string TeamTitle { get; set; }
+        /// <summary>
+        /// 球队
+        /// </summary>
+        public string openTeam { get; set; }
+
+        /// <summary>
+        /// 开奖号码
+        /// </summary>
+        public string openCode { get; set; }
+
+        /// <summary>
+        /// 半全场 
+        /// </summary>
+        public string halfull { get; set; }
+
+    }
+
+
+
 }

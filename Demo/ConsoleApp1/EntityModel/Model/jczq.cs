@@ -45,6 +45,10 @@ namespace EntityModel.Model
         public string VisitingTeam { get; set; }
 
         /// <summary>
+        /// 平均欧赔
+        /// </summary>
+        public string AvgOuCompensation { get; set; }
+        /// <summary>
         /// 比分
         /// </summary>
         public string Score { get; set; }

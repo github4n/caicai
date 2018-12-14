@@ -43,10 +43,152 @@ namespace Consoletest.Controllers
         }
 
         /// <summary>
+        /// 6场半全采集
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public List<zc6> Getzc6()
+        {
+            var anode = CommonHelper.GetExpect("http://kaijiang.500.com/zc6.shtml");
+
+            List<zc6> jq4Lists = new List<zc6>();
+            foreach (HtmlNode item in anode)
+            {
+
+                var list = GetZc6ByRule(item.InnerText);
+                jq4Lists.AddRange(list);
+
+            }
+            return jq4Lists;
+        }
+
+        public static List<zc6> GetZc6ByRule(string urlNumber)
+        {
+            List<zc6> jq4Lists = new List<zc6>();
+            if (Convert.ToInt32(urlNumber) > 18171)
+            {
+                var html = "http://kaijiang.500.com/shtml/zc6/" + urlNumber + ".shtml";
+                HtmlWeb web = new HtmlWeb();
+                CommonHelper.Gzip(web);
+                var htmlDoc = web.Load(html);
+
+                var firstTableNode = htmlDoc.DocumentNode.SelectNodes("//table[@class='kj_tablelist02']")[0];
+                var firstTable_trnode = firstTableNode.SelectNodes("tr");
+                int k = 1;
+                zc6 jq4 = new zc6();
+                var listTeams = new List<Team>();
+                foreach (HtmlNode item in firstTable_trnode)  //循环第一个table的tr
+                {
+                    var zc6 = new zc6();
+                    switch (k)
+                    {
+                        case 1:
+                            var Date = item.SelectSingleNode("//span[@class='span_right']").InnerHtml;
+                            string openTime = Date.Split('：')[1].Split('兑')[0];
+                            string EndTime = Date.Split('：')[2];
+
+                            jq4.expect = urlNumber;
+                            jq4.openTime = openTime;
+                            jq4.endTime = EndTime;
+                            jq4Lists.Add(jq4);
+                            break;
+
+                        case 2:
+
+                            for (int i = 0; i < item.SelectNodes("td").Count; i++)
+                            {
+                                var teams = new Team();
+                                teams.TeamTitle = item.SelectNodes("td")[i].Attributes["title"].Value.Replace("&nbsp;","");
+                                teams.openTeam= item.SelectNodes("td")[i].InnerHtml;
+                                listTeams.Add(teams);
+                                listTeams.Add(teams);
+                            }
+
+                            break;
+
+                        case 3:
+                            for (int i = 0; i < item.SelectNodes("td").Count; i++)
+                            {
+                                listTeams[i].halfull = item.SelectNodes("td")[i].InnerHtml;
+                            }
+                            break;
+                        case 4:
+                            for (int i = 0; i < item.SelectNodes("td").Count; i++)
+                            {
+                                listTeams[i].openCode = item.SelectNodes("td")[i].SelectSingleNode("./span").InnerHtml;
+                            }
+                            break;
+                        case 5:
+                            //取列数据 
+                            IEnumerable<HtmlNode> getSpanList = item.SelectSingleNode("td").SelectNodes("span");
+                            int spanNumber = 1;
+                            foreach (var spanItem in getSpanList)
+                            {
+                                switch (spanNumber)
+                                {
+                                    case 1:
+                                        jq4.SalesVolume = spanItem.InnerHtml;
+                                        break;
+                                    case 2:
+                                        jq4.PoolRolling = spanItem.InnerHtml;
+                                        break;
+                                }
+                                spanNumber = spanNumber + 1;
+                            }
+                            string SalesVolume = item.InnerHtml;
+                            break;
+                    }
+
+                    k = k + 1;
+                }
+                var SecondTablenode = htmlDoc.DocumentNode.SelectNodes("//table[@class='kj_tablelist02']")[1];
+                var SecondTable_trnode = SecondTablenode.SelectNodes("tr");
+                int trIndex = 1;
+                foreach (HtmlNode item in SecondTable_trnode)  //循环第二个table的tr
+                {
+                    int lnode = SecondTable_trnode.Count();
+                    if (2 < trIndex && trIndex < lnode)
+                    {
+
+                        IEnumerable<HtmlNode> getTdList = item.SelectNodes("td");
+                        int tdIndex = 1;
+                        var jq4LotteryDetails = new LotteryDetails();
+                        foreach (var tdItem in getTdList)
+                        {
+                            switch (tdIndex)
+                            {
+
+                                case 1:
+                                    jq4LotteryDetails.openPrize = tdItem.InnerHtml;
+                                    break;
+                                case 2:
+                                    jq4LotteryDetails.openWinNumber = tdItem.InnerHtml;
+                                    break;
+                                case 3:
+                                    jq4LotteryDetails.openSingleBonus = tdItem.InnerHtml;
+                                    break;
+                            }
+                            tdIndex = tdIndex + 1;
+                        }
+                        foreach (var item3 in jq4Lists)
+                        {
+                            item3.openLotteryDetails.Add(jq4LotteryDetails);
+                        }
+
+                    }
+                    trIndex = trIndex + 1;
+                }
+                jq4.teams.AddRange(listTeams);
+            }
+            return jq4Lists;
+
+        }
+
+        /// <summary>
         /// 大乐透开奖信息
         /// </summary>
         /// <returns></returns>
-          List<dlt> dltLists = new List<dlt>();
+        List<dlt> dltLists = new List<dlt>();
         [HttpGet]
         public List<dlt> GetDlt()
         {
@@ -223,6 +365,7 @@ namespace Consoletest.Controllers
                 var firstTable_trnode = firstTableNode.SelectNodes("tr");
                 int k = 1;
                 jq4 jq4 = new jq4();
+                var listTeams = new List<Team>();
                 foreach (HtmlNode item in firstTable_trnode)  //循环第一个table的tr
                 {
                     switch (k)
@@ -237,35 +380,21 @@ namespace Consoletest.Controllers
                             jq4.endTime = EndTime;
                             jq4Lists.Add(jq4);
                             break;
-
                         case 2:
-                            foreach (var item2 in item.SelectNodes("td"))
+                            for (int i = 0; i < item.SelectNodes("td").Count; i++)
                             {
-                                string GameTeam = item2.InnerHtml;
-
-
-                                foreach (var item3 in jq4Lists)
-                                {
-                                    var jq4Team = new jq4Team();
-                                    jq4Team.openTeam = GameTeam.ToString().Replace("&nbsp;", "");
-                                    item3.openTeam.Add(jq4Team);
-                                }
+                                var teams = new Team();
+                                teams.TeamTitle = item.SelectNodes("td")[i].Attributes["title"].Value;
+                                teams.openTeam = item.SelectNodes("td")[i].InnerHtml;
+                                listTeams.Add(teams);
+                                
                             }
                             break;
 
                         case 3:
-                            foreach (var item2 in item.SelectNodes("td"))
+                            for (int i = 0; i < item.SelectNodes("td").Count; i++)
                             {
-                                string GameCode = item2.SelectSingleNode("./span").InnerHtml;
-
-                                foreach (var item3 in jq4Lists)
-                                {
-                                    var jq4Code = new jq4Core();
-                                    jq4Code.openCode = GameCode;
-                                    item3.openCode.Add(jq4Code);
-                                }
-
-
+                                listTeams[i].openCode= item.SelectNodes("td")[i].SelectSingleNode("./span").InnerHtml;
                             }
                             break;
 
@@ -329,8 +458,9 @@ namespace Consoletest.Controllers
                     }
                     trIndex = trIndex + 1;
                 }
-
+                jq4.teams.AddRange(listTeams);
             }
+       
             return jq4Lists;
 
         }
@@ -343,24 +473,23 @@ namespace Consoletest.Controllers
         {
             string date = DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd");
             var tableNode = CommonHelper.LoadGziphtml("http://zx.500.com/jczq/kaijiang.php?d=" + date).DocumentNode.SelectSingleNode("//table[@class='ld_table']");
-            
-            var trNode = tableNode.SelectNodes("tr");
-            int index = 1;
+            //获取平均欧赔
+            var trNodes = CommonHelper.LoadGziphtml("http://zx.500.com/jczq/kaijiang.php?playid=1&d=" + date).DocumentNode.SelectSingleNode("//table[@class='ld_table']").SelectNodes("tr").Skip(1);
+
+            var trNode = tableNode.SelectNodes("tr").Skip(1);
+        
+            int OpIndex = 1;
             List<jczq> jczqs = new List<jczq>();
             jczq jczq;
             //赛果开奖情况
             foreach (var item in trNode)
             {
-                if (index == 1)
-                {
-                    index = 0;
-                    continue;
-                }
-                 jczq = new jczq();
+                OpIndex++;
+                jczq = new jczq();
                 int tdIndex = 1;
                 foreach (var item2 in item.SelectNodes("td"))
                 {
-                 
+                   
                     string strText = Regex.Replace(item2.InnerHtml, "<[^>]+>", "");//不包含>的任意字符，字符个数不限，但至少一个字符
                     if (strText == "&nbsp;") 
                     {
@@ -415,15 +544,42 @@ namespace Consoletest.Controllers
                             break;
 
                     }
-                  
+                    
+
+                
                     tdIndex = tdIndex + 1;
 
 
                 }
+              
+                int indexop = 1;
+                foreach (var item3 in trNodes)
+                {
+                        indexop++;
+                        if (indexop != OpIndex)
+                        {
+                            continue;
+                        }
+                        for (int i = 0; i < trNodes.Count(); i++)
+                        {
+                            if (i > 10 && i < 14)
+                            {
+                                jczq.AvgOuCompensation += item3.SelectNodes("td")[i].InnerHtml + ",";
+
+                            }
+                            if (i >= 14)
+                            {
+                                break;
+                            }
+                        }
+                        break;
+                   
+                }
+                jczq.AvgOuCompensation=jczq.AvgOuCompensation.Substring(0, jczq.AvgOuCompensation.Length-1);
                 jczqs.Add(jczq);
             }
-           
 
+           
             return jczqs;
         }
 

@@ -12,7 +12,7 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "api/flcp/Getfc3ds",
+      "launchUrl": "api/values/GetJczq",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
