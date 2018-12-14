@@ -72,7 +72,7 @@ namespace EntityModel.Model
         /// <summary>
         /// 奖金
         /// </summary>
-        public decimal Bonus { get; set; }
+        public string Bonus { get; set; }
     }
     /// <summary>
     /// 胜平负
@@ -88,7 +88,7 @@ namespace EntityModel.Model
         /// <summary>
         /// 奖金
         /// </summary>
-        public decimal Bonus { get; set; }
+        public string Bonus { get; set; }
     }
 
     /// <summary>
@@ -105,7 +105,7 @@ namespace EntityModel.Model
         /// <summary>
         /// 奖金
         /// </summary>
-        public decimal Bonus { get; set; }
+        public string Bonus { get; set; }
     }
 
     /// <summary>
@@ -122,7 +122,7 @@ namespace EntityModel.Model
         /// <summary>
         /// 奖金
         /// </summary>
-        public decimal Bonus { get; set; }
+        public string Bonus { get; set; }
     }
 
     /// <summary>
