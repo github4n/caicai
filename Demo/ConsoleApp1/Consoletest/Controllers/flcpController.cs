@@ -40,7 +40,6 @@ namespace Consoletest.Controllers
                 info.SalesVolume = htmlDoc.DocumentNode.SelectNodes("//table[@class='kj_tablelist02']").FirstOrDefault().SelectNodes("tr")[2].SelectSingleNode("//span[@class='cfont1 ']").InnerHtml.Replace("元","");
 
                 var firstTableNode = htmlDoc.DocumentNode.SelectNodes("//table[@class='kj_tablelist02']")[0].SelectNodes("tr")[1].SelectSingleNode("td").SelectSingleNode("table").SelectSingleNode("tr").SelectNodes("td");
-                //var firstTable_tdnode = firstTableNode.SelectNodes("tr").FirstOrDefault().SelectNodes("td");
                 int i = 0;
                 foreach (var Subitem in firstTableNode)
                 {
@@ -86,14 +85,13 @@ namespace Consoletest.Controllers
                 
                 for (int m=0;m< table_tr.Count;m++)//遍历tr
                 {
-                    //table_tr_Subitem in table_tr
                     if (m <= 1)
                     {
                         continue;
                     }
                     else//第二个tr开始爬取数据
                     {
-                        if (m < 21)//没数据了
+                        if (m < 21)
                         {
                             if (table_tr[m].SelectNodes("td")[0].OuterHtml.Contains("rowspan"))
                             {
@@ -103,10 +101,10 @@ namespace Consoletest.Controllers
                                     if (n == 0)
                                     {
                                         fc3D fc = new fc3D();
-                                        fc.Prize = table_tr[m].SelectNodes("td")[0].InnerHtml.TrimStart().TrimEnd();
-                                        fc.PrizeType = table_tr[m].SelectNodes("td")[1].InnerHtml.TrimStart().TrimEnd();
-                                        fc.BettingCount = table_tr[m].SelectNodes("td")[2].InnerHtml.TrimStart().TrimEnd();
-                                        fc.Bonus = table_tr[m].SelectNodes("td")[3].InnerHtml.TrimStart().TrimEnd();
+                                        fc.Prize = table_tr[m].SelectNodes("td")[0].InnerHtml.Trim();
+                                        fc.PrizeType = table_tr[m].SelectNodes("td")[1].InnerHtml.Trim();
+                                        fc.BettingCount = table_tr[m].SelectNodes("td")[2].InnerHtml.Trim();
+                                        fc.Bonus = table_tr[m].SelectNodes("td")[3].InnerHtml.TrimStart().Trim();
                                         fc.LotteryInfo = info;
                                         fc3Ds.Add(fc);
                                     }
