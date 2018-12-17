@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Text;
 
-namespace EntityModel.Common
+namespace Smart.Core
 {
    public class CommonHelper
     {
