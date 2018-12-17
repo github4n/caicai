@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Lottery.Modes.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Smart.Core.Filter;
@@ -31,11 +30,11 @@ namespace Lottery.API.Controllers
         /// 获取一个数据列表
         /// </summary>
         /// <returns></returns>
-        [HttpPost]
-        public ActionResult<IEnumerable<string>> Post([FromBody]Users user)
-        {
-            return new string[] { "value1", "value2" };
-        }
+        //[HttpPost]
+        //public ActionResult<IEnumerable<string>> Post([FromBody]Users user)
+        //{
+        //    return new string[] { "value1", "value2" };
+        //}
 
         // GET api/values/5
         //[HttpGet("{id}")]
