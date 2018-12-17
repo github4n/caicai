@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Lottery.API</name>
+    </assembly>
+    <members>
+        <member name="T:Lottery.API.Controllers.BaseController">
+            <summary>
+            公共
+            </summary>
+        </member>
+        <member name="P:Lottery.API.Controllers.BaseController.GetHeaderToken">
+            <summary>
+            获取header token
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Lottery.API.Controllers.LoginController.GetToken(System.String,System.String)">
+            <summary>
+            获取token
+            </summary>
+            <param name="name"></param>
+            <param name="password"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lottery.API.Controllers.UserController.Test">
+            <summary>
+            测试
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Lottery.API.Controllers.UserController.Test111">
+            <summary>
+            测试
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Lottery.API.Controllers.ValuesController.Post(Lottery.Modes.Model.Users)">
+            <summary>
+            获取一个数据列表
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Lottery.API.Controllers.ValuesController.Put(System.Int32,System.String)">
+            <summary>
+            post
+            </summary>
+            <param name="love">model实体类参数</param>
+        </member>
+        <member name="T:Lottery.API.Startup">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Lottery.API.Startup.#ctor(Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="configuration"></param>
+        </member>
+        <member name="P:Lottery.API.Startup.Configuration">
+            <summary>
+            Configuration 属性
+            </summary>
+        </member>
+        <member name="M:Lottery.API.Startup.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            This method gets called by the runtime. Use this method to add services to the container.
+            </summary>
+            <param name="services"></param>
+        </member>
+        <member name="M:Lottery.API.Startup.Configure(Microsoft.AspNetCore.Builder.IApplicationBuilder,Microsoft.AspNetCore.Hosting.IHostingEnvironment)">
+            <summary>
+            This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+            </summary>
+            <param name="app"></param>
+            <param name="env"></param>
+        </member>
+    </members>
+</doc>

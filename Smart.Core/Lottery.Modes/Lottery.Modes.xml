@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Lottery.Modes</name>
+    </assembly>
+    <members>
+        <member name="T:Lottery.Modes.Entity.blast_count">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Lottery.Modes.Entity.blast_count.id">
+            <summary>
+            Desc:
+            Default:
+            Nullable:False
+            </summary>    
+        </member>
+        <member name="P:Lottery.Modes.Entity.blast_count.typeid">
+            <summary>
+            Desc:彩种ID
+            Default:
+            Nullable:False
+            </summary>           
+        </member>
+        <member name="P:Lottery.Modes.Entity.blast_count.playedId">
+            <summary>
+            Desc:玩法ID
+            Default:
+            Nullable:False
+            </summary>           
+        </member>
+        <member name="P:Lottery.Modes.Entity.blast_count.createdate">
+            <summary>
+            Desc:统计日期,一天一次
+            Default:
+            Nullable:False
+            </summary>           
+        </member>
+        <member name="P:Lottery.Modes.Entity.blast_count.betCount">
+            <summary>
+            Desc:投注数
+            Default:
+            Nullable:False
+            </summary>           
+        </member>
+        <member name="P:Lottery.Modes.Entity.blast_count.betAmount">
+            <summary>
+            Desc:投注金额
+            Default:
+            Nullable:False
+            </summary>           
+        </member>
+        <member name="P:Lottery.Modes.Entity.blast_count.zjAmount">
+            <summary>
+            Desc:中奖金额
+            Default:
+            Nullable:False
+            </summary>           
+        </member>
+        <member name="T:Lottery.Modes.Model.Users">
+            <summary>
+            用户
+            </summary>
+        </member>
+        <member name="P:Lottery.Modes.Model.Users.Id">
+            <summary>
+            id
+            </summary>
+        </member>
+        <member name="P:Lottery.Modes.Model.Users.Name">
+            <summary>
+            姓名
+            </summary>
+        </member>
+        <member name="P:Lottery.Modes.Model.Users.Age">
+            <summary>
+            年龄
+            </summary>
+        </member>
+    </members>
+</doc>

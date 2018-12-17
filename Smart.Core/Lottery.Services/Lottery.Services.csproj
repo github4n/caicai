@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Lottery.Modes\Lottery.Modes.csproj" />
+    <ProjectReference Include="..\Lottery.Services.Abstractions\Lottery.Services.Abstractions.csproj" />
+    <ProjectReference Include="..\Smart.Core\Smart.Core.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Extensions\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Lottery.Tasks.Abstractions\Lottery.Tasks.Abstractions.csproj" />
+    <ProjectReference Include="..\Smart.Core\Smart.Core.csproj" />
+  </ItemGroup>
+
+</Project>
