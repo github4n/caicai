@@ -12,7 +12,7 @@ namespace EntityModel.Model
             sPF = new SPF();
             zJQS = new ZJQS();
             bQC = new BQC();
-           
+            gameTypes = new List<GameType>();
         }
         public string id { get; set; }
 
@@ -59,8 +59,31 @@ namespace EntityModel.Model
         public ZJQS zJQS { get; set; }
         public BQC bQC { get; set; }
 
+        public List<GameType> gameTypes { get; set; }
+    }
 
+    public enum Game
+    {
+        让球胜平负 = 1,
+        胜平负 = 2,
+        总进球数 = 3,
+        半全场=4,
+        比分=5,
+        上下单双=6
+    }
 
+    public class GameType
+    {
+        public Game game { get; set; }
+        /// <summary>
+        /// 彩果
+        /// </summary>
+        public string FruitColor { get; set; }
+
+        /// <summary>
+        /// 奖金
+        /// </summary>
+        public string Bonus { get; set; }
     }
 
     /// <summary>
@@ -128,6 +151,8 @@ namespace EntityModel.Model
         /// </summary>
         public string Bonus { get; set; }
     }
+
+
 
     /// <summary>
     /// 今日总结
