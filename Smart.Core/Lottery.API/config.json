@@ -1,0 +1,18 @@
+﻿{
+  "Lottery": {
+    "Data": {
+      "Database": {
+        "Connection": "Server=10.0.3.6;Port=3306;Database=ecp_newcai;Username=root;Password=!@#123456abc;Pooling=True;MinimumPoolSize=8;MaximumPoolsize=512;Charset=utf8;SSLMode=None"
+      },
+      "DistributedCache": {
+        "Connection": "192.168.1.233:6379"
+      }
+    }
+  },
+  "Logging": {
+    "LogLevel": {
+      "System": "Trace",
+      "Default": "Trace"
+    }
+  }
+}

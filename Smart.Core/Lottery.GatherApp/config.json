@@ -1,0 +1,129 @@
+﻿{
+  "Lottery": {
+    "Data": {
+      "Database": {
+        "Connection": "Server=10.0.3.6;Port=3306;Database=xingcai;Username=root;Password=!@#123456abc;Pooling=True;MinimumPoolSize=8;MaximumPoolsize=512;Charset=utf8;SSLMode=None"
+      },
+      "DistributedCache": {
+        "Connection": "192.168.1.233:6379"
+      }
+    }
+  },
+  "Logging": {
+    "LogLevel": {
+      "System": "Trace",
+      "Default": "Trace"
+    }
+  },
+  "Analysis": {
+    "cqssc_config": { //重庆时时彩 129kai,opencai,168,16cp,cle
+      "type": "168",
+      "interval": 30000
+    },
+    "tjssc_config": { //天津时时彩 129kai,opencai,168
+      "type": "168",
+      "interval": 30000
+    },
+    "xjssc_config": { //新疆时时彩 129kai,opencai,168
+      "type": "168",
+      "interval": 30000
+    },
+    "twssc_config": { //台湾时时彩
+      "interval": 30000
+    },
+    "amssc_config": { //澳门时时彩
+      "interval": 30000
+    },
+    "gd11x5_config": { //广东11x5  129kai,opencai,168
+      "type": "168",
+      "interval": 30000
+    },
+    "jx11x5_config": { //江西11x5  360,opencai
+      "type": "360",
+      "interval": 30000
+    },
+    "sd11X5_config": { //山东11x5  129kai opencai cle caibb
+      "type": "caibb",
+      "interval": 30000
+    },
+    "sh11x5_config": { //上海11x5  350,168,opencai
+      "type": "360",
+      "interval": 30000
+    },
+    "tw11x5_config": { //台湾11X5
+      "interval": 30000
+    },
+    "am11x5c_config": { //澳门11X5
+      "interval": 30000
+    },
+    "bjkl8_config": { //北京快乐8    ,opencai,168,（360,bwlc）
+      "type": "168",
+      "interval": 30000
+    },
+    "hgkl8_config": { //韩国快乐8
+      "interval": 30000
+    },
+    "amkl8_config": { //澳门快乐8
+      "interval": 30000
+    },
+    "bjpk10_config": { //北京PK10    opencai,168(bwlc,129kai)
+      "type": "168",
+      "interval": 30000
+    },
+    "ampk10_config": { //澳门pk10
+      "interval": 30000
+    },
+    "twpk10_config": { //台湾pk10
+      "interval": 30000
+    },
+    "fc3d_config": { //福彩3D    168,500w,opencai
+      "type": "168",
+      "interval": 30000
+    },
+    "am3d_config": { //澳门3d
+      "interval": 30000
+    },
+    "tw3d_config": { //台湾3d
+      "interval": 30000
+    },
+    "pl3_config": { //排列3    168,500w,opencai
+      "type": "168",
+      "interval": 30000
+    },
+    "jsk3_config": { //江苏快3    129kai,168,360,opencai
+      "type": "168",
+      "interval": 30000
+    },
+    "amk3_config": { //澳门快3
+      "interval": 30000
+    },
+    "twk3_config": { //台湾快3
+      "interval": 30000
+    },
+    "twxync_config": { //台湾幸运农场
+      "interval": 30000
+    },
+    "amxync_config": { //澳门幸运农场
+      "interval": 30000
+    },
+    "hn5fz_config": { //河内5分钟
+      "interval": 5000
+    },
+    "hn2fz_config": { //河内2分钟
+      "interval": 5000
+    },
+    "hn1fz_config": { //河内1分钟
+      "interval": 5000
+    },
+    "bxklc_config": { //巴西快乐彩
+      "interval": 5000
+    },
+    "bx15fc_config": { //巴西1.5分彩
+      "interval": 5000
+    }
+
+
+
+
+  }
+}
