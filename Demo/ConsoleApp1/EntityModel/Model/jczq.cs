@@ -8,10 +8,6 @@ namespace EntityModel.Model
     {
         public jczq()
         {
-            rQSPF = new RQSPF();
-            sPF = new SPF();
-            zJQS = new ZJQS();
-            bQC = new BQC();
             gameTypes = new List<GameType>();
         }
         public string id { get; set; }
@@ -52,13 +48,6 @@ namespace EntityModel.Model
         /// 比分
         /// </summary>
         public string Score { get; set; }
-
-        public RQSPF rQSPF { get; set; }
-
-        public SPF sPF { get; set; }
-        public ZJQS zJQS { get; set; }
-        public BQC bQC { get; set; }
-
         public List<GameType> gameTypes { get; set; }
     }
 
@@ -85,75 +74,6 @@ namespace EntityModel.Model
         /// </summary>
         public string Bonus { get; set; }
     }
-
-    /// <summary>
-    /// 让球胜平负
-    /// </summary>
-    public class RQSPF {
-
-        /// <summary>
-        /// 彩果
-        /// </summary>
-        public string FruitColor { get; set; }
-
-        /// <summary>
-        /// 奖金
-        /// </summary>
-        public string Bonus { get; set; }
-    }
-    /// <summary>
-    /// 胜平负
-    /// </summary>
-    public class SPF
-    {
-
-        /// <summary>
-        /// 彩果
-        /// </summary>
-        public string FruitColor { get; set; }
-
-        /// <summary>
-        /// 奖金
-        /// </summary>
-        public string Bonus { get; set; }
-    }
-
-    /// <summary>
-    /// 总进球数
-    /// </summary>
-    public class ZJQS
-    {
-
-        /// <summary>
-        /// 彩果
-        /// </summary>
-        public string FruitColor { get; set; }
-
-        /// <summary>
-        /// 奖金
-        /// </summary>
-        public string Bonus { get; set; }
-    }
-
-    /// <summary>
-    /// 半全场
-    /// </summary>
-    public class BQC
-    {
-
-        /// <summary>
-        /// 彩果
-        /// </summary>
-        public string FruitColor { get; set; }
-
-        /// <summary>
-        /// 奖金
-        /// </summary>
-        public string Bonus { get; set; }
-    }
-
-
-
     /// <summary>
     /// 今日总结
     /// </summary>

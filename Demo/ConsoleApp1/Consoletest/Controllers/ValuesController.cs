@@ -481,6 +481,8 @@ namespace Consoletest.Controllers
             int OpIndex = 1;
             List<jczq> jczqs = new List<jczq>();
             jczq jczq;
+            var game = new GameType();
+            var GameTypes = new List<GameType>();
             //赛果开奖情况
             foreach (var item in trNode)
             {
@@ -519,28 +521,41 @@ namespace Consoletest.Controllers
                             jczq.Score = strText;
                             break;
                         case 8:
-                            jczq.rQSPF.FruitColor = strText;
+                            game.game = Game.让球胜平负;
+                            game.FruitColor = strText;
+       
                             break;
                         case 9:
-                            jczq.rQSPF.Bonus = strText;
+                            game.Bonus = strText;
+                            GameTypes.Add(game);
                             break;
                         case 10:
-                            jczq.sPF.FruitColor = strText;
+                            game = new GameType();
+                            game.game = Game.胜平负;
+                            game.FruitColor = strText;
                             break;
                         case 11:
-                            jczq.sPF.Bonus = strText;
+                            game.Bonus = strText;
+                            GameTypes.Add(game);
                             break;
                         case 12:
-                            jczq.zJQS.FruitColor = strText;
+                            game = new GameType();
+                            game.game = Game.总进球数;
+                            game.FruitColor = strText;
                             break;
                         case 13:
-                            jczq.zJQS.Bonus = strText;
+                            game.Bonus = strText;
+                            GameTypes.Add(game);
                             break;
                         case 14:
-                            jczq.bQC.FruitColor = strText;
+                            game = new GameType();
+                            game.game = Game.半全场;
+                            game.FruitColor = strText;
                             break;
                         case 15:
-                            jczq.bQC.Bonus =strText;
+                            game.Bonus = strText;
+                            GameTypes.Add(game);
+                            jczq.gameTypes.AddRange(GameTypes);
                             break;
 
                     }
