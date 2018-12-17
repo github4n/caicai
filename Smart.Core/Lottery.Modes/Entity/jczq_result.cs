@@ -25,7 +25,7 @@ namespace Lottery.Modes.Entity
         /// 比赛时间
         ///</summary>
 
-        public string MatchData{ get; set; }
+        public string MatchDate{ get; set; }
         /// <summary>
         /// 比赛编号
         ///</summary>
