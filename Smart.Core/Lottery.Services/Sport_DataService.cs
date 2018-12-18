@@ -29,16 +29,18 @@ namespace Lottery.Services
             List<bjdc_result> bjdc_s = new List<bjdc_result>();
             foreach (var item in model)
             {
-                bjdc_result resultModel = new bjdc_result();
-                resultModel.MatchId = item.id+ item.TournamentNumber;
-                resultModel.MatchDate = item.MatchTime;
-                resultModel.HomeTeam = item.HomeTeam;
-                resultModel.GuestTeam = item.VisitingTeam;
-                resultModel.LetBall = item.LetBall;
-                resultModel.HalfScore =item.Score=="-"?"-":item.Score.Split(")")[0].Replace("(", "").Replace(")", "");
-                resultModel.FullScore = item.Score == "-" ? "-" : item.Score.Split(")")[1].Replace(")", "");
-                resultModel.LeagueName = item.TournamentType;
-                //resultModel.League_Color=
+                bjdc_result resultModel = new bjdc_result
+                {
+                    MatchId = item.id + item.TournamentNumber,
+                    MatchDate = item.MatchTime,
+                    HomeTeam = item.HomeTeam,
+                    GuestTeam = item.VisitingTeam,
+                    LetBall = item.LetBall,
+                    HalfScore = item.Score == "-" ? "-" : item.Score.Split(")")[0].Replace("(", "").Replace(")", ""),
+                    FullScore = item.Score == "-" ? "-" : item.Score.Split(")")[1].Replace(")", ""),
+                    LeagueName = item.TournamentType
+                };
+                resultModel.League_Color = item.League_Color;
                 foreach (var Sub_item in item.gameTypes)
                 {
                     if (Sub_item.game == Game.让球胜平负)
