@@ -1,9 +1,7 @@
-﻿using SqlSugar;
+﻿
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-namespace Lottery.Modes.Entity
+
+namespace EntityModel.Model
 {
     /// <summary>
     /// 
@@ -18,7 +16,6 @@ namespace Lottery.Modes.Entity
         /// <summary>
         /// 
         ///</summary>
-        [SugarColumn(IsNullable = false, IsPrimaryKey = true)]
         public string MatchId{ get; set; }
             /// <summary>
             /// 
@@ -85,18 +82,14 @@ namespace Lottery.Modes.Entity
             ///</summary>
          
             public DateTime? CreateTime{ get; set; }
-
-           /// <summary>
-           /// 
-           ///</summary>
-           public string LeagueName { get; set; }
+        /// <summary>
+        /// 
+        ///</summary>
+        public string LeagueName { get; set; }
 
         /// <summary>
         /// 
         ///</summary>
         public string FullScore { get; set; }
-
-        
-
     }
 }
