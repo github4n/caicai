@@ -9,6 +9,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             {
                 services.AddSingleton<IUsersService, UsersService>();
+                services.AddSingleton<IBJDC_DataService, BJDC_DataService>();
             }
 
             return services;

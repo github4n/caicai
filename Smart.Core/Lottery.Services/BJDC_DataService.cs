@@ -6,6 +6,7 @@ using Lottery.Services.Abstractions;
 using Smart.Core.Repository.SqlSugar;
 using SqlSugar;
 using System.Threading.Tasks;
+using EntityModel.Model;
 
 namespace Lottery.Services
 {
@@ -16,9 +17,13 @@ namespace Lottery.Services
         {
             db = factory.GetDbContext();
         }
-        public void AddBJDCAsync(List<bjdc_result> model)
+        public void AddBJDC(List<jczq> model)
         {
-           db.Insertable(model);
+            jczq_result resultModel = new jczq_result();
+            foreach (var item in model)
+            {
+                resultModel.MatchId = item.id;
+            }
         }
     }
 }
