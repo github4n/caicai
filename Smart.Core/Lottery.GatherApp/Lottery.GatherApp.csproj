@@ -105,6 +105,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Lottery.Modes\Lottery.Modes.csproj" />
     <ProjectReference Include="..\Lottery.Services.Abstractions\Lottery.Services.Abstractions.csproj" />
     <ProjectReference Include="..\Lottery.Services\Lottery.Services.csproj" />
     <ProjectReference Include="..\Smart.Core\Smart.Core.csproj" />

@@ -62,7 +62,7 @@ namespace Lottery.GatherApp
             //List<DataModel> lists = new List<DataModel>();
 
             XmlNodeList list = doc.SelectNodes("//row");
-            _IXML_DataService.AddGdklsfAsync(list);
+           // _IXML_DataService.AddGdklsfAsync(list);
             return list;
         }
     }

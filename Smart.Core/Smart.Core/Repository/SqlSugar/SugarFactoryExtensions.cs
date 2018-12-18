@@ -433,15 +433,27 @@ namespace Smart.Core.Repository.SqlSugar
         #region 根据Linq表达式条件获取列表
 
         /// <summary>
+        /// 根据条件获取实体列表(异步)
+        /// </summary>
+        /// <typeparam name="TSource">数据源类型</typeparam>
+        /// <param name="db"></param>
+        /// <param name="whereExp">条件表达式</param>
+        /// <returns></returns>
+        public static async Task<List<TSource>> GetListAsync<TSource>(this SqlSugarClient db, Expression<Func<TSource, bool>> whereExp) where TSource : EntityBase, new()
+        {
+            return await Task.Run(() => db.Queryable<TSource>().Where(whereExp).ToList());
+        }
+
+        /// <summary>
         /// 根据条件获取实体列表
         /// </summary>
         /// <typeparam name="TSource">数据源类型</typeparam>
         /// <param name="db"></param>
         /// <param name="whereExp">条件表达式</param>
         /// <returns></returns>
-        public static async Task<List<TSource>> GetList<TSource>(this SqlSugarClient db, Expression<Func<TSource, bool>> whereExp) where TSource : EntityBase, new()
+        public static List<TSource> GetList<TSource>(this SqlSugarClient db, Expression<Func<TSource, bool>> whereExp) where TSource : EntityBase, new()
         {
-            return await Task.Run(() => db.Queryable<TSource>().Where(whereExp).ToList());
+            return  db.Queryable<TSource>().Where(whereExp).ToList();
         }
 
         /// <summary>
