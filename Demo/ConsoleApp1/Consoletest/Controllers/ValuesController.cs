@@ -1033,5 +1033,113 @@ namespace Consoletest.Controllers
             return jclq_results;
         }
 
+
+        /// <summary>
+        /// 足球单场-胜负过关开奖SP
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public List<zqdc_sfgg_result> GetZqdc_SfggExpect()
+        {
+            var anode = CommonHelper.GetBJDCExpect("http://zx.500.com/zqdc/kaijiang.php?playid=6");
+
+            List<zqdc_sfgg_result> zqdc_sfgg_results = new List<zqdc_sfgg_result>();
+            foreach (HtmlNode item in anode)
+            {
+
+                var list = GetZqdc_Sfgg(item.Attributes["value"].Value);
+                zqdc_sfgg_results.AddRange(list);
+
+            }
+            return zqdc_sfgg_results;
+        }
+
+
+
+        /// <summary>
+        /// 足球单场-胜负过关开奖SP
+        /// </summary>
+        /// <returns></returns>
+        public List<zqdc_sfgg_result> GetZqdc_Sfgg(string expect)
+        {
+
+            var tableNode = CommonHelper.LoadGziphtml("http://zx.500.com/zqdc/kaijiang.php?playid=6&expect=" + expect).DocumentNode.SelectSingleNode("//table[@class='ld_table']");
+            var trNode = tableNode.SelectNodes("tr").Skip(1);
+            List<zqdc_sfgg_result> zqdc_Sfgg_Results = new List<zqdc_sfgg_result>();
+            if (expect == "81203")
+            {
+                //赛果开奖情况
+                foreach (var item in trNode)
+                {
+
+                    zqdc_sfgg_result zqdc_Sfgg_Result = new zqdc_sfgg_result();
+                    int tdIndex = 1;
+                    var game = new GameType();
+                    var GameTypes = new List<GameType>();
+                    foreach (var item2 in item.SelectNodes("td"))
+                    {
+
+                        string strText = Regex.Replace(item2.InnerHtml, "<[^>]+>", "");//不包含>的任意字符，字符个数不限，但至少一个字符
+                        if (strText == "&nbsp;" || strText == "")
+                        {
+                            continue;
+                        }
+                        switch (tdIndex)
+                        {
+                            case 1:
+                                zqdc_Sfgg_Result.MatchNumber = strText;
+                                break;
+                            case 2:
+
+                                zqdc_Sfgg_Result.BallType_Color = item2.SelectSingleNode("a|span").Attributes["style"].Value.Replace("background-color:", "");
+                                zqdc_Sfgg_Result.BallType = strText;
+                                break;
+                            case 3:
+                                zqdc_Sfgg_Result.LeagueName = strText;
+                                break;
+                            case 4:
+                                zqdc_Sfgg_Result.MatchDate = strText;
+                                break;
+                            case 5:
+                                zqdc_Sfgg_Result.HomeTeam = strText;
+                                break;
+                            case 6:
+                                zqdc_Sfgg_Result.LetBall = strText;
+                                break;
+                            case 7:
+                                zqdc_Sfgg_Result.GuestTeam = strText;
+                                break;
+                            case 8:
+                                zqdc_Sfgg_Result.FullScore = strText;
+
+                                break;
+                            case 9:
+                                zqdc_Sfgg_Result.SF_Result = strText;
+                                break;
+                            case 10:
+                                zqdc_Sfgg_Result.SPF_SP = strText;
+                                break;
+                            case 11:
+                                zqdc_Sfgg_Result.AvgEu_SP += strText + ",";
+                                tdIndex--;
+                                break;
+
+                        }
+
+
+
+                        tdIndex = tdIndex + 1;
+
+
+                    }
+                    zqdc_Sfgg_Result.IssueNo = expect;
+                    zqdc_Sfgg_Result.AvgEu_SP = zqdc_Sfgg_Result.AvgEu_SP.Substring(0, zqdc_Sfgg_Result.AvgEu_SP.Length - 1);
+                    zqdc_Sfgg_Results.Add(zqdc_Sfgg_Result);
+                }
+
+            }
+            return zqdc_Sfgg_Results;
+        }
+
     }
 }
