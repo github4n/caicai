@@ -1,4 +1,5 @@
 ﻿using Lottery.GatherApp.Analysis.HK6;
+using Lottery.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -40,7 +40,7 @@ namespace Lottery.GatherApp
              {
                  op.ConnectionString = ConfigFileHelper.Get("Lottery:Data:Database:Connection");
                  op.DbType = DbType.MySql;
-                 op.IsAutoCloseConnection = true;
+                 op.IsAutoCloseConnection = false;
                  op.InitKeyType = InitKeyType.Attribute;
                  op.IsShardSameThread = true;
              });
@@ -55,7 +55,8 @@ namespace Lottery.GatherApp
             var provider = services.BuildServiceProvider();
             var tasks = provider.GetRequiredService<BalanceTasks>();
             await Task.WhenAll(new Task[] {
-                tasks.HK6Issue()
+                tasks.HK6Issue(),
+                tasks.BJDC()
             });
             Console.WriteLine("Done.");
             Console.ReadLine();

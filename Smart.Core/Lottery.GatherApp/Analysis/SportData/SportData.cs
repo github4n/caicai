@@ -11,10 +11,10 @@ using Lottery.Services.Abstractions;
 
 namespace Lottery.GatherApp
 {
-    public class BJDC
+    public class SportData
     {
         protected ISport_DataService _SportService;
-        public BJDC(ISport_DataService Sport_DataService)
+        public SportData(ISport_DataService Sport_DataService)
         {
             _SportService = Sport_DataService;
         }
@@ -134,7 +134,7 @@ namespace Lottery.GatherApp
                             {
                                 continue;
                             }
-                            for (int i = 0; i < trNodes.Count(); i++)
+                            for (int i = 0; i < item3.SelectNodes("td").Count(); i++)
                             {
                                 if (i > 10 && i < 14)
                                 {
@@ -174,6 +174,7 @@ namespace Lottery.GatherApp
             {
                 OpIndex++;
                 jczq = new jczq();
+                jczq.id = date;
                 int tdIndex = 1;
                 foreach (var item2 in item.SelectNodes("td"))
                 {
@@ -253,7 +254,7 @@ namespace Lottery.GatherApp
                     {
                         continue;
                     }
-                    for (int i = 0; i < trNodes.Count(); i++)
+                    for (int i = 0; i < item3.SelectNodes("td").Count(); i++)
                     {
                         if (i > 10 && i < 14)
                         {
