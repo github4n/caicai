@@ -24,6 +24,10 @@ namespace EntityModel.Model
         /// 赛事类型
         /// </summary>
         public string TournamentType { get; set; }
+        /// <summary>
+        /// 赛事类型_颜色
+        /// </summary>
+        public string League_Color { get; set; }
 
         /// <summary>
         /// 比赛时间

@@ -75,5 +75,13 @@ namespace EntityModel.Common
             var anode = lastnode.SelectNodes("a"); //获取a标签里面的期号
             return anode;
         }
+        public static HtmlNodeCollection GetBJDCExpect(string Url)
+        {
+            var footnode = LoadGziphtml(Url).DocumentNode.SelectSingleNode("//div[@class='an_box']/div[1]");
+            var commentnode = footnode.SelectSingleNode("span");
+            var lastnode = commentnode.SelectSingleNode("//select");
+            var anode = lastnode.SelectNodes("option"); //获取option标签里面的期号
+            return anode;
+        }
     }
 }

@@ -6,8 +6,10 @@ using Lottery.Modes.Entity;
 
 namespace Lottery.Services.Abstractions
 {
-   public interface IBJDC_DataService
+   public interface ISport_DataService
     {
-        void AddBJDC(List<jczq> model);
+        void Add_BJDC(List<jczq> model);
+        void Add_JCLQ();
+        void Add_JCZQ(List<jczq> model);
     }
 }
