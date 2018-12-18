@@ -60,7 +60,8 @@ namespace Lottery.Services
                     }
                     else if (Sub_item.game==Game.上下单双)
                     {
-                        
+                        resultModel.SXDS_Result = item.FruitColor;
+                        resultModel.SXDS_SP = item.Bonus;
                     }
                     else if(Sub_item.game==Game.半全场)
                     {
