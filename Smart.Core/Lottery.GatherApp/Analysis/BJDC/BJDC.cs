@@ -6,12 +6,18 @@ using System.Text.RegularExpressions;
 using EntityModel.Common;
 using EntityModel.Model;
 using Lottery.Services;
+using Lottery.Services.Abstractions;
 
 namespace Lottery.GatherApp
 {
    public class BJDC
     {
-        public List<jczq> GetBjdc()
+        protected IBJDC_DataService _bjdcService;
+        public BJDC(IBJDC_DataService BJDC_DataService)
+        {
+            _bjdcService = BJDC_DataService;
+        }
+        public void GetBjdc()
         {
             string date = DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd");
             var tableNode = CommonHelper.LoadGziphtml("http://zx.500.com/zqdc/kaijiang.php?d=" + date).DocumentNode.SelectSingleNode("//table[@class='ld_table']");
@@ -136,7 +142,7 @@ namespace Lottery.GatherApp
                 jczq.AvgOuCompensation = jczq.AvgOuCompensation.Substring(0, jczq.AvgOuCompensation.Length - 1);
                 jczqs.Add(jczq);
             }
-            return jczqs;
+            _bjdcService.AddBJDC(jczqs);
         }
     }
 }
