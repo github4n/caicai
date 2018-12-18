@@ -1,4 +1,5 @@
-﻿using SqlSugar;
+﻿using Smart.Core.Repository;
+using SqlSugar;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace Lottery.Modes.Entity
     /// 
     ///</summary>
 
-    public class bjdc_result
+    public class bjdc_result: EntityBase
     { 
         public bjdc_result()
         {
