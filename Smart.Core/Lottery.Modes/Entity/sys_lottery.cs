@@ -1,89 +1,83 @@
-﻿using SqlSugar;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 namespace Lottery.Modes.Entity
 {
     /// <summary>
-    /// 
+    // 
     ///</summary>
 
-    public class zqdc_sfgg_result
+    public class sys_lottery
     { 
-        public zqdc_sfgg_result()
+        public sys_lottery()
         {
         
         }
-        /// <summary>
-        /// 
-        ///</summary>
-        [SugarColumn(IsNullable = false, IsPrimaryKey = true, IsIdentity = true)]
-        public string MatchId{ get; set; }
+            /// <summary>
+            /// 
+            ///</summary>
+          
+            public int Lottery_Id{ get; set; }
             /// <summary>
             /// 
             ///</summary>
          
-            public string MatchDate{ get; set; }
+            public string LotteryName{ get; set; }
             /// <summary>
             /// 
             ///</summary>
          
-            public string MatchNumber{ get; set; }
+            public string LotteryCode{ get; set; }
             /// <summary>
             /// 
             ///</summary>
          
-            public string BallType{ get; set; }
+            public int? RegionId{ get; set; }
             /// <summary>
             /// 
             ///</summary>
          
-            public string BallType_Color{ get; set; }
+            public string LotteryDay{ get; set; }
             /// <summary>
             /// 
             ///</summary>
          
-            public bool? IsFinish{ get; set; }
+            public string NumberPeriods{ get; set; }
             /// <summary>
             /// 
             ///</summary>
          
-            public string HomeTeam{ get; set; }
+            public string LotteryFrequency{ get; set; }
             /// <summary>
             /// 
             ///</summary>
          
-            public string GuestTeam{ get; set; }
-            /// <summary>
-            /// 
-            ///</summary>
-         
-            public string LetBall{ get; set; }
-            /// <summary>
-            /// 
-            ///</summary>
-         
-            public string SF_Result{ get; set; }
-            /// <summary>
-            /// 
-            ///</summary>
-         
-            public string SPF_SP{ get; set; }
-            /// <summary>
-            /// 
-            ///</summary>
-         
-            public string AvgEu_SP{ get; set; }
-            /// <summary>
-            /// 
-            ///</summary>
-         
-            public string IssueNo{ get; set; }
+            public int? HighFrequency{ get; set; }
             /// <summary>
             /// 
             ///</summary>
          
             public DateTime? CreateTime{ get; set; }
+            /// <summary>
+            /// 
+            ///</summary>
+         
+            public DateTime? UpdateTime{ get; set; }
+            /// <summary>
+            /// 
+            ///</summary>
+         
+            public bool IsShow{ get; set; }
+            /// <summary>
+            /// 
+            ///</summary>
+         
+            public string WebLogo{ get; set; }
+            /// <summary>
+            /// 
+            ///</summary>
+         
+            public string WapLogo{ get; set; }
     }
 }
