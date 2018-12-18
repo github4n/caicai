@@ -64,16 +64,6 @@ namespace Lottery.GatherApp
             XmlNodeList list = doc.SelectNodes("//row");
             _IXML_DataService.AddGdklsfAsync(list);
             return list;
-            //foreach (XmlNode item in list)
-            //{
-            //    DataModel cust = new DataModel();
-            //    cust.expect = item.Attributes["expect"].Value;
-            //    cust.opencode = item.Attributes["opencode"].Value;
-            //    cust.opentime = Convert.ToDateTime(item.Attributes["opentime"].Value);
-            //    Console.WriteLine("开奖期号:" + cust.expect + "    开奖号码:" + cust.opencode + "   开奖时间:" + cust.opentime);
-            //    lists.Add(cust);
-            //}
-
         }
     }
 }
