@@ -18,7 +18,7 @@ namespace Lottery.Modes.Entity
         /// <summary>
         /// 
         ///</summary>
-        [SugarColumn(IsNullable = false, IsPrimaryKey = true, IsIdentity = true)]
+        [SugarColumn(IsNullable = false, IsPrimaryKey = true)]
         public string MatchId{ get; set; }
             /// <summary>
             /// 

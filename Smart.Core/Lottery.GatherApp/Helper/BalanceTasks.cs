@@ -14,11 +14,13 @@ namespace Lottery.GatherApp
         protected readonly IUsersService _userSvc;
         protected readonly ILogger _logger;
         protected readonly RedisManager _redisManager;
-        public BalanceTasks(IUsersService usersSvc, ILogger logger, RedisManager redisManager)
+        protected readonly ISport_DataService _sport_DataService;
+        public BalanceTasks(IUsersService usersSvc, ILogger logger,ISport_DataService sport_DataService ,RedisManager redisManager)
         {
             this._userSvc = usersSvc;
             this._logger = logger;
             this._redisManager = redisManager;
+            _sport_DataService = sport_DataService;
         }
 
         public async Task CQSSC()
@@ -128,6 +130,12 @@ namespace Lottery.GatherApp
 
             _redisManager.RedisDb(0).Publish("chan1", "123123123");
             _redisManager.RedisDb(0).Subscribe(("chan1", msg => Console.WriteLine(msg.Body)));
+        }
+        public async Task BJDC()
+        {
+            var manager = new SportData(_sport_DataService);
+            manager.GetBjdc();
+            manager.GetJCZQ();
         }
     }
 }

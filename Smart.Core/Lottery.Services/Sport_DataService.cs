@@ -33,12 +33,14 @@ namespace Lottery.Services
                 {
                     MatchId = item.id + item.TournamentNumber,
                     MatchDate = item.MatchTime,
+                    MatchNumber = item.TournamentNumber,
                     HomeTeam = item.HomeTeam,
                     GuestTeam = item.VisitingTeam,
                     LetBall = item.LetBall,
                     HalfScore = item.Score == "-" ? "-" : item.Score.Split(")")[0].Replace("(", "").Replace(")", ""),
                     FullScore = item.Score == "-" ? "-" : item.Score.Split(")")[1].Replace(")", ""),
-                    LeagueName = item.TournamentType
+                    LeagueName = item.TournamentType,
+                    CreateTime=DateTime.Now
                 };
                 resultModel.League_Color = item.League_Color;
                 foreach (var Sub_item in item.gameTypes)
@@ -78,7 +80,7 @@ namespace Lottery.Services
                 }
                 bjdc_s.Add(resultModel);
             }
-            db.Insertable(bjdc_s);
+            db.Insertable(bjdc_s).ExecuteCommand();
         }
         /// <summary>
         /// 竞彩篮球
@@ -95,8 +97,52 @@ namespace Lottery.Services
             List<jczq_result> jczq_Results = new List<jczq_result>();
             foreach (var item in model)
             {
-                jczq_result jczq = new jczq_result();
+                jczq_result jczq = new jczq_result
+                {
+                    MatchId = item.id.Replace("-","")+item.TournamentNumber,
+                    MatchDate = item.MatchTime,
+                    MatchNumber= item.TournamentNumber,
+                    HomeTeam=item.HomeTeam,
+                    GuestTeam=item.VisitingTeam,
+                    LetBall=item.LetBall,
+                    HalfScore= item.Score == "-" ? "-" : item.Score.Split(")")[0].Replace("(", "").Replace(")", ""),
+                    FullScore = item.Score == "-" ? "-" : item.Score.Split(")")[1].Replace(")", ""),
+                    LeagueName=item.TournamentType,
+                    League_Color=item.League_Color,
+                    CreateTime=DateTime.Now,
+                    JCDate = item.MatchTime,
+                };
+                foreach (var Sub_item in item.gameTypes)
+                {
+                    if (Sub_item.game == Game.让球胜平负)
+                    {
+                        jczq.RQSPF_Result = Sub_item.FruitColor;
+                        jczq.RQSPF_SP = Sub_item.Bonus;
+                    }
+                    else if (Sub_item.game == Game.总进球数)
+                    {
+                        jczq.ZJQ_Result = Sub_item.FruitColor;
+                        jczq.ZJQ_SP = Sub_item.Bonus;
+                    }
+                    else if (Sub_item.game == Game.比分)
+                    {
+                        //比分彩果FullScore
+                        jczq.BF_SP = Sub_item.Bonus;
+                    }
+                    else if (Sub_item.game == Game.胜平负)
+                    {
+                        jczq.SPF_Result = Sub_item.FruitColor;
+                        jczq.SPF_SP = Sub_item.Bonus;
+                    }
+                    else if (Sub_item.game == Game.半全场)
+                    {
+                        jczq.BQC_Result = Sub_item.FruitColor;
+                        jczq.BQC_SP = Sub_item.Bonus;
+                    }
+                }
+                jczq_Results.Add(jczq);
             }
+            db.Insertable(jczq_Results).ExecuteCommand();
         }
     }
 }

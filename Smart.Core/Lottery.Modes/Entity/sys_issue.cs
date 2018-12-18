@@ -19,7 +19,7 @@ namespace Lottery.Modes.Entity
         /// <summary>
         /// 期号id
         ///</summary>
-        [SugarColumn(IsNullable = false, IsPrimaryKey = true, IsIdentity = true)]
+        [SugarColumn(IsNullable = false, IsPrimaryKey = true)]
         public int Id{ get; set; }
         /// <summary>
         /// 期号名称
