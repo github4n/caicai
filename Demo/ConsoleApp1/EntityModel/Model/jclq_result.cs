@@ -1,9 +1,9 @@
-﻿using SqlSugar;
+﻿
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-namespace Lottery.Modes.Entity
+namespace EntityModel.Model
 {
     /// <summary>
     /// 
@@ -18,7 +18,7 @@ namespace Lottery.Modes.Entity
         /// <summary>
         /// 
         ///</summary>
-        [SugarColumn(IsNullable = false, IsPrimaryKey = true, IsIdentity = true)]
+      
         public string MatchId{ get; set; }
             /// <summary>
             /// 

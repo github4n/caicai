@@ -24,7 +24,7 @@ namespace Lottery.Modes.Entity
             /// 
             ///</summary>
          
-            public string MatchData{ get; set; }
+            public string MatchDate{ get; set; }
             /// <summary>
             /// 
             ///</summary>

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lottery.Services.Abstractions;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
@@ -9,8 +10,14 @@ namespace Lottery.GatherApp
 {
     public class XML
     {
+        protected IXML_DataService _IXML_DataService;
+
+        public XML(IXML_DataService XML_DataService)
+        {
+            _IXML_DataService = XML_DataService;
+        }
         //读取xml
-        public static XmlNodeList GdklsfXml()
+        public XmlNodeList GdklsfXml()
         {
             //辽宁快乐12  广东快乐十分  广西快乐10分 重庆时时彩 是网页版
             //gdklsf(广东快乐十分)  bjsyxw(北京11选5)  kl8(北京快乐8)   bjkzhc(北京快中彩)  bjpkshi(北京PK拾) bjk3(北京快3)  tjsyxw(天津11选5)
@@ -55,6 +62,7 @@ namespace Lottery.GatherApp
             //List<DataModel> lists = new List<DataModel>();
 
             XmlNodeList list = doc.SelectNodes("//row");
+            _IXML_DataService.AddGdklsfAsync(list);
             return list;
             //foreach (XmlNode item in list)
             //{

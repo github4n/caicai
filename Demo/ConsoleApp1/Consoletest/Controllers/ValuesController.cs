@@ -471,7 +471,7 @@ namespace Consoletest.Controllers
         /// <returns></returns>
         public List<jczq>  GetJczq()
         {
-            string date = DateTime.Now.AddDays(-2).ToString("yyyy-MM-dd");
+            string date = DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd");
             var tableNode = CommonHelper.LoadGziphtml("http://zx.500.com/jczq/kaijiang.php?d=" + date).DocumentNode.SelectSingleNode("//table[@class='ld_table']");
             //获取平均欧赔
             var trNodes = CommonHelper.LoadGziphtml("http://zx.500.com/jczq/kaijiang.php?playid=1&d=" + date).DocumentNode.SelectSingleNode("//table[@class='ld_table']").SelectNodes("tr").Skip(1);
@@ -577,7 +577,7 @@ namespace Consoletest.Controllers
                         {
                             continue;
                         }
-                        for (int i = 0; i < trNodes.Count(); i++)
+                        for (int i = 0; i < item3.SelectNodes("td").Count(); i++)
                         {
                             if (i > 10 && i < 14)
                             {
@@ -883,6 +883,155 @@ namespace Consoletest.Controllers
         }
 
 
+        /// <summary>
+        /// 竞彩足球赛果开奖
+        /// </summary>
+        /// <returns></returns>
+        public List<jclq_result> GetJclq()
+        {
+            string date = DateTime.Now.AddDays(-2).ToString("yyyy-MM-dd");
+            //竞彩篮球单关数据
+            var tableNode = CommonHelper.LoadGziphtml("http://zx.500.com/jclq/kaijiang.php??playid=0&ggid=0&d=" + date).DocumentNode.SelectSingleNode("//table[@class='ld_table']");
+            //竞彩篮球过关数据
+            var GgtableNode = CommonHelper.LoadGziphtml("http://zx.500.com/jclq/kaijiang.php??playid=0&ggid=1&d=" + date).DocumentNode.SelectSingleNode("//table[@class='ld_table']").SelectNodes("tr").Skip(1);
+            //获取平均欧赔
+            var trNodes = CommonHelper.LoadGziphtml("http://zx.500.com/jclq/kaijiang.php?playid=1&d=" + date).DocumentNode.SelectSingleNode("//table[@class='ld_table']").SelectNodes("tr").Skip(1);
+
+            var trNode = tableNode.SelectNodes("tr").Skip(1);
+
+            int OpIndex = 1;
+            List<jclq_result> jczqs = new List<jclq_result>();
+            jclq_result jclq_result;
+
+            //赛果开奖情况
+            foreach (var item in trNode)
+            {
+                OpIndex++;
+                jclq_result = new jclq_result();
+                //单关数据
+                int tdIndex = 1;
+                foreach (var item2 in item.SelectNodes("td"))
+                {
+
+                    string strText = Regex.Replace(item2.InnerHtml, "<[^>]+>", "");//不包含>的任意字符，字符个数不限，但至少一个字符
+                    if (strText == "&nbsp;" || strText == "VS" || strText == "" || strText== "--")
+                    {
+                        continue;
+                    }
+                    switch (tdIndex)
+                    {
+                        case 1:
+                            jclq_result.MatchNumber = strText;
+                            break;
+                        case 2:
+                            jclq_result.League_Color = item2.Attributes["style"].Value.Replace("background-color:", "");
+                            jclq_result.LeagueName = strText;
+                            break;
+                        case 3:
+                            jclq_result.MatchDate = strText;
+                            break;
+                        case 4:
+                            jclq_result.GuestTeam = strText;
+                            break;
+                        case 5:
+                            jclq_result.HomeTeam = strText;
+                            break;
+                        case 6:
+                            jclq_result.FullScore = strText;
+                            break;
+                        case 7:
+                            jclq_result.SF_Result = strText;
+                            break;
+                        case 8:
+                            jclq_result.LetBall = strText;
+                            break;
+                        case 9:
+                            jclq_result.RFSF_Result = strText;
+                      
+                            break;
+                        case 10:
+                            jclq_result.SFC_Result = strText;
+                         
+                            break;
+                        case 11:
+                            jclq_result.YSZF = strText;
+                            break;
+                        case 12:
+                            jclq_result.DXF_Result = strText;
+                            break;
+                      
+                    }
+
+
+
+                    tdIndex = tdIndex + 1;
+
+
+                }
+
+                //获取篮球平均欧赔
+                int indexop = 1;
+                foreach (var item3 in trNodes)
+                {
+                    indexop++;
+                    if (indexop != OpIndex)
+                    {
+                        continue;
+                    }
+                    for (int i = 0; i < item3.SelectNodes("td").Count(); i++)
+                    {
+                        if (i > 9 && i < 12)
+                        {
+                            jclq_result.AvgEu_SP += item3.SelectNodes("td")[i].InnerHtml + ",";
+
+                        }
+                        if (i >= 12)
+                        {
+                            break;
+                        }
+                    }
+                    break;
+
+                }
+                //过关数据
+                int Ggindex = 1;
+                foreach (var item4 in GgtableNode)
+                {
+                    Ggindex++;
+                    if (Ggindex != OpIndex)
+                    {
+                        continue;
+                    }
+                    for (int i = 0; i < item4.SelectNodes("td").Count(); i++)
+                    {
+                        if (i ==7)
+                        {
+                            jclq_result.GG_SF_Result= item4.SelectNodes("td")[i].InnerHtml;
+                        }
+                        if (i == 10)
+                        {
+                            jclq_result.GG_RFSF_Result = item4.SelectNodes("td")[i].InnerHtml;
+                        }
+                        if (i == 12)
+                        {
+                            jclq_result.GG_SFC_Result = item4.SelectNodes("td")[i].InnerHtml;
+                        }
+                        if (i == 12)
+                        {
+                            jclq_result.GG_DXF_Result = item4.SelectNodes("td")[i].InnerHtml;
+                        }
+                    }
+                    break;
+                }
+
+
+                jclq_result.AvgEu_SP = jclq_result.AvgEu_SP.Substring(0, jclq_result.AvgEu_SP.Length - 1);
+                jczqs.Add(jclq_result);
+            }
+
+
+            return jczqs;
+        }
 
     }
 }

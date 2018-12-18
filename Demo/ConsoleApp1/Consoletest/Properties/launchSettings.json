@@ -12,7 +12,7 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "api/values/GetBjdcExpect",
+      "launchUrl": "api/values/GetJclq",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
