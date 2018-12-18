@@ -900,7 +900,7 @@ namespace Consoletest.Controllers
             var trNode = tableNode.SelectNodes("tr").Skip(1);
 
             int OpIndex = 1;
-            List<jclq_result> jczqs = new List<jclq_result>();
+            List<jclq_result> jclq_results = new List<jclq_result>();
             jclq_result jclq_result;
 
             //赛果开奖情况
@@ -1026,11 +1026,11 @@ namespace Consoletest.Controllers
 
 
                 jclq_result.AvgEu_SP = jclq_result.AvgEu_SP.Substring(0, jclq_result.AvgEu_SP.Length - 1);
-                jczqs.Add(jclq_result);
+                jclq_results.Add(jclq_result);
             }
 
 
-            return jczqs;
+            return jclq_results;
         }
 
     }
