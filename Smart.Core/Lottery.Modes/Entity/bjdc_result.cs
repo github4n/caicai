@@ -25,7 +25,7 @@ namespace Lottery.Modes.Entity
         /// 比赛时间
         ///</summary>
 
-        public string MatchData{ get; set; }
+        public string MatchDate { get; set; }
         /// <summary>
         /// 比赛编号
         ///</summary>
@@ -67,12 +67,12 @@ namespace Lottery.Modes.Entity
 
         public string League_Color{ get; set; }
         /// <summary>
-        /// 胜负过关赛果
+        /// 胜平负赛果
         ///</summary>
 
         public string SPF_Result{ get; set; }
         /// <summary>
-        /// 胜负过关SP
+        /// 胜平负SP
         ///</summary>
 
         public string SPF_SP{ get; set; }
@@ -121,16 +121,7 @@ namespace Lottery.Modes.Entity
         ///</summary>
 
         public string IssueNo{ get; set; }
-        /// <summary>
-        /// 球种
-        ///</summary>
 
-        public string BallType{ get; set; }
-        /// <summary>
-        /// 球种_颜色
-        ///</summary>
-
-        public string BallType_Color{ get; set; }
         /// <summary>
         /// 是否采集完成
         ///</summary>
