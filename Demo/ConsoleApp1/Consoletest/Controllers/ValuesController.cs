@@ -884,7 +884,7 @@ namespace Consoletest.Controllers
 
 
         /// <summary>
-        /// 竞彩足球赛果开奖
+        /// 竞彩篮球赛果开奖
         /// </summary>
         /// <returns></returns>
         public List<jclq_result> GetJclq()
