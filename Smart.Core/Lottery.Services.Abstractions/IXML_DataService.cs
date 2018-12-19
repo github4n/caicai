@@ -1,4 +1,5 @@
-﻿using Lottery.Modes.Entity;
+﻿using HtmlAgilityPack;
+using Lottery.Modes.Entity;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,5 +13,7 @@ namespace Lottery.Services.Abstractions
         Task<int> AddXMLAsync(XmlNodeList xmlNodeList, string gameCode);
 
         sys_issue GetNowIssuNo(string LotteryCode);
+
+        Task<int> AddBjdcIssue(HtmlNodeCollection htmlNodeCollection);
     }
 }

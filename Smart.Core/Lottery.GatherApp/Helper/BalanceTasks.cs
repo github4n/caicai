@@ -156,12 +156,16 @@ namespace Lottery.GatherApp
         {
             int count = 0;
             var manager = new XML(_xml_DataService);
-            count=await manager.LoadXml("gdklsf");
+           // count = await manager.GetBjdcAsync();
+            Console.WriteLine("北京单场采集完毕.新采集了" + count + "条");
+           // count =await manager.LoadXml("gdklsf");
             Console.WriteLine("广东快乐10分采集完毕.新采集了"+ count+"条");
-            count = await manager.LoadXml("bjsyxw");
+           // count = await manager.LoadXml("bjsyxw");
             Console.WriteLine("北京11选5采集完毕.新采集了" + count + "条");
             count= await manager.LoadXml("kl8");
             Console.WriteLine("北京快乐8采集完毕.新采集了" + count + "条");
         }
+
+
     }
 }

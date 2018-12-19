@@ -57,7 +57,7 @@ namespace Lottery.GatherApp
             await Task.WhenAll(new Task[] {
                 tasks.HK6Issue(),
                 tasks.XML(),
-                tasks.BJDC()
+                //tasks.BJDC()
             });
             Console.WriteLine("Done.");
             Console.ReadLine();

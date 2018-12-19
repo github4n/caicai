@@ -1,4 +1,6 @@
-﻿using Lottery.Services.Abstractions;
+﻿using EntityModel.Common;
+using HtmlAgilityPack;
+using Lottery.Services.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -55,12 +57,12 @@ namespace Lottery.GatherApp
                 }
                 if (response.ContentEncoding != null && response.ContentEncoding.ToLower() == "gzip")
                 {
-                 
-                        System.IO.Stream streamReceive = response.GetResponseStream();
-                        var zipStream = new System.IO.Compression.GZipStream(streamReceive, System.IO.Compression.CompressionMode.Decompress);
-                        StreamReader sr = new System.IO.StreamReader(zipStream, Encoding.GetEncoding("GB2312"));
-                        htmlCode = sr.ReadToEnd();
-                  
+
+                    System.IO.Stream streamReceive = response.GetResponseStream();
+                    var zipStream = new System.IO.Compression.GZipStream(streamReceive, System.IO.Compression.CompressionMode.Decompress);
+                    StreamReader sr = new System.IO.StreamReader(zipStream, Encoding.GetEncoding("GB2312"));
+                    htmlCode = sr.ReadToEnd();
+
                 }
                 else
                 {
@@ -74,16 +76,24 @@ namespace Lottery.GatherApp
                 XmlDocument doc = new System.Xml.XmlDocument();//新建对象
                 doc.LoadXml(htmlCode);
                 //List<DataModel> lists = new List<DataModel>();
-              
+
                 list = doc.SelectNodes("//row");
 
-                 count = await _IXML_DataService.AddXMLAsync(list, gameCode);
+                count = await _IXML_DataService.AddXMLAsync(list, gameCode);
                 InsertCount += count;
             }
 
-            
+
             return await Task.FromResult(InsertCount);
         }
+
+        public async Task<int> GetBjdcAsync()
+        {
+            var anode = CommonHelper.GetBJDCExpect("http://zx.500.com/zqdc/kaijiang.php");
+            int count= await _IXML_DataService.AddBjdcIssue(anode);
+            return count;
+        }
+    
 
     }
 }

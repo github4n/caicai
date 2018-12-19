@@ -1,4 +1,5 @@
-﻿using Lottery.Modes.Entity;
+﻿using HtmlAgilityPack;
+using Lottery.Modes.Entity;
 using Lottery.Services.Abstractions;
 using Smart.Core.Repository.SqlSugar;
 using SqlSugar;
@@ -18,6 +19,8 @@ namespace Lottery.Services
             db = factory.GetDbContext();
         }
        
+
+
         public async Task<int> AddXMLAsync(XmlNodeList xmlNodeList,string gameCode)
         {
             int count = 0;
@@ -67,6 +70,39 @@ namespace Lottery.Services
             return await Task.FromResult(count);
         }
 
+
+        public async Task<int> AddBjdcIssue(HtmlNodeCollection htmlNodeCollection)
+        {
+            int count = 0;
+            var lottery = GetLottery("zqdc");
+            var insertObjs = new List<sys_issue>();
+            sys_issue sys_issue = GetNowIssuNo("zqdc");
+            foreach (var item in htmlNodeCollection)
+            {
+                if (sys_issue != null)
+                {
+                    if (sys_issue.IssueNo == item.Attributes["value"].Value)
+                    {
+                        break;
+                    }
+
+                }
+                sys_issue issue = new sys_issue();
+                issue.IssueNo = item.Attributes["value"].Value;
+                issue.LotteryId = lottery.Lottery_Id;
+                issue.LotteryCode = lottery.LotteryCode;
+                issue.CreateTime = DateTime.Now;
+                issue.UpdateTime = DateTime.Now;
+                insertObjs.Add(issue);
+            }
+            if (insertObjs.Count != 0)
+            {
+                count = db.Insertable(insertObjs.ToArray()).ExecuteCommand();
+
+            }
+
+            return await Task.FromResult(count);
+        }
 
         /// <summary>
         /// 获取彩种
