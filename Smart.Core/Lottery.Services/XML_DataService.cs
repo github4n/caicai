@@ -5,6 +5,7 @@ using SqlSugar;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using System.Xml;
 
 namespace Lottery.Services
@@ -16,19 +17,85 @@ namespace Lottery.Services
         {
             db = factory.GetDbContext();
         }
-
-        public void AddGdklsfAsync(XmlNodeList xmlNodeList)
+       
+        public async Task<int> AddXMLAsync(XmlNodeList xmlNodeList,string gameCode)
         {
-            var lottery = db.Queryable<sys_lottery>().Where(n=>n.LotteryCode== "gdklsf").First();
+            int count = 0;
+            var lottery = GetLottery(gameCode);
+            var insertObjs = new List<sys_issue>();
+            sys_issue sys_issue = GetNowIssuNo(gameCode);
             foreach (XmlNode item in xmlNodeList)
             {
+                if (sys_issue != null)
+                {
+                    if (sys_issue.IssueNo == item.Attributes["expect"].Value)
+                    {
+                        break;
+                    }
+                }
+
                 sys_issue issue = new sys_issue();
                 issue.IssueNo = item.Attributes["expect"].Value;
-                issue.OpenCode = item.Attributes["opencode"].Value;
-                issue.OpenTime = item.Attributes["opentime"].Value;
-               
-            }
 
+                if (item.Attributes["specail"] != null)
+                {
+                    issue.OpenCode = item.Attributes["opencode"].Value + "|" + item.Attributes["specail"].Value;
+                }
+                else if (item.Attributes["opencode_specail"] != null)
+                {
+
+                    issue.OpenCode = item.Attributes["opencode"].Value + "|" + item.Attributes["opencode_specail"].Value;
+                }
+                else
+                {
+                    issue.OpenCode = item.Attributes["opencode"].Value;
+                }
+
+                issue.OpenTime = item.Attributes["opentime"].Value;
+                issue.LotteryId = lottery.Lottery_Id;
+                issue.LotteryCode = lottery.LotteryCode;
+                issue.CreateTime = DateTime.Now;
+                issue.UpdateTime = DateTime.Now;
+                insertObjs.Add(issue);
+            }
+            if (insertObjs.Count != 0)
+            {
+                 count = db.Insertable(insertObjs.ToArray()).ExecuteCommand();
+
+            }
+         
+            return await Task.FromResult(count);
         }
+
+
+        /// <summary>
+        /// 获取彩种
+        /// </summary>
+        /// <param name="LotteryCode"></param>
+        /// <returns></returns>
+        public sys_lottery GetLottery(string LotteryCode)
+        {
+            sys_lottery lottery = db.Queryable<sys_lottery>().Where(n => n.LotteryCode == LotteryCode).First();
+            return lottery;
+        }
+
+        /// <summary>
+        /// 获取彩种最新信息
+        /// </summary>
+        /// <returns></returns>
+        public sys_issue GetNowIssuNo(string LotteryCode)
+        {
+            sys_issue issue = db.Queryable<sys_issue>().Where(n => n.LotteryCode == LotteryCode).OrderBy(n => n.IssueNo, OrderByType.Desc).Take(1).First();
+            if (issue == null)
+            {
+                return null;
+            }
+            else
+            {
+                return issue;
+            }
+            
+        }
+
     }
 }

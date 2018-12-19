@@ -1,5 +1,6 @@
 ﻿using EntityModel.Model;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
@@ -13,7 +14,14 @@ namespace readXml
         static void Main(string[] args)
         {
 
-            readXml();
+           // readXml();
+            DateTime OldDate = DateTime.Now.AddMonths(-11);
+            DateTime NowDate = DateTime.Now;
+            TimeSpan ts = NowDate - OldDate;
+            for (int i = 0; i < ts.Days + 1; i++)
+            {
+                Console.WriteLine(OldDate.AddDays(i).ToString("yyyyMMdd"));
+            }
             Console.ReadKey();
         }
 
@@ -37,7 +45,7 @@ namespace readXml
             var gameCode = "gdklsf";
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             string date = DateTime.Now.AddDays(-2).ToString("yyyyMMdd");
-            string Url = "http://kaijiang.500.com/static/info/kaijiang/xml/"+ gameCode + "/" + date + ".xml";
+            string Url = "http://kaijiang.500.com/static/info/kaijiang/xml/" + gameCode + "/" + date + ".xml";
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(Url);
             request.Method = "GET";
             request.ContentType = "text/xml";
@@ -63,16 +71,21 @@ namespace readXml
             XmlDocument doc = new System.Xml.XmlDocument();//新建对象
             doc.LoadXml(htmlCode);
             List<DataModel> lists = new List<DataModel>();
-
+            ArrayList arrNodeList = new ArrayList();
             XmlNodeList list = doc.SelectNodes("//row");
             foreach (XmlNode item in list)
             {
+                arrNodeList.Add(item);
+            }
+            arrNodeList.Reverse();
+            foreach (XmlNode item in arrNodeList)
+            {
+
                 DataModel cust = new DataModel();
                 cust.expect = item.Attributes["expect"].Value;
                 cust.opencode = item.Attributes["opencode"].Value;
                 cust.opentime = Convert.ToDateTime(item.Attributes["opentime"].Value);
                 Console.WriteLine("开奖期号:" + cust.expect + "    开奖号码:" + cust.opencode + "   开奖时间:" + cust.opentime);
-                lists.Add(cust);
             }
 
         }
