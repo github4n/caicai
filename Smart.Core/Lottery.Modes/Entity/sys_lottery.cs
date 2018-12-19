@@ -33,7 +33,7 @@ namespace Lottery.Modes.Entity
             /// 
             ///</summary>
          
-            public int? RegionId{ get; set; }
+            public string RegionName { get; set; }
             /// <summary>
             /// 
             ///</summary>

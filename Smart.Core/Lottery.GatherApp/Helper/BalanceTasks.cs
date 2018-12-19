@@ -15,12 +15,16 @@ namespace Lottery.GatherApp
         protected readonly ILogger _logger;
         protected readonly RedisManager _redisManager;
         protected readonly ISport_DataService _sport_DataService;
-        public BalanceTasks(IUsersService usersSvc, ILogger logger,ISport_DataService sport_DataService ,RedisManager redisManager)
+        protected readonly IXML_DataService _xml_DataService;
+
+        public BalanceTasks(IUsersService usersSvc, ILogger logger,ISport_DataService sport_DataService , IXML_DataService xml_DataService,RedisManager redisManager)
         {
             this._userSvc = usersSvc;
             this._logger = logger;
             this._redisManager = redisManager;
             _sport_DataService = sport_DataService;
+            _xml_DataService = xml_DataService;
+
         }
 
         public async Task CQSSC()
@@ -136,6 +140,12 @@ namespace Lottery.GatherApp
             var manager = new SportData(_sport_DataService);
             manager.GetBjdc();
             manager.GetJCZQ();
+        }
+
+        public async Task XML()
+        {
+            var manager = new XML(_xml_DataService);
+             manager.GdklsfXml();
         }
     }
 }
