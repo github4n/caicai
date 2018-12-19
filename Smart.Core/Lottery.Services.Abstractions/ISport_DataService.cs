@@ -14,6 +14,6 @@ namespace Lottery.Services.Abstractions
         List<string> GetNotFinish(string GameCode);
         List<string> GetNow3IssuNo(string GameCode);
         string GetNowIssuNo(string GameCode);
-        string GetNowGame();
+        string GetJCDate();
     }
 }

@@ -161,7 +161,7 @@ namespace Lottery.GatherApp
         }
         public void GetJCZQ()
         {
-            DateTime olddate =Convert.ToDateTime(_SportService.GetNowGame());
+            DateTime olddate =Convert.ToDateTime(_SportService.GetJCDate());
             string date = DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd");
             var span = (Convert.ToDateTime(date) - olddate).Days;
             for (int h = 0; h < span; h++)
