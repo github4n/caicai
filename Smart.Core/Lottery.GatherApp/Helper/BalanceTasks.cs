@@ -17,16 +17,23 @@ namespace Lottery.GatherApp
         protected readonly ISport_DataService _sport_DataService;
         protected readonly IXML_DataService _xml_DataService;
 
-        public BalanceTasks(IUsersService usersSvc, ILogger logger,ISport_DataService sport_DataService , IXML_DataService xml_DataService,RedisManager redisManager)
+        //public BalanceTasks(IUsersService usersSvc, ILogger logger,ISport_DataService sport_DataService , IXML_DataService xml_DataService,RedisManager redisManager)
+        //{
+        //    this._userSvc = usersSvc;
+        //    this._logger = logger;
+        //   this._redisManager = redisManager;
+        //    _sport_DataService = sport_DataService;
+        //    _xml_DataService = xml_DataService;
+
+        //}
+        public BalanceTasks(IUsersService usersSvc, ILogger logger, ISport_DataService sport_DataService, IXML_DataService xml_DataService)
         {
             this._userSvc = usersSvc;
             this._logger = logger;
-            this._redisManager = redisManager;
             _sport_DataService = sport_DataService;
             _xml_DataService = xml_DataService;
 
         }
-
         public async Task CQSSC()
         {
             //this._redisManager.RedisDb(0).Set("ceshi","11111",100000);
@@ -135,11 +142,12 @@ namespace Lottery.GatherApp
             _redisManager.RedisDb(0).Publish("chan1", "123123123");
             _redisManager.RedisDb(0).Subscribe(("chan1", msg => Console.WriteLine(msg.Body)));
         }
-        public async Task BJDC()
+        public async Task SportData()
         {
             var manager = new SportData(_sport_DataService);
             manager.GetBjdc();
             manager.GetJCZQ();
+            manager.GetJCLQ();
         }
         //辽宁快乐12  广东快乐十分  广西快乐10分 重庆时时彩 是网页版
         //gdklsf(广东快乐十分)  bjsyxw(北京11选5)  kl8(北京快乐8)   bjkzhc(北京快中彩)  bjpkshi(北京PK拾) bjk3(北京快3)  tjsyxw(天津11选5)

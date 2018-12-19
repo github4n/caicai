@@ -91,7 +91,7 @@ namespace Lottery.Services
             var NoFinish = GetNotFinish(GameCode);
             if (NoFinish != null && NoFinish.Count > 0)
             {
-                UpdateList = bjdc_s.Where(x => NoFinish.Contains(x.IssueNo)).ToList();
+                UpdateList = bjdc_s.Where(x => NoFinish.Select(y=>y.Key).Contains(x.MatchId)).ToList();
                 foreach (var oldItem in UpdateList)
                 {
                     if (!string.IsNullOrEmpty(oldItem.RQSPF_Result) && oldItem.RQSPF_Result != "-" &&
@@ -102,14 +102,13 @@ namespace Lottery.Services
                     {
                         oldItem.IsFinish = true;
                     }
-                    else
-                    {
-                        oldItem.IsFinish = false;
-                    }
                 }
                 if (UpdateList != null && UpdateList.Count > 0)
                 {
-                    bjdc_s.RemoveAll((bjdc_result br) => { return NoFinish.Contains(br.IssueNo); });//删除bjdc列表中存在的数据
+                    bjdc_s.RemoveAll((bjdc_result br) => {
+                        return NoFinish.Select(x=>x.Key).Contains(br.MatchId)||
+                        NoFinish.Select(y=>y.Value).Contains(br.IssueNo); }
+                    );//避免重复
                     db.Updateable(UpdateList).ExecuteCommand();
                 }
             }
@@ -187,7 +186,6 @@ namespace Lottery.Services
                         jczq.BQC_SP = Sub_item.Bonus;
                     }
                 }
-
                 jczq_Results.Add(jczq);
             }
             var IssuNo = GetJCZQ_JCDate();
@@ -204,10 +202,10 @@ namespace Lottery.Services
         /// 获取最近三场没有完成的场次(BJDC)
         /// </summary>
         /// <returns></returns>
-        public List<string> GetNotFinish(string GameCode)
+        public Dictionary<string,string> GetNotFinish(string GameCode)
         {
             var issuNo = GetNow3IssuNo(GameCode);
-            return db.Queryable<bjdc_result>().Where(x => x.IsFinish == false && issuNo.Contains(x.IssueNo)).Select(x => x.IssueNo).ToList();
+            return db.Queryable<bjdc_result>().Where(x => x.IsFinish == false && issuNo.Contains(x.IssueNo)).ToList().ToDictionary(x=>x.MatchId,y=>y.IssueNo);
         }
         /// <summary>
         /// 获取最近3期(BJDC)
