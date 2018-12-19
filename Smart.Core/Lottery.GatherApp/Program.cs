@@ -40,26 +40,27 @@ namespace Lottery.GatherApp
              {
                  op.ConnectionString = ConfigFileHelper.Get("Lottery:Data:Database:Connection");
                  op.DbType = DbType.MySql;
-                 op.IsAutoCloseConnection = false;
+                 op.IsAutoCloseConnection = true;
                  op.InitKeyType = InitKeyType.Attribute;
                  op.IsShardSameThread = true;
              });
             services.AddServices();
-            services.AddCSRedis(options =>
-            {
-                options.Add(new Smart.Core.NoSql.Redis.RedisConfig() { C_IP = "127.0.0.1", C_Post = 6379, C_Password = "redis123",C_Defaultdatabase=0 });
-                options.Add(new Smart.Core.NoSql.Redis.RedisConfig() { C_IP = "127.0.0.1", C_Post = 6379, C_Password = "redis123", C_Defaultdatabase = 1 });
-            });
+            //services.AddCSRedis(options =>
+            //{
+            //    options.Add(new Smart.Core.NoSql.Redis.RedisConfig() { C_IP = "10.0.3.6", C_Post = 6379, C_Password = "redis123",C_Defaultdatabase=0 });
+            //    options.Add(new Smart.Core.NoSql.Redis.RedisConfig() { C_IP = "10.0.3.6", C_Post = 6379, C_Password = "redis123", C_Defaultdatabase = 1 });
+            //});
             services.AddConsoleLogger(options => { });
             services.AddSingleton<BalanceTasks>();
             var provider = services.BuildServiceProvider();
             var tasks = provider.GetRequiredService<BalanceTasks>();
             await Task.WhenAll(new Task[] {
-                tasks.HK6Issue(),
+                //tasks.HK6Issue(),
                 tasks.XML(),
-                tasks.BJDC()
+                tasks.SportData()
             });
             Console.WriteLine("Done.");
+            Console.ReadLine();
             Console.ReadLine();
 
         }
