@@ -125,6 +125,14 @@ namespace Lottery.Services
                 item.MatchId = item.MatchId + item.MatchNumber;
                 item.CreateTime = DateTime.Now;
             }
+            var Issue = GetJCLQ_JCDate();
+            var result = GetJCLQResultsByIssueNo(Issue).Select(x => x.MatchId);
+            var temp = model.Where(x => result.Contains(x.MatchId)).ToList();
+            if (temp != null && temp.Count > 0)
+            {
+                model.RemoveAll((jclq_result jr) => { return result.Contains(jr.MatchId); });//移除已经存在的数据
+                db.Updateable(temp).ExecuteCommand();
+            }
             db.Insertable(model).ExecuteCommand();
         }
         /// <summary>
@@ -182,10 +190,14 @@ namespace Lottery.Services
 
                 jczq_Results.Add(jczq);
             }
-            var IssuNo = GetNowIssuNo(GameCode);
-            var result=GetResultsByIssueNo(IssuNo).Select(x=>x.MatchId);
-            //var temp = jczq_Results.Where(x => x.JCDate == IssuNo).Where(x=>!result.Contains(x.MatchId)).ToList();
-            jczq_Results.RemoveAll((jczq_result jr) => { return result.Contains(jr.MatchId); });//移除已经存在的数据
+            var IssuNo = GetJCZQ_JCDate();
+            var result= GetJCZQResultsByIssueNo(IssuNo).Select(x=>x.MatchId);
+            var temp = jczq_Results.Where(x => result.Contains(x.MatchId)).ToList();
+            if (temp != null && temp.Count > 0)
+            {
+                jczq_Results.RemoveAll((jczq_result jr) => { return result.Contains(jr.MatchId); });//移除已经存在的数据
+                db.Updateable(temp).ExecuteCommand();
+            }
             db.Insertable(jczq_Results).ExecuteCommand();
         }
         /// <summary>
@@ -218,13 +230,26 @@ namespace Lottery.Services
         /// 获取数据库最迟的竞彩时间(JCZQ)
         /// </summary>
         /// <returns></returns>
-        public string GetJCDate()
+        public string GetJCZQ_JCDate()
         {
             return db.Queryable<jczq_result>().OrderBy(x=>x.JCDate,OrderByType.Desc).Select(x=>x.JCDate).First();
         }
-        public List<jczq_result> GetResultsByIssueNo(string IssueNo)
+        public List<jczq_result> GetJCZQResultsByIssueNo(string IssueNo)
         {
             return db.Queryable<jczq_result>().Where(x => x.JCDate == IssueNo).ToList();
         }
+        public List<jclq_result> GetJCLQResultsByIssueNo(string IssueNo)
+        {
+            return db.Queryable<jclq_result>().Where(x => x.JCDate == IssueNo).ToList();
+        }
+        /// <summary>
+        /// 获取数据库最迟的竞彩时间(JCLQ)
+        /// </summary>
+        /// <returns></returns>
+        public string GetJCLQ_JCDate()
+        {
+            return db.Queryable<jclq_result>().OrderBy(x => x.JCDate, OrderByType.Desc).Select(x => x.JCDate).First();
+        }
+        
     }
 }
