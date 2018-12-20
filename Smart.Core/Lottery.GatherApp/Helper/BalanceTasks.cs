@@ -145,9 +145,7 @@ namespace Lottery.GatherApp
         public async Task SportData()
         {
             var manager = new SportData(_sport_DataService);
-            manager.GetBjdc();
-            manager.GetJCZQ();
-            manager.GetJCLQ();
+            manager.Start();
         }
         //辽宁快乐12  广东快乐十分  广西快乐10分 重庆时时彩 是网页版
         //gdklsf(广东快乐十分)  bjsyxw(北京11选5)  kl8(北京快乐8)   bjkzhc(北京快中彩)  bjpkshi(北京PK拾) bjk3(北京快3)  tjsyxw(天津11选5)
@@ -164,16 +162,14 @@ namespace Lottery.GatherApp
         {
             int count = 0;
             var manager = new XML(_xml_DataService);
-           // count = await manager.GetBjdcAsync();
+            count = await manager.GetBjdcAsync();
             Console.WriteLine("北京单场采集完毕.新采集了" + count + "条");
-           // count =await manager.LoadXml("gdklsf");
+            count =await manager.LoadXml("gdklsf");
             Console.WriteLine("广东快乐10分采集完毕.新采集了"+ count+"条");
-           // count = await manager.LoadXml("bjsyxw");
+           count = await manager.LoadXml("bjsyxw");
             Console.WriteLine("北京11选5采集完毕.新采集了" + count + "条");
             count= await manager.LoadXml("kl8");
             Console.WriteLine("北京快乐8采集完毕.新采集了" + count + "条");
         }
-
-
     }
 }
