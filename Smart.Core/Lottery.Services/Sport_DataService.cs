@@ -136,10 +136,10 @@ namespace Lottery.Services
                 });
                 var Issue = GetJCLQ_JCDate();
                 var result = GetJCLQResultsByIssueNo(Issue).Select(x => x.MatchId);
-                var temp = model.Where(x => result.Contains(x.MatchId));
+                var temp = model.Where(x => result.Contains(x.MatchId)).ToList();
                 if (temp != null && temp.Count() > 0)
                 {
-                    db.Updateable(temp.ToList()).ExecuteCommand();
+                    db.Updateable(temp).ExecuteCommand();
                     ConSoleHelp("U", GameCode,temp.Select(x => x.JCDate).FirstOrDefault(), temp.Count());
                     model =model.Where(x=>!temp.Select(y=>y.JCDate).Contains(x.JCDate)).ToList();
                 }
