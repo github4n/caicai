@@ -314,10 +314,10 @@ namespace Lottery.GatherApp
         {
             try
             {
-                DateTime olddate = Convert.ToDateTime(_SportService.GetJCLQ_JCDate())==null || String.IsNullOrEmpty(_SportService.GetJCLQ_JCDate()) == true ? DateTime.Now.AddMonths(-1) : Convert.ToDateTime(_SportService.GetJCLQ_JCDate());
-                string date = DateTime.Now.AddDays(-2).ToString("yyyy-MM-dd");
-                int ts = (Convert.ToDateTime(date) - olddate).Days;
-                for (int h = 0; h < ts; h++)
+                DateTime olddate = Convert.ToDateTime(_SportService.GetJCLQ_JCDate())==null || String.IsNullOrEmpty(_SportService.GetJCLQ_JCDate()) == true ? DateTime.Now.AddMonths(-1) : Convert.ToDateTime(_SportService.GetJCLQ_JCDate()).AddDays(-1);
+                DateTime date = DateTime.Now;
+                int ts = (date - olddate).Days;
+                for (int h = 0; h <= ts; h++)
                 {
                     //竞彩篮球单关数据
                     var tableNode = CommonHelper.LoadGziphtml("http://zx.500.com/jclq/kaijiang.php??playid=0&ggid=0&d=" + olddate.AddDays(h)).DocumentNode.SelectSingleNode("//table[@class='ld_table']");
@@ -334,7 +334,7 @@ namespace Lottery.GatherApp
                     {
                         OpIndex++;
                         jclq_result = new jclq_result();
-                        jclq_result.MatchId = date.Replace("-", "");
+                        jclq_result.MatchId = olddate.AddDays(h).ToString("yyyy-MM-dd").Replace("-", "");
                         jclq_result.JCDate = olddate.AddDays(h).ToString("yyyy-MM-dd");
                         //单关数据
                         int tdIndex = 1;
