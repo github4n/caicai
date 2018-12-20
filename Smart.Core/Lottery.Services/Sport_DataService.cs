@@ -130,11 +130,10 @@ namespace Lottery.Services
         {
             try
             {
-                foreach (var item in model)
-                {
-                    item.MatchId = item.MatchId + item.MatchNumber;
-                    item.CreateTime = DateTime.Now;
-                }
+                model.ForEach((a) => {
+                    a.MatchId = a.MatchId + a.MatchNumber;
+                    a.CreateTime = DateTime.Now;
+                });
                 var Issue = GetJCLQ_JCDate();
                 var result = GetJCLQResultsByIssueNo(Issue).Select(x => x.MatchId);
                 var temp = model.Where(x => result.Contains(x.MatchId));
