@@ -145,8 +145,8 @@ namespace Lottery.API
             services.AddServices();
             services.AddCSRedis(options =>
             {
-                options.Add(new Smart.Core.NoSql.Redis.RedisConfig() { C_IP = "127.0.0.1", C_Post = 6379, C_Password = "redis123", C_Defaultdatabase = 0 });
-                options.Add(new Smart.Core.NoSql.Redis.RedisConfig() { C_IP = "127.0.0.1", C_Post = 6379, C_Password = "redis123", C_Defaultdatabase = 1 });
+                options.Add(new Smart.Core.NoSql.Redis.RedisConfig() { C_IP = "10.0.3.27", C_Post = 6379, C_Password = "a123456", C_Defaultdatabase = 0 });
+                options.Add(new Smart.Core.NoSql.Redis.RedisConfig() { C_IP = "10.0.3.27", C_Post = 6379, C_Password = "a123456", C_Defaultdatabase = 1 });
             });
             services.AddConsoleLogger(options => { });
 

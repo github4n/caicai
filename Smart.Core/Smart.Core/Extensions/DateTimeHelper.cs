@@ -90,5 +90,11 @@ namespace Smart.Core.Extensions
         {
             return LocalDateTimeToJavaTimeStamp(DateTime.Now);
         }
+
+        public static DateTime StampToDateTime(string timeStamp)
+        {
+            var t = Convert.ToUInt32(timeStamp);
+            return UTCOrigin.AddSeconds(t);
+        }
     }
 }

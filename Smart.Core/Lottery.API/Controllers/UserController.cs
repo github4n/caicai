@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Lottery.Api.Controllers.CommonFilterActtribute;
 using Lottery.Services.Abstractions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -39,7 +40,8 @@ namespace Lottery.API.Controllers
         /// 测试
         /// </summary>
         /// <returns></returns>
-        [HttpGet]
+        [ReusltFilter]
+        [HttpPost]
         public async Task<object> Test111()
         {
 
