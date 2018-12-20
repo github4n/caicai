@@ -100,8 +100,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="HangFire" Version="1.6.21" />
+    <PackageReference Include="Hangfire.MemoryStorage" Version="1.5.3" />
     <PackageReference Include="HtmlAgilityPack" Version="1.8.11" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.1.1" />
+    <PackageReference Include="Quartz" Version="3.0.7" />
   </ItemGroup>
 
   <ItemGroup>
