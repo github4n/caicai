@@ -56,5 +56,10 @@ namespace Lottery.Modes.Entity
         ///</summary>
 
         public string OpenCode{ get; set; }
+
+        /// <summary>
+        /// 采集日期
+        /// </summary>
+        public string LotteryTime { get; set; }
     }
 }

@@ -79,7 +79,7 @@ namespace Lottery.GatherApp
 
                 list = doc.SelectNodes("//row");
 
-                count = await _IXML_DataService.AddXMLAsync(list, gameCode);
+                count = await _IXML_DataService.AddXMLAsync(list, gameCode, OldDate.AddDays(i).ToShortDateString());
                 InsertCount += count;
             }
 

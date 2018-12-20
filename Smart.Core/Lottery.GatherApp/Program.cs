@@ -56,7 +56,7 @@ namespace Lottery.GatherApp
             var tasks = provider.GetRequiredService<BalanceTasks>();
             await Task.WhenAll(new Task[] {
                 //tasks.HK6Issue(),
-                tasks.SportData(),
+                //tasks.SportData(),
                 tasks.XML(),
             });
             Console.WriteLine("Done.");
