@@ -1,10 +1,15 @@
 ﻿using EntityModel.Model;
+using Quartz;
+using Quartz.Impl;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Net;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Xml;
 
 namespace readXml
@@ -13,15 +18,25 @@ namespace readXml
     {
         static void Main(string[] args)
         {
-
-           // readXml();
-            DateTime OldDate = DateTime.Now.AddMonths(-11);
-            DateTime NowDate = DateTime.Now;
-            TimeSpan ts = NowDate - OldDate;
-            for (int i = 0; i < ts.Days + 1; i++)
+            Task parent = new Task(() =>
             {
-                Console.WriteLine(OldDate.AddDays(i).ToString("yyyyMMdd"));
-            }
+                CancellationTokenSource cts = new CancellationTokenSource(5000);
+                //创建任务工厂
+                TaskFactory tf = new TaskFactory(cts.Token, TaskCreationOptions.AttachedToParent,
+                TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Default);
+                //添加一组具有相同状态的子任务
+                Task[] task = new Task[]{
+              tf.StartNew(() => { Console.WriteLine("我是任务工厂里的第一个任务。"); }),
+              tf.StartNew(() => { Console.WriteLine("我是任务工厂里的第二个任务。"); }),
+              tf.StartNew(() => { Console.WriteLine("我是任务工厂里的第三个任务。"); })
+          };
+            });
+            parent.Start();
+           
+            //Console.WriteLine("Time Job Start");
+            //RunProgram().GetAwaiter().GetResult();
+            //Console.WriteLine("Hello World!");
+            Console.Read();
             Console.ReadKey();
         }
 
@@ -89,5 +104,58 @@ namespace readXml
             }
 
         }
+
+        private static async Task RunProgram()
+        {
+            try
+            {
+                // Grab the Scheduler instance from the Factory  
+                NameValueCollection props = new NameValueCollection
+                {
+                    { "quartz.serializer.type", "binary" }
+                };
+                StdSchedulerFactory factory = new StdSchedulerFactory(props);
+                IScheduler scheduler = await factory.GetScheduler();
+
+
+                // 启动任务调度器  
+                await scheduler.Start();
+
+
+                // 定义一个 Job  
+                IJobDetail job = JobBuilder.Create<HelloJob>()
+                    .WithIdentity("job1", "group1")
+                    .Build();
+                ISimpleTrigger trigger = (ISimpleTrigger)TriggerBuilder.Create()
+                    .WithIdentity("trigger1") // 给任务一个名字  
+                    .StartAt(DateTime.Now) // 设置任务开始时间  
+                    .ForJob("job1", "group1") //给任务指定一个分组  
+                    .WithSimpleSchedule(x => x
+                    .WithIntervalInSeconds(10)  //循环的时间 1秒1次 
+                    .RepeatForever())
+                    .Build();
+
+
+                // 等待执行任务  
+                await scheduler.ScheduleJob(job, trigger);
+
+
+                // some sleep to show what's happening  
+                //await Task.Delay(TimeSpan.FromMilliseconds(2000));  
+            }
+            catch (SchedulerException se)
+            {
+                await Console.Error.WriteLineAsync(se.ToString());
+            }
+        }
+
+        public class HelloJob : IJob
+        {
+            public Task Execute(IJobExecutionContext context)
+            {
+                return Console.Out.WriteLineAsync("Greetings from HelloJob!");
+            }
+        }
+
     }
 }

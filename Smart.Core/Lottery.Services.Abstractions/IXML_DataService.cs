@@ -14,6 +14,6 @@ namespace Lottery.Services.Abstractions
 
         sys_issue GetNowIssuNo(string LotteryCode);
 
-        Task<int> AddBjdcIssue(HtmlNodeCollection htmlNodeCollection);
+        Task<int> AddBjdcIssue(HtmlNodeCollection htmlNodeCollection, string gameCode);
     }
 }

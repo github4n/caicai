@@ -63,20 +63,20 @@ namespace Lottery.Services
             }
             if (insertObjs.Count != 0)
             {
-                 count = db.Insertable(insertObjs.ToArray()).ExecuteCommand();
-
+                //count = db.Insertable(insertObjs).ExecuteCommand();
+                await db.InsertRange(insertObjs);
             }
          
-            return await Task.FromResult(count);
+            return await Task.FromResult(0);
         }
 
 
-        public async Task<int> AddBjdcIssue(HtmlNodeCollection htmlNodeCollection)
+        public async Task<int> AddBjdcIssue(HtmlNodeCollection htmlNodeCollection, string gameCode)
         {
             int count = 0;
-            var lottery = GetLottery("zqdc");
+            var lottery = GetLottery(gameCode);
             var insertObjs = new List<sys_issue>();
-            sys_issue sys_issue = GetNowIssuNo("zqdc");
+            sys_issue sys_issue = GetNowIssuNo(gameCode);
             foreach (var item in htmlNodeCollection)
             {
                 if (sys_issue != null)

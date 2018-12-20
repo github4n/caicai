@@ -87,13 +87,27 @@ namespace Lottery.GatherApp
             return await Task.FromResult(InsertCount);
         }
 
+        /// <summary>
+        /// 北京单场期号
+        /// </summary>
+        /// <returns></returns>
         public async Task<int> GetBjdcAsync()
         {
             var anode = CommonHelper.GetBJDCExpect("http://zx.500.com/zqdc/kaijiang.php");
-            int count= await _IXML_DataService.AddBjdcIssue(anode);
+            int count= await _IXML_DataService.AddBjdcIssue(anode, "zqdc");
             return count;
         }
-    
+
+        /// <summary>
+        /// 胜负过关期号
+        /// </summary>
+        /// <returns></returns>
+        public async Task<int> GetSfggAsync()
+        {
+            var anode = CommonHelper.GetBJDCExpect("http://zx.500.com/zqdc/kaijiang.php?playid=6");
+            int count = await _IXML_DataService.AddBjdcIssue(anode, "zqdcsfgg");
+            return count;
+        }
 
     }
 }
