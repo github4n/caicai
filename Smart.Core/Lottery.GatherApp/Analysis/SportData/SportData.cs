@@ -23,9 +23,12 @@ namespace Lottery.GatherApp
         /// </summary>
         public void Start()
         {
-            GetBjdc();
-            GetJCZQ();
+            //GetBjdc();
+            //Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~★北京单场爬取数据完成★~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            //GetJCZQ();
+            //Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~★竞彩足球爬取数据完成★~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             GetJCLQ();
+            Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~★竞彩篮球爬取数据完成★~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         }
         /// <summary>
         /// 北京单场
@@ -179,7 +182,7 @@ namespace Lottery.GatherApp
             try
             {
                 DateTime olddate = Convert.ToDateTime(_SportService.GetJCZQ_JCDate())==null|| String.IsNullOrEmpty(_SportService.GetJCZQ_JCDate())==true? DateTime.Now.AddMonths(-1): Convert.ToDateTime(_SportService.GetJCZQ_JCDate());
-                string date = DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd");
+                string date = DateTime.Now.Date.AddDays(-1).ToString("yyyy-MM-dd");
                 var span = (Convert.ToDateTime(date) - olddate).Days;
                 for (int h = 0; h < span; h++)
                 {
