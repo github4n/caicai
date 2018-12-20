@@ -10,7 +10,7 @@ namespace Lottery.Services.Abstractions
 {
     public interface IXML_DataService
     {
-        Task<int> AddXMLAsync(XmlNodeList xmlNodeList, string gameCode);
+        Task<int> AddXMLAsync(XmlNodeList xmlNodeList, string gameCode, string LotteryTime);
 
         sys_issue GetNowIssuNo(string LotteryCode);
 

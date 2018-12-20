@@ -21,7 +21,7 @@ namespace Lottery.Services
        
 
 
-        public async Task<int> AddXMLAsync(XmlNodeList xmlNodeList,string gameCode)
+        public async Task<int> AddXMLAsync(XmlNodeList xmlNodeList,string gameCode,string LotteryTime)
         {
             int count = 0;
             var lottery = GetLottery(gameCode);
@@ -59,6 +59,7 @@ namespace Lottery.Services
                 issue.LotteryCode = lottery.LotteryCode;
                 issue.CreateTime = DateTime.Now;
                 issue.UpdateTime = DateTime.Now;
+                issue.LotteryTime = LotteryTime;
                 insertObjs.Add(issue);
             }
             if (insertObjs.Count != 0)
