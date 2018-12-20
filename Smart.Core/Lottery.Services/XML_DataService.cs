@@ -63,11 +63,11 @@ namespace Lottery.Services
             }
             if (insertObjs.Count != 0)
             {
-                //count = db.Insertable(insertObjs).ExecuteCommand();
-                await db.InsertRange(insertObjs);
+                count = db.Insertable(insertObjs).ExecuteCommand();
+                //await db.InsertRange(insertObjs);
             }
          
-            return await Task.FromResult(0);
+            return await Task.FromResult(count);
         }
 
 
