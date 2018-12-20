@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="HtmlAgilityPack" Version="1.8.11" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Lottery.Modes\Lottery.Modes.csproj" />
     <ProjectReference Include="..\Lottery.Services.Abstractions\Lottery.Services.Abstractions.csproj" />
     <ProjectReference Include="..\Smart.Core\Smart.Core.csproj" />

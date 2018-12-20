@@ -25,8 +25,10 @@ namespace Smart.Core.NoSql.Redis
             {
                 //string key = $"{item.C_IP}:{item.C_Post}/{item.C_Defaultdatabase}";
                 string key = $"{i}";
+                //var connectionString = $"{item.C_IP}:{item.C_Post},password={item.C_Password},defaultDatabase={item.C_Defaultdatabase},poolsize={item.C_PoolSize}," +
+                //     $"preheat=true,ssl=false,writeBuffer=10240,prefix={item.C_Prefix}";
                 var connectionString = $"{item.C_IP}:{item.C_Post},password={item.C_Password},defaultDatabase={item.C_Defaultdatabase},poolsize={item.C_PoolSize}," +
-                    $"preheat=true,ssl=false,writeBuffer=10240,prefix={item.C_Prefix}";
+                     $"preheat=true,ssl=false,writeBuffer=10240";
                 RedisHas[key] = new CSRedis.CSRedisClient(connectionString);
                 redisClients[i] = new CSRedis.CSRedisClient(connectionString);
                 i++;

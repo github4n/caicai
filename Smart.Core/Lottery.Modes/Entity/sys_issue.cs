@@ -20,7 +20,7 @@ namespace Lottery.Modes.Entity
         /// 期号id
         ///</summary>
         [SugarColumn(IsNullable = false, IsPrimaryKey = true)]
-        public int Id{ get; set; }
+        public long Id{ get; set; }
         /// <summary>
         /// 期号名称
         ///</summary>
@@ -56,5 +56,10 @@ namespace Lottery.Modes.Entity
         ///</summary>
 
         public string OpenCode{ get; set; }
+
+        /// <summary>
+        /// 采集日期
+        /// </summary>
+        public string LotteryTime { get; set; }
     }
 }

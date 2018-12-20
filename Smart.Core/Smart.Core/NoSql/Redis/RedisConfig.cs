@@ -9,7 +9,7 @@ namespace Smart.Core.NoSql.Redis
         /// <summary>
         /// 连接ip
         /// </summary>
-        public string C_IP { get; set; } = "127.0.0.1";
+        public string C_IP { get; set; } = "10.0.3.6";
         /// <summary>
         /// 连接端口
         /// </summary>
@@ -17,7 +17,7 @@ namespace Smart.Core.NoSql.Redis
         /// <summary>
         /// 密码
         /// </summary>
-        public string C_Password { get; set; } = "";
+        public string C_Password { get; set; } = "redis123";
         /// <summary>
         /// 默认数据库
         /// </summary>

@@ -70,6 +70,7 @@ namespace Smart.Core.Logger
             var msg = e.ToString();
             //Console.WriteLine(msg);
             Console.WriteLine($"{level.ToString()}--{msg}");
+            Console.ReadLine();
         }
 
         static ConcurrentDictionary<Int32, ConsoleColor> dic = new ConcurrentDictionary<Int32, ConsoleColor>();
