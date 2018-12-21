@@ -143,11 +143,11 @@ namespace Lottery.API
                 op.IsShardSameThread = true;
             });
             services.AddServices();
-            //services.AddCSRedis(options =>
-            //{
-            //    options.Add(new Smart.Core.NoSql.Redis.RedisConfig() { C_IP = "10.0.3.6", C_Post = 6379, C_Password = "redis123", C_Defaultdatabase = 0 });
-            //    options.Add(new Smart.Core.NoSql.Redis.RedisConfig() { C_IP = "10.0.3.6", C_Post = 6379, C_Password = "redis123", C_Defaultdatabase = 1 });
-            //});
+            services.AddCSRedis(options =>
+            {
+                options.Add(new Smart.Core.NoSql.Redis.RedisConfig() { C_IP = "10.0.3.27", C_Post = 6379, C_Password = "a123456", C_Defaultdatabase = 0 });
+                options.Add(new Smart.Core.NoSql.Redis.RedisConfig() { C_IP = "10.0.3.27", C_Post = 6379, C_Password = "a123456", C_Defaultdatabase = 1 });
+            });
             services.AddConsoleLogger(options => { });
 
             services.AddApiThrottle(options =>

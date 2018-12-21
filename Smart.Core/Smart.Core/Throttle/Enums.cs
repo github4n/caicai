@@ -86,4 +86,49 @@ namespace Smart.Core.Throttle
         /// </summary>
         WhiteList = 2
     }
+
+    public enum ResponseCode
+    {
+        成功 = 101,
+        失败 = 201,
+        //验证码错误
+        ValiteCodeError = 301,
+        TimeStampError = 401,
+    }
+
+    public enum SchemeSource
+    {
+        Web = 0,
+        Iphone = 101,
+        Android = 102,
+        Wap = 103,
+        Touch = 104,
+        YQS = 105,
+        YQS_Advertising = 106,
+        NS_Bet = 107,
+        YQS_Bet = 108,
+        Publisher_0321 = 109,
+        WX_GiveLottery = 110,
+        Web_GiveLottery = 111,
+        LuckyDraw = 112,
+        NewIphone = 113,
+        NewAndroid = 115,
+        NewWeb = 116
+    }
+
+    public enum HighFrequencyType
+    {
+        /// <summary>
+        /// 全国彩
+        /// </summary>
+        Country=0,
+        /// <summary>
+        /// 高频彩
+        /// </summary>
+        High=1,
+        /// <summary>
+        /// 地方彩
+        /// </summary>
+        Local=2
+    }
 }
