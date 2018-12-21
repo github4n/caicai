@@ -175,7 +175,7 @@ namespace Lottery.GatherApp
             };//一小时执行一次
             timer.Elapsed += SportData;
             timer.AutoReset = true;//自动重置
-
+            GC.KeepAlive(timer);
             while (true)
             {
                 foreach (var item in _xml_DataService.GetHighFrequency())
