@@ -7,6 +7,7 @@ using Smart.Core.Utils;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace Lottery.GatherApp
 {
@@ -17,6 +18,7 @@ namespace Lottery.GatherApp
         protected readonly RedisManager _redisManager;
         protected readonly ISport_DataService _sport_DataService;
         protected readonly IXML_DataService _xml_DataService;
+        protected static System.Timers.Timer timer;
 
         //public BalanceTasks(IUsersService usersSvc, ILogger logger,ISport_DataService sport_DataService , IXML_DataService xml_DataService,RedisManager redisManager)
         //{
@@ -33,7 +35,6 @@ namespace Lottery.GatherApp
             this._logger = logger;
             _sport_DataService = sport_DataService;
             _xml_DataService = xml_DataService;
-
         }
         public async Task CQSSC()
         {
@@ -143,7 +144,7 @@ namespace Lottery.GatherApp
             _redisManager.RedisDb(0).Publish("chan1", "123123123");
             _redisManager.RedisDb(0).Subscribe(("chan1", msg => Console.WriteLine(msg.Body)));
         }
-        public async Task SportData()
+        public void SportData(Object source, ElapsedEventArgs e)
         {
             var manager = new SportData(_sport_DataService);
             manager.Start();
@@ -167,17 +168,23 @@ namespace Lottery.GatherApp
             Console.WriteLine("北京单场采集完毕.新采集了" + count + "条");
             //count = await manager.GetSfggAsync();
             Console.WriteLine("北京单场——胜负过关采集完毕.新采集了" + count + "条");
+
+            timer = new System.Timers.Timer(60 * 1000)
+            {
+                Enabled = true//自动执行
+            };//一小时执行一次
+            timer.Elapsed += SportData;
+            timer.AutoReset = true;//自动重置
+
             while (true)
             {
-                var SportData_manager = new SportData(_sport_DataService);
-                SportData_manager.Start();
-                //foreach (var item in _xml_DataService.GetHighFrequency())
-                //{
-                //    count = await manager.LoadXml(item.LotteryCode);
-                //    Console.WriteLine(item.LotteryName + "采集完毕.新采集了" + count + "条");
-                //    Thread.Sleep(new Random().Next(1000, 5000));
-                //}
-                //Thread.Sleep(60 * 1000);
+                foreach (var item in _xml_DataService.GetHighFrequency())
+                {
+                    count = await manager.LoadXml(item.LotteryCode);
+                    Console.WriteLine(item.LotteryName + "采集完毕.新采集了" + count + "条");
+                    Thread.Sleep(new Random().Next(1000, 5000));
+                }
+                Thread.Sleep(60 * 1000);
             }
 
             

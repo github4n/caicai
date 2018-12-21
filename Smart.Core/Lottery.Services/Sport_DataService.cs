@@ -94,7 +94,8 @@ namespace Lottery.Services
                     bjdc_result result = db.Queryable<bjdc_result>().Where(x => x.MatchId == a.MatchId).First();
                     if (result != null)
                     {
-                        if (result.IsFinish == false)
+                        var Issure = db.Queryable<bjdc_result>().OrderBy(x => x.IssueNo, OrderByType.Desc).GroupBy(p=>p.IssueNo).Select(p=>p.IssueNo).Skip(2).First();
+                        if (result.IsFinish == false&&Convert.ToInt32(result.IssueNo)>Convert.ToInt32(Issure))
                         {
                             db.Updateable(a).ExecuteCommand();
                             m++;
