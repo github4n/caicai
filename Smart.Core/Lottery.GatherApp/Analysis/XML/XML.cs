@@ -39,7 +39,7 @@ namespace Lottery.GatherApp
             TimeSpan ts = NowDate - OldDate;
             XmlNodeList list = null;
             HttpWebRequest request;
-            HttpWebResponse response;
+            HttpWebResponse response=null;
             int count = 0; int InsertCount = 0;
             for (int i = 0; i < ts.Days + 1; i++)
             {
@@ -55,10 +55,9 @@ namespace Lottery.GatherApp
                         Url = "http://kaijiang.500.com/static/info/kaijiang/xml/" + gameCode + "/" + OldDate.AddDays(i).ToString("yyyyMMdd") + ".xml";
                     }
                     request = (HttpWebRequest)WebRequest.Create(Url);
-                    var userAgentModel = CommonHelper.GetUserAgent();
-                    request = CommonHelper.SettingProxyCookit(request,0);
-                    response = (HttpWebResponse)request.GetResponse();
-                    foreach (Cookie cookie in response.Cookies) userAgentModel.CookiesContainer.Add(cookie);//将Cookie加入容器，保存登录状态
+
+                    response = CommonHelper.SettingProxyCookit(request, response);
+                 
                 }
                 catch (Exception  ex)
                 {

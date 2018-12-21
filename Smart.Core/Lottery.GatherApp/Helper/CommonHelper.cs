@@ -1,6 +1,7 @@
 ﻿using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Text;
 
@@ -32,26 +33,26 @@ namespace EntityModel.Common
             return keyValue;
         }
 
-        public static HtmlDocument Loadhtml(string strhtml)
-        {
+        //public static HtmlDocument Loadhtml(string strhtml)
+        //{
 
-            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance); //注册EncodingProvider的方法，获得网页编码GB2312的支持
-            var html = strhtml;
-            HtmlWeb web = new HtmlWeb();
-            web.OverrideEncoding = Encoding.GetEncoding("gb2312");
-            HtmlDocument htmlDoc = web.Load(html);
-            return htmlDoc;
-        }
-        public static HtmlDocument LoadGziphtml(string strhtml)
-        {
+        //    Encoding.RegisterProvider(CodePagesEncodingProvider.Instance); //注册EncodingProvider的方法，获得网页编码GB2312的支持
+        //    var html = strhtml;
+        //    HtmlWeb web = new HtmlWeb();
+        //    web.OverrideEncoding = Encoding.GetEncoding("gb2312");
+        //    HtmlDocument htmlDoc = web.Load(html);
+        //    return htmlDoc;
+        //}
+        //public static HtmlDocument LoadGziphtml(string strhtml)
+        //{
 
-            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance); //注册EncodingProvider的方法，获得网页编码GB2312的支持
-            var html = strhtml;
-            HtmlWeb web = new HtmlWeb();
-            Gzip(web);  //解压html
-            HtmlDocument htmlDoc = web.Load(html);
-            return htmlDoc;
-        }
+          
+        //    var html = strhtml;
+        //    HtmlWeb web = new HtmlWeb();
+        //    Gzip(web);  //解压html
+        //    HtmlDocument htmlDoc = web.Load(html);
+        //    return htmlDoc;
+        //}
         public static CookieContainer CookiesContainer { get; set; }//定义Cookie容器
 
         public static List<UserAgent_Cookies> UserAgentList { get; set; }
@@ -81,22 +82,21 @@ namespace EntityModel.Common
             var rdNum = rd.Next(0, 2);
             return UserAgentList[rdNum];
         }
-        public static void Gzip(HtmlWeb web)
-        {
-           
-            HtmlWeb.PreRequestHandler handler = delegate (HttpWebRequest request)
-            {
-                request.Headers[HttpRequestHeader.AcceptEncoding] = "gzip, deflate";
-                request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
-                //request.CookieContainer = new System.Net.CookieContainer();
-                SettingProxyCookit(request,1);
-                return true;
-            };
-            web.PreRequest += handler;
-            web.OverrideEncoding = Encoding.GetEncoding("gb2312");
-        }
+        //public static void Gzip(HtmlWeb web)
+        //{
 
-        public static HttpWebRequest SettingProxyCookit(HttpWebRequest request,int index) {
+        //    HtmlWeb.PreRequestHandler handler = delegate (HttpWebRequest request)
+        //    {
+        //        request.Headers[HttpRequestHeader.AcceptEncoding] = "gzip, deflate";
+        //        request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
+             
+        //        return true;
+        //    };
+        //    web.PreRequest += handler;
+        //    web.OverrideEncoding = Encoding.GetEncoding("gb2312");
+        //}
+       
+        public static HttpWebResponse SettingProxyCookit(HttpWebRequest request, HttpWebResponse response) {
 
             var userAgentModel = GetUserAgent();
             request.Method = "GET";
@@ -114,17 +114,49 @@ namespace EntityModel.Common
             request.ContentType = "text/xml";
             request.CookieContainer = userAgentModel.CookiesContainer;//附加Cookie容器
             request.ServicePoint.ConnectionLimit = int.MaxValue;//定义最大连接数
-            ////if (index == 1)
-            ////{
-            //    var response = (HttpWebResponse)request.GetResponse();
-            //    foreach (Cookie cookie in response.Cookies) userAgentModel.CookiesContainer.Add(cookie);//将Cookie加入容器，保存登录状态
-            ////}
-            return request;
+             response = (HttpWebResponse)request.GetResponse();
+            foreach (Cookie cookie in response.Cookies) userAgentModel.CookiesContainer.Add(cookie);//将Cookie加入容器，保存登录状态
+            return response;
         }
 
+        public static HtmlDocument LoadGziphtml(string strhtml)
+        {
+            string htmlCode;
+           
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance); //注册EncodingProvider的方法，获得网页编码GB2312的支持
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(strhtml);
+            HttpWebResponse response=null;
+            var responses= SettingProxyCookit(request, response);
+            //HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            //foreach (Cookie cookie in response.Cookies) userAgentModel.CookiesContainer.Add(cookie);//将Cookie加入容器，保存登录状态
+            if (responses.ContentEncoding != null && responses.ContentEncoding.ToLower() == "gzip")
+            {
+                    System.IO.Stream streamReceive = responses.GetResponseStream();
+                    var zipStream = new System.IO.Compression.GZipStream(streamReceive, System.IO.Compression.CompressionMode.Decompress);
+                    StreamReader sr = new System.IO.StreamReader(zipStream, Encoding.GetEncoding("GB2312"));
+                    htmlCode = sr.ReadToEnd();
+            }
+            else
+            {
+                System.IO.Stream streamReceive = responses.GetResponseStream();
+                StreamReader sr = new System.IO.StreamReader(streamReceive, Encoding.GetEncoding("GB2312"));
+                htmlCode = sr.ReadToEnd();
+            }
 
 
-        public static  HtmlNodeCollection GetExpect(string Url)
+            var stream = responses.GetResponseStream();
+
+            using (var reader = new StreamReader(stream))
+            {
+              
+                var doc = new HtmlDocument();
+                doc.LoadHtml(htmlCode);
+                return doc;
+
+            }
+        }
+
+        public static HtmlNodeCollection GetExpect(string Url)
         {
             var footnode = LoadGziphtml(Url).DocumentNode.SelectSingleNode("//div[@class='kjxq_box02_title_right']");
             var commentnode = footnode.SelectSingleNode("span[@class='iSelectBox']");
