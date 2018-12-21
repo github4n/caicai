@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
+using System.Threading;
 
 namespace EntityModel.Common
 {
@@ -122,7 +123,7 @@ namespace EntityModel.Common
         public static HtmlDocument LoadGziphtml(string strhtml)
         {
             string htmlCode;
-           
+            Thread.Sleep(new Random().Next(1000, 5000));
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance); //注册EncodingProvider的方法，获得网页编码GB2312的支持
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(strhtml);
             HttpWebResponse response=null;
@@ -145,15 +146,17 @@ namespace EntityModel.Common
 
 
             var stream = responses.GetResponseStream();
-
+           
             using (var reader = new StreamReader(stream))
             {
               
                 var doc = new HtmlDocument();
                 doc.LoadHtml(htmlCode);
+               
                 return doc;
-
+               
             }
+           
         }
 
         public static HtmlNodeCollection GetExpect(string Url)
