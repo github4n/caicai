@@ -5,6 +5,7 @@ using Smart.Core.Logger;
 using Smart.Core.NoSql.Redis;
 using Smart.Core.Utils;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Lottery.GatherApp
@@ -162,28 +163,24 @@ namespace Lottery.GatherApp
         {
             int count = 0;
             var manager = new XML(_xml_DataService);
-            count = await manager.GetBjdcAsync();
+            //count = await manager.GetBjdcAsync();
             Console.WriteLine("北京单场采集完毕.新采集了" + count + "条");
-            count = await manager.GetSfggAsync();
+            //count = await manager.GetSfggAsync();
             Console.WriteLine("北京单场——胜负过关采集完毕.新采集了" + count + "条");
-            count = await manager.LoadXml("gdklsf");
-            Console.WriteLine("广东快乐10分采集完毕.新采集了" + count + "条");
-            count = await manager.LoadXml("bjsyxw");
-            Console.WriteLine("北京11选5采集完毕.新采集了" + count + "条");
-            count = await manager.LoadXml("kl8");
-            Console.WriteLine("北京快乐8采集完毕.新采集了" + count + "条");
-            count = await manager.LoadXml("bjkzhc");
-            Console.WriteLine("北京快中彩采集完毕.新采集了" + count + "条");
-            count = await manager.LoadXml("bjpkshi");
-            Console.WriteLine("北京PK拾采集完毕.新采集了" + count + "条");
-            count = await manager.LoadXml("bjk3");
-            Console.WriteLine("北京快3采集完毕.新采集了" + count + "条");
-            count = await manager.LoadXml("tjsyxw");
-            Console.WriteLine("天津11选5采集完毕.新采集了" + count + "条");
-            count = await manager.LoadXml("klsf");
-            Console.WriteLine("天津快乐十分采集完毕.新采集了" + count + "条");
-            count = await manager.LoadXml("tjssc");
-            Console.WriteLine("天津时时彩采集完毕.新采集了" + count + "条");
+            while (true)
+            {
+                foreach (var item in _xml_DataService.GetHighFrequency())
+                {
+                 
+                        count = await manager.LoadXml(item.LotteryCode);
+                        Console.WriteLine(item.LotteryName + "采集完毕.新采集了" + count + "条");
+                        Thread.Sleep(new Random().Next(1000,5000));
+                   
+                }
+                Thread.Sleep(60 * 1000);
+            }
+
+            
 
         }
     }

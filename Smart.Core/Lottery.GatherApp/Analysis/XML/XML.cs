@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 
@@ -19,6 +20,7 @@ namespace Lottery.GatherApp
         {
             _IXML_DataService = XML_DataService;
         }
+        public CookieContainer CookiesContainer { get; set; }//定义Cookie容器
         public async Task<int> LoadXml(string gameCode)
         {
             string htmlCode;
@@ -27,7 +29,7 @@ namespace Lottery.GatherApp
             var strDate = _IXML_DataService.GetNowIssuNo(gameCode);
             if (strDate == null)
             {
-                OldDate = DateTime.Now.AddYears(-1);
+                OldDate = DateTime.Now.AddMonths(-1);
             }
             else {
 
@@ -43,17 +45,26 @@ namespace Lottery.GatherApp
             {
                 try
                 {
-                    string Url = "http://kaijiang.500.com/static/info/kaijiang/xml/" + gameCode + "/" + OldDate.AddDays(i).ToString("yyyyMMdd") + ".xml";
-
+                    string Url;
+                    if (gameCode == "ssl")
+                    {
+                        Url = "http://kaijiang.500.com/static/public/ssl/xml/qihaoxml/" + OldDate.AddDays(i).ToString("yyyyMMdd") + ".xml";
+                    }
+                    else
+                    {
+                        Url = "http://kaijiang.500.com/static/info/kaijiang/xml/" + gameCode + "/" + OldDate.AddDays(i).ToString("yyyyMMdd") + ".xml";
+                    }
                     request = (HttpWebRequest)WebRequest.Create(Url);
-                    request.Method = "GET";
-                    request.ContentType = "text/xml";
+                    var userAgentModel = CommonHelper.GetUserAgent();
+                    CommonHelper.SettingProxyCookit(request,0);
                     response = (HttpWebResponse)request.GetResponse();
+                    foreach (Cookie cookie in response.Cookies) userAgentModel.CookiesContainer.Add(cookie);//将Cookie加入容器，保存登录状态
                 }
-                catch (Exception)
+                catch (Exception  ex)
                 {
-
+                    Console.WriteLine(ex.Message);
                     continue;
+                  
                 }
                 if (response.ContentEncoding != null && response.ContentEncoding.ToLower() == "gzip")
                 {
@@ -81,6 +92,7 @@ namespace Lottery.GatherApp
 
                 count = await _IXML_DataService.AddXMLAsync(list, gameCode, OldDate.AddDays(i).ToString("yyyy-MM-dd"));
                 InsertCount += count;
+                Thread.Sleep(new Random().Next(1000,5000));
             }
 
 
@@ -108,6 +120,8 @@ namespace Lottery.GatherApp
             int count = await _IXML_DataService.AddBjdcIssue(anode, "zqdcsfgg");
             return count;
         }
+
+
 
     }
 }

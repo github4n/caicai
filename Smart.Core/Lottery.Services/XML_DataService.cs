@@ -26,7 +26,7 @@ namespace Lottery.Services
             int count = 0;
             var lottery = GetLottery(gameCode);
             var insertObjs = new List<sys_issue>();
-            sys_issue sys_issue = GetNowIssuNo(gameCode);
+            sys_issue sys_issue = GetNowGpcIssuNo(gameCode, LotteryTime);
             foreach (XmlNode item in xmlNodeList)
             {
                 if (sys_issue != null)
@@ -120,6 +120,23 @@ namespace Lottery.Services
         /// 获取彩种最新信息
         /// </summary>
         /// <returns></returns>
+        public sys_issue GetNowGpcIssuNo(string LotteryCode,string LotteryTime)
+        {
+            sys_issue issue = db.Queryable<sys_issue>().Where(n => n.LotteryCode == LotteryCode && n.LotteryTime==LotteryTime).OrderBy(n => n.IssueNo, OrderByType.Desc).Take(1).First();
+            if (issue == null)
+            {
+                return null;
+            }
+            else
+            {
+                return issue;
+            }
+            
+        }
+        /// <summary>
+        /// 获取彩种最新信息
+        /// </summary>
+        /// <returns></returns>
         public sys_issue GetNowIssuNo(string LotteryCode)
         {
             sys_issue issue = db.Queryable<sys_issue>().Where(n => n.LotteryCode == LotteryCode).OrderBy(n => n.IssueNo, OrderByType.Desc).Take(1).First();
@@ -131,7 +148,13 @@ namespace Lottery.Services
             {
                 return issue;
             }
-            
+
+        }
+
+
+        public List<sys_lottery> GetHighFrequency()
+        {
+            return db.Queryable<sys_lottery>().Where(n => n.HighFrequency == 1).ToList();
         }
 
     }
