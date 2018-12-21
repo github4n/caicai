@@ -57,8 +57,9 @@ namespace Lottery.GatherApp
             await Task.WhenAll(new Task[] {
                 //tasks.HK6Issue(),
                 //tasks.SportData(),
-                tasks.XML(),
+                //tasks.XML(),
             });
+            tasks.SportData();
             Console.WriteLine("Done.");
             Console.ReadLine();
             Console.ReadLine();
