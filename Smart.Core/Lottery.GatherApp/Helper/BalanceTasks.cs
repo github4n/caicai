@@ -169,13 +169,13 @@ namespace Lottery.GatherApp
             Console.WriteLine("北京单场——胜负过关采集完毕.新采集了" + count + "条");
             while (true)
             {
+                var SportData_manager = new SportData(_sport_DataService);
+                SportData_manager.Start();
                 foreach (var item in _xml_DataService.GetHighFrequency())
                 {
-                 
-                        count = await manager.LoadXml(item.LotteryCode);
-                        Console.WriteLine(item.LotteryName + "采集完毕.新采集了" + count + "条");
-                        Thread.Sleep(new Random().Next(1000,5000));
-                   
+                    count = await manager.LoadXml(item.LotteryCode);
+                    Console.WriteLine(item.LotteryName + "采集完毕.新采集了" + count + "条");
+                    Thread.Sleep(new Random().Next(1000, 5000));
                 }
                 Thread.Sleep(60 * 1000);
             }
