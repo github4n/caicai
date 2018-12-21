@@ -96,7 +96,7 @@ namespace EntityModel.Common
             web.OverrideEncoding = Encoding.GetEncoding("gb2312");
         }
 
-        public static HttpWebResponse SettingProxyCookit(HttpWebRequest request,int index) {
+        public static HttpWebRequest SettingProxyCookit(HttpWebRequest request,int index) {
 
             var userAgentModel = GetUserAgent();
             request.Method = "GET";
@@ -114,12 +114,12 @@ namespace EntityModel.Common
             request.ContentType = "text/xml";
             request.CookieContainer = userAgentModel.CookiesContainer;//附加Cookie容器
             request.ServicePoint.ConnectionLimit = int.MaxValue;//定义最大连接数
-            //if (index == 1)
-            //{
-                var response = (HttpWebResponse)request.GetResponse();
-                foreach (Cookie cookie in response.Cookies) userAgentModel.CookiesContainer.Add(cookie);//将Cookie加入容器，保存登录状态
-            //}
-            return response;
+            ////if (index == 1)
+            ////{
+            //    var response = (HttpWebResponse)request.GetResponse();
+            //    foreach (Cookie cookie in response.Cookies) userAgentModel.CookiesContainer.Add(cookie);//将Cookie加入容器，保存登录状态
+            ////}
+            return request;
         }
 
 

@@ -56,9 +56,9 @@ namespace Lottery.GatherApp
                     }
                     request = (HttpWebRequest)WebRequest.Create(Url);
                     var userAgentModel = CommonHelper.GetUserAgent();
-                    response=CommonHelper.SettingProxyCookit(request,0);
-                    //response = (HttpWebResponse)request.GetResponse();
-                    //foreach (Cookie cookie in response.Cookies) userAgentModel.CookiesContainer.Add(cookie);//将Cookie加入容器，保存登录状态
+                    request = CommonHelper.SettingProxyCookit(request,0);
+                    response = (HttpWebResponse)request.GetResponse();
+                    foreach (Cookie cookie in response.Cookies) userAgentModel.CookiesContainer.Add(cookie);//将Cookie加入容器，保存登录状态
                 }
                 catch (Exception  ex)
                 {
