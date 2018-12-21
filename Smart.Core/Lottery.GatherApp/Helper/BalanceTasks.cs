@@ -143,7 +143,7 @@ namespace Lottery.GatherApp
             _redisManager.RedisDb(0).Publish("chan1", "123123123");
             _redisManager.RedisDb(0).Subscribe(("chan1", msg => Console.WriteLine(msg.Body)));
         }
-        public async Task SportData()
+        public async void SportData()
         {
             var manager = new SportData(_sport_DataService);
             manager.Start();

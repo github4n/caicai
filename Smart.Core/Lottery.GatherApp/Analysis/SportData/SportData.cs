@@ -9,6 +9,8 @@ using HtmlAgilityPack;
 using Lottery.Services;
 using Lottery.Services.Abstractions;
 using Lottery.Modes.Entity;
+using System.Threading;
+
 namespace Lottery.GatherApp
 {
     public class SportData
@@ -23,12 +25,27 @@ namespace Lottery.GatherApp
         /// </summary>
         public void Start()
         {
-            //GetBjdc();
-            //Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~★北京单场爬取数据完成★~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-            //GetJCZQ();
-            //Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~★竞彩足球爬取数据完成★~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-            GetJCLQ();
-            Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~★竞彩篮球爬取数据完成★~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            try
+            {
+                Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~★北京单场开始爬取★~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                GetBjdc();
+                Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~★北京单场爬取数据完成★~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                System.Threading.Tasks.Task.Delay(5000);
+
+                Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~★竞彩足球开始爬取★~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                GetJCZQ();
+                Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~★竞彩足球爬取数据完成★~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                System.Threading.Tasks.Task.Delay(5000);
+
+                Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~★竞彩篮球开始爬取★~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                GetJCLQ();
+                Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~★竞彩篮球爬取数据完成★~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                System.Threading.Tasks.Task.Delay(5000);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message, ex.StackTrace);
+            }
         }
         /// <summary>
         /// 北京单场
@@ -44,9 +61,18 @@ namespace Lottery.GatherApp
                 {
                     List<jczq> jczqs = new List<jczq>();
                     var tableNode = CommonHelper.LoadGziphtml("http://zx.500.com/zqdc/kaijiang.php?&expect=" + code).DocumentNode.SelectSingleNode("//table[@class='ld_table']");
+                    if (tableNode == null)
+                    {
+                        Console.WriteLine($"奖期{code}北京单场获取根节点失败");
+                        continue;
+                    }
                     //获取平均欧赔
                     var trNodes = CommonHelper.LoadGziphtml("http://zx.500.com/zqdc/kaijiang.php?playid=1&expect=" + code).DocumentNode.SelectSingleNode("//table[@class='ld_table']").SelectNodes("tr").Skip(1);
-
+                    if (trNodes == null)
+                    {
+                        Console.WriteLine($"奖期{code}北京单场获取平均欧赔节点失败");
+                        continue;
+                    }
                     var trNode = tableNode.SelectNodes("tr").Skip(1);
 
                     int OpIndex = 1;
@@ -167,6 +193,7 @@ namespace Lottery.GatherApp
                         jczqs.Add(jczq);
                     }
                     _SportService.Add_BJDC(jczqs);
+                    Thread.Sleep(1000);
                 }
             }
             catch (Exception ex)
@@ -187,11 +214,20 @@ namespace Lottery.GatherApp
                 for (int h = 0; h < span; h++)
                 {
                     var tableNode = CommonHelper.LoadGziphtml("http://zx.500.com/jczq/kaijiang.php?d=" + olddate.AddDays(h).ToString("yyyy-MM-dd")).DocumentNode.SelectSingleNode("//table[@class='ld_table']");
+                    if (tableNode == null)
+                    {
+                        Console.WriteLine($"奖期{olddate.AddDays(h).ToString("yyyy-MM-dd")}竞猜足球获取根节点失败");
+                        continue;
+                    }
                     //获取平均欧赔
-                    var trNodes = CommonHelper.LoadGziphtml("http://zx.500.com/jczq/kaijiang.php?playid=1&d=" + olddate.AddDays(h).ToString("yyyy-MM-dd")).DocumentNode.SelectSingleNode("//table[@class='ld_table']").SelectNodes("tr").Skip(1);
-
+                    var trNodess = CommonHelper.LoadGziphtml("http://zx.500.com/jczq/kaijiang.php?playid=1&d=" + olddate.AddDays(h).ToString("yyyy-MM-dd")).DocumentNode.SelectSingleNode("//table[@class='ld_table']");
+                    if (trNodess == null)
+                    {
+                        Console.WriteLine($"奖期{olddate.AddDays(h).ToString("yyyy-MM-dd")}竞猜足球获取平均欧赔失败");
+                        continue;
+                    }
+                    var trNodes = trNodess.SelectNodes("tr").Skip(1);
                     var trNode = tableNode.SelectNodes("tr").Skip(1);
-
                     int OpIndex = 1;
                     List<jczq> jczqs = new List<jczq>();
                     jczq jczq;
@@ -300,6 +336,7 @@ namespace Lottery.GatherApp
                         jczqs.Add(jczq);
                     }
                     _SportService.Add_JCZQ(jczqs);
+                    Thread.Sleep(1000);
                 }
             }
             catch (Exception ex)
@@ -321,10 +358,27 @@ namespace Lottery.GatherApp
                 {
                     //竞彩篮球单关数据
                     var tableNode = CommonHelper.LoadGziphtml("http://zx.500.com/jclq/kaijiang.php??playid=0&ggid=0&d=" + olddate.AddDays(h)).DocumentNode.SelectSingleNode("//table[@class='ld_table']");
+                    if (tableNode == null)
+                    {
+                        Console.WriteLine($"奖期{olddate.AddDays(h)}竞彩篮球获取根节点失败");
+                        continue;
+                    }
                     //竞彩篮球过关数据
-                    var GgtableNode = CommonHelper.LoadGziphtml("http://zx.500.com/jclq/kaijiang.php??playid=0&ggid=1&d=" + olddate.AddDays(h)).DocumentNode.SelectSingleNode("//table[@class='ld_table']").SelectNodes("tr").Skip(1);
+                    var GgtableNodes = CommonHelper.LoadGziphtml("http://zx.500.com/jclq/kaijiang.php??playid=0&ggid=1&d=" + olddate.AddDays(h)).DocumentNode.SelectSingleNode("//table[@class='ld_table']");
+                    if(GgtableNodes == null)
+                    {
+                        Console.WriteLine($"奖期{olddate.AddDays(h)}竞彩篮球获取过关数据失败");
+                        continue;
+                    }
+                    var GgtableNode = GgtableNodes.SelectNodes("tr").Skip(1);
                     //获取平均欧赔
-                    var trNodes = CommonHelper.LoadGziphtml("http://zx.500.com/jclq/kaijiang.php?playid=1&d=" + olddate.AddDays(h)).DocumentNode.SelectSingleNode("//table[@class='ld_table']").SelectNodes("tr").Skip(1);
+                    var trNodess = CommonHelper.LoadGziphtml("http://zx.500.com/jclq/kaijiang.php?playid=1&d=" + olddate.AddDays(h)).DocumentNode.SelectSingleNode("//table[@class='ld_table']");
+                    if (trNodess == null)
+                    {
+                        Console.WriteLine($"奖期{olddate.AddDays(h)}竞彩篮球获取平均欧赔失败");
+                        continue;
+                    }
+                    var trNodes = trNodess.SelectNodes("tr").Skip(1);
                     var trNode = tableNode.SelectNodes("tr").Skip(1);
                     int OpIndex = 1;
                     List<jclq_result> jclq_results = new List<jclq_result>();
@@ -445,6 +499,7 @@ namespace Lottery.GatherApp
                         jclq_results.Add(jclq_result);
                     }
                     _SportService.Add_JCLQ(jclq_results);
+                    Thread.Sleep(1000);
                 }
             }
             catch (Exception ex)
