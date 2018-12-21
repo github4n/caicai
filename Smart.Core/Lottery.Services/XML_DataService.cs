@@ -139,7 +139,7 @@ namespace Lottery.Services
         /// <returns></returns>
         public sys_issue GetNowIssuNo(string LotteryCode)
         {
-            sys_issue issue = db.Queryable<sys_issue>().Where(n => n.LotteryCode == LotteryCode).OrderBy(n => n.IssueNo, OrderByType.Desc).Take(1).First();
+            sys_issue issue = db.Queryable<sys_issue>().Where(n => n.LotteryCode == LotteryCode).OrderBy(n => n.OpenTime, OrderByType.Desc).Take(1).First();
             if (issue == null)
             {
                 return null;
@@ -154,7 +154,7 @@ namespace Lottery.Services
 
         public List<sys_lottery> GetHighFrequency()
         {
-            return db.Queryable<sys_lottery>().Where(n => n.HighFrequency == 1).ToList();
+            return db.Queryable<sys_lottery>().Where(n => n.HighFrequency != 0).ToList();
         }
 
     }

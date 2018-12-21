@@ -46,18 +46,23 @@ namespace Lottery.GatherApp
                 try
                 {
                     string Url;
-                    if (gameCode == "ssl")
+                    if (gameCode == "ssl" || gameCode == "ssc")
                     {
-                        Url = "http://kaijiang.500.com/static/public/ssl/xml/qihaoxml/" + OldDate.AddDays(i).ToString("yyyyMMdd") + ".xml";
+                        
+                        Url = "http://kaijiang.500.com/static/public/" + gameCode + "/xml/qihaoxml/" + OldDate.AddDays(i).ToString("yyyyMMdd") + ".xml";
+                    }
+                    else if (gameCode== "df6j1")
+                    {
+                        Url = "http://kaijiang.500.com/static/info/kaijiang/xml/" + gameCode + "/list.xml";
                     }
                     else
                     {
                         Url = "http://kaijiang.500.com/static/info/kaijiang/xml/" + gameCode + "/" + OldDate.AddDays(i).ToString("yyyyMMdd") + ".xml";
                     }
                     request = (HttpWebRequest)WebRequest.Create(Url);
-
+                   
                     response = CommonHelper.SettingProxyCookit(request, response);
-                 
+                   
                 }
                 catch (Exception  ex)
                 {
@@ -67,10 +72,10 @@ namespace Lottery.GatherApp
                 }
                 if (response.ContentEncoding != null && response.ContentEncoding.ToLower() == "gzip")
                 {
-
+                  
                     System.IO.Stream streamReceive = response.GetResponseStream();
                     var zipStream = new System.IO.Compression.GZipStream(streamReceive, System.IO.Compression.CompressionMode.Decompress);
-                    StreamReader sr = new System.IO.StreamReader(zipStream, Encoding.GetEncoding("GB2312"));
+                    StreamReader sr = new System.IO.StreamReader(zipStream, Encoding.UTF8);
                     htmlCode = sr.ReadToEnd();
 
                 }
@@ -78,7 +83,7 @@ namespace Lottery.GatherApp
                 {
                     System.IO.Stream streamReceive = response.GetResponseStream();
 
-                    StreamReader sr = new System.IO.StreamReader(streamReceive, Encoding.GetEncoding("GB2312"));
+                    StreamReader sr = new System.IO.StreamReader(streamReceive, Encoding.UTF8);
 
                     htmlCode = sr.ReadToEnd();
                 }
