@@ -30,7 +30,6 @@ namespace Lottery.Services
             try
             {
                 List<bjdc_result> bjdc_s = new List<bjdc_result>();
-                List<bjdc_result> UpdateList = new List<bjdc_result>();
                 foreach (var item in model)
                 {
                     bjdc_result resultModel = new bjdc_result
@@ -107,7 +106,7 @@ namespace Lottery.Services
                         i++;
                     }
                 });
-                ConSoleHelp("U", GameCode, UpdateList.Select(x => x.IssueNo).FirstOrDefault(), m);
+                ConSoleHelp("U", GameCode, bjdc_s.Select(x => x.IssueNo).FirstOrDefault(), m);
                 ConSoleHelp("A", GameCode, bjdc_s.Select(x => x.IssueNo).FirstOrDefault(), i);
             }
             catch (Exception ex)
