@@ -193,7 +193,6 @@ namespace Lottery.GatherApp
                         jczqs.Add(jczq);
                     }
                     _SportService.Add_BJDC(jczqs);
-                    Thread.Sleep(new Random().Next(1000, 5000));
                 }
             }
             catch (Exception ex)
@@ -336,7 +335,6 @@ namespace Lottery.GatherApp
                         jczqs.Add(jczq);
                     }
                     _SportService.Add_JCZQ(jczqs);
-                    Thread.Sleep(new Random().Next(1000, 5000));
                 }
             }
             catch (Exception ex)
@@ -499,7 +497,6 @@ namespace Lottery.GatherApp
                         jclq_results.Add(jclq_result);
                     }
                     _SportService.Add_JCLQ(jclq_results);
-                    Thread.Sleep(new Random().Next(1000,5000));
                 }
             }
             catch (Exception ex)

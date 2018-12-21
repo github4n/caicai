@@ -30,7 +30,6 @@ namespace Lottery.Services
             try
             {
                 List<bjdc_result> bjdc_s = new List<bjdc_result>();
-                List<bjdc_result> UpdateList = new List<bjdc_result>();
                 foreach (var item in model)
                 {
                     bjdc_result resultModel = new bjdc_result
@@ -89,34 +88,27 @@ namespace Lottery.Services
                     }
                     bjdc_s.Add(resultModel);
                 }
-
-                var NoFinish = GetNotFinish(GameCode);
-                if (NoFinish != null && NoFinish.Count > 0)
+                int i = 0, m = 0;
+                bjdc_s.ForEach((a) =>
                 {
-                    UpdateList = bjdc_s.Where(x => NoFinish.Select(y => y.Key).Contains(x.MatchId)).ToList();
-                    foreach (var oldItem in UpdateList)
+                    bjdc_result result = db.Queryable<bjdc_result>().Where(x => x.MatchId == a.MatchId).First();
+                    if (result != null)
                     {
-                        if (!string.IsNullOrEmpty(oldItem.RQSPF_Result) && oldItem.RQSPF_Result != "-" &&
-                        !string.IsNullOrEmpty(oldItem.ZJQ_Result) && oldItem.ZJQ_Result != "-" &&
-                        !string.IsNullOrEmpty(oldItem.FullScore) && oldItem.FullScore != "-" &&
-                        !string.IsNullOrEmpty(oldItem.SXDS_Result) && oldItem.SXDS_Result != "-" &&
-                        !string.IsNullOrEmpty(oldItem.BQC_Result) && oldItem.BQC_Result != "-")
+                        var Issure = db.Queryable<bjdc_result>().OrderBy(x => x.IssueNo, OrderByType.Desc).GroupBy(p=>p.IssueNo).Select(p=>p.IssueNo).Skip(2).First();
+                        if (result.IsFinish == false&&Convert.ToInt32(result.IssueNo)>Convert.ToInt32(Issure))
                         {
-                            oldItem.IsFinish = true;
+                            db.Updateable(a).ExecuteCommand();
+                            m++;
                         }
                     }
-                    if (UpdateList != null && UpdateList.Count > 0)
+                    else
                     {
-                        db.Updateable(UpdateList).ExecuteCommand();
-                        ConSoleHelp("U", GameCode,UpdateList.Select(x => x.IssueNo).FirstOrDefault(), UpdateList.Count());
-                        bjdc_s = bjdc_s.Where(x =>!UpdateList.Select(y=>y.IssueNo).Contains(x.IssueNo)).ToList();
+                        db.Insertable(a).ExecuteCommand();
+                        i++;
                     }
-                }
-                if (bjdc_s != null && bjdc_s.Count > 0)
-                {
-                    db.Insertable(bjdc_s).ExecuteCommand();
-                    ConSoleHelp("A", GameCode,bjdc_s.Select(x => x.IssueNo).FirstOrDefault(), bjdc_s.Count());
-                }
+                });
+                ConSoleHelp("U", GameCode, bjdc_s.Select(x => x.IssueNo).FirstOrDefault(), m);
+                ConSoleHelp("A", GameCode, bjdc_s.Select(x => x.IssueNo).FirstOrDefault(), i);
             }
             catch (Exception ex)
             {
@@ -134,20 +126,17 @@ namespace Lottery.Services
                     a.MatchId = a.MatchId + a.MatchNumber;
                     a.CreateTime = DateTime.Now;
                 });
-                var Issue = GetJCLQ_JCDate();
-                var result = GetJCLQResultsByIssueNo(Issue).Select(x => x.MatchId);
-                var temp = model.Where(x => result.Contains(x.MatchId)).ToList();
-                if (temp != null && temp.Count() > 0)
+                int i = 0;
+                model.ForEach((b) =>
                 {
-                    db.Updateable(temp).ExecuteCommand();
-                    ConSoleHelp("U", GameCode,temp.Select(x => x.JCDate).FirstOrDefault(), temp.Count());
-                    model =model.Where(x=>!temp.Select(y=>y.JCDate).Contains(x.JCDate)).ToList();
-                }
-                if (model != null && model.Count() > 0)
-                {
-                    db.Insertable(model).ExecuteCommand();
-                    ConSoleHelp("A", GameCode, model.Select(x => x.JCDate).FirstOrDefault(), model.Count());
-                }
+                    bool d = db.Queryable<jclq_result>().Where(x => x.MatchId == b.MatchId).Count() > 0 ? true : false;
+                    if (d)
+                    {
+                        db.Insertable(b).ExecuteCommand();
+                        i++;
+                    }
+                });
+                ConSoleHelp("A", GameCode, model.Select(x => x.JCDate).FirstOrDefault(), i);
             }
             catch (Exception ex)
             {
@@ -210,20 +199,16 @@ namespace Lottery.Services
                     }
                     jczq_Results.Add(jczq);
                 }
-                var IssuNo = GetJCZQ_JCDate();
-                var result = GetJCZQResultsByIssueNo(IssuNo).Select(x => x.MatchId);
-                var temp = jczq_Results.Where(x => result.Contains(x.MatchId)).ToList();
-                if (temp != null && temp.Count > 0)
-                {
-                    db.Updateable(temp).ExecuteCommand();
-                    ConSoleHelp("U", GameCode, temp.Select(x => x.JCDate).FirstOrDefault(), temp.Count());
-                    jczq_Results = jczq_Results.Where(x => temp.Select(y => y.JCDate).Contains(x.JCDate)).ToList();
-                }
-                if (jczq_Results != null && jczq_Results.Count() > 0)
-                {
-                    db.Insertable(jczq_Results).ExecuteCommand();
-                    ConSoleHelp("A", GameCode, jczq_Results.Select(x => x.JCDate).FirstOrDefault(), jczq_Results.Count());
-                }
+                int i = 0;
+                jczq_Results.ForEach((a) => {
+                    bool b = db.Queryable<jczq_result>().Where(x => x.MatchId == a.MatchId).Count() > 0 ? true : false;
+                    if (b)
+                    {
+                        db.Insertable(a).ExecuteCommand();
+                        i++;
+                    }
+                });
+                ConSoleHelp("A", GameCode, jczq_Results.Select(x => x.JCDate).FirstOrDefault(), i);
             }
             catch (Exception ex)
             {
@@ -292,22 +277,22 @@ namespace Lottery.Services
                 throw new Exception(ex.Message);
             }
         }
-        public List<jczq_result> GetJCZQResultsByIssueNo(string IssueNo)
+        public List<string> GetJCZQResultsByIssueNo(string IssueNo)
         {
             try
             {
-                return db.Queryable<jczq_result>().Where(x => x.JCDate == IssueNo).ToList();
+                return db.Queryable<jczq_result>().Where(x => x.JCDate == IssueNo).Select(x=>x.MatchId).ToList();
             }
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
         }
-        public List<jclq_result> GetJCLQResultsByIssueNo(string IssueNo)
+        public List<string> GetJCLQResultsByIssueNo(string IssueNo)
         {
             try
             {
-                return db.Queryable<jclq_result>().Where(x => x.JCDate == IssueNo).ToList();
+                return db.Queryable<jclq_result>().Where(x => x.JCDate == IssueNo).Select(x => x.MatchId).ToList();
             }
             catch (Exception ex)
             {
@@ -339,6 +324,26 @@ namespace Lottery.Services
             {
                 Console.WriteLine($"{GameCode}奖期{Issue}成功新增数据{Count}条");
             }
+        }
+        public bool IsExist(string IssureNo,Type type)
+        {
+            if (type == typeof(bjdc_result))
+            {
+                return db.Queryable<bjdc_result>().Where(x => x.IssueNo == IssureNo).Count()>0? true:false;
+            }
+            else if (type == typeof(jczq_result))
+            {
+                return db.Queryable<jczq_result>().Where(x => x.JCDate == IssureNo).Count() > 0 ? true : false;
+            }
+            else if (type == typeof(jclq_result))
+            {
+                return db.Queryable<jclq_result>().Where(x => x.JCDate == IssureNo).Count() > 0 ? true : false;
+            }
+            return false;
+        }
+        public List<bjdc_result> Exist_bjdc_List(string IssureNo)
+        {
+            return db.Queryable<bjdc_result>().Where(x => x.IssueNo == IssureNo&&x.IsFinish==false).ToList();
         }
     }
 }
