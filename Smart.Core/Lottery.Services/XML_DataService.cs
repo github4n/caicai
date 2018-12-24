@@ -156,7 +156,7 @@ namespace Lottery.Services
             return await Task.FromResult(count);
         }
 
-        public async Task<int> AddQGhtml(List<sys_issue> sys_Issues, string gameCode)
+        public async Task<int> AddSDhtml(List<sys_issue> sys_Issues, string gameCode)
         {
             int count = 0;
             int insertCount = 0;

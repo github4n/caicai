@@ -178,24 +178,24 @@ namespace Lottery.GatherApp
             GC.KeepAlive(timer);
             while (true)
             {
-                //foreach (var item in _xml_DataService.GetHighFrequency())
-                //{
-                //    if (item.HighFrequency == 1)
-                //    {
-                //        count = await manager.LoadXml(item.LotteryCode);
-                //        Console.WriteLine(item.LotteryName + "采集完毕.新采集了" + count + "条");
-                //        Thread.Sleep(new Random().Next(1000, 5000));
-                //    }
-                //    else
-                //    {
-
-                //        count = await manager.LoadQGDFCXml(item.LotteryCode);
-                //        Console.WriteLine(item.LotteryName + "采集完毕.新采集了" + count + "条");
-                //        Thread.Sleep(new Random().Next(1000, 5000));
-
-                //    }
-                count = await manager.LoadQGhtml("sd");
+                foreach (var item in _xml_DataService.GetHighFrequency())
+                {
+                    if (item.HighFrequency == 1)
+                    {
+                        count = await manager.LoadXml(item.LotteryCode);
+                        Console.WriteLine(item.LotteryName + "采集完毕.新采集了" + count + "条");
+                        Thread.Sleep(new Random().Next(1000, 5000));
+                    }
+                    else
+                    {
+                        count = await manager.LoadQGDFCXml(item.LotteryCode);
+                        Console.WriteLine(item.LotteryName + "采集完毕.新采集了" + count + "条");
+                        Thread.Sleep(new Random().Next(1000, 5000));
+                    }
+                    count = await manager.LoadSDhtml("sd");
                 Console.WriteLine("福彩3D采集完毕.新采集了" + count + "条");
+                count = await manager.LoadPlsHtml("pls");
+                Console.WriteLine("排列3采集完毕.新采集了" + count + "条");
                 Thread.Sleep(60 * 1000);
             
 

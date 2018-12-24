@@ -158,7 +158,7 @@ namespace Lottery.GatherApp
             return await Task.FromResult(count);
         }
 
-        public async Task<int> LoadQGhtml(string gameCode)
+        public async Task<int> LoadSDhtml(string gameCode)
         {
             var anode = CommonHelper.GetExpect("http://kaijiang.500.com/sd.shtml");
             List<sys_issue> sys_issue = new List<sys_issue>();
@@ -227,8 +227,68 @@ namespace Lottery.GatherApp
                 Console.WriteLine(index);
             }
 
-            int count = await _IXML_DataService.AddQGhtml(sys_issue, gameCode);
+            int count = await _IXML_DataService.AddSDhtml(sys_issue, gameCode);
             return count;
+        }
+
+        public async Task<int> LoadPlsHtml(string gameCode)
+        {
+            var anode = CommonHelper.GetExpect("http://kaijiang.500.com/pls.shtml");
+            List<sys_issue> sys_issue = new List<sys_issue>();
+            int index = 0;
+            foreach (HtmlNode item in anode)
+            {
+                index++;
+                if (index < 31)
+                {
+                    if (_IXML_DataService.GetDescIssuNo(gameCode) != null)
+                    {
+                        if (item.InnerHtml == _IXML_DataService.GetDescIssuNo(gameCode).IssueNo)
+                        {
+                            break;
+                        }
+                    }
+                    sys_issue issue = new sys_issue();
+                    issue.IssueNo = item.InnerHtml;
+                    var htmlDoc = CommonHelper.LoadGziphtml("http://kaijiang.500.com/shtml/pls/" + item.InnerHtml + ".shtml");
+
+                    var FirstTableTrNode = htmlDoc.DocumentNode.SelectNodes("//table[@class='kj_tablelist02']")[0].SelectNodes("tr");
+                    int k = 1;
+                    foreach (var item2 in FirstTableTrNode)//遍历第一个table下的tr
+                    {
+                        switch (k)
+                        {
+                            case 1:
+                                var Date = item2.SelectSingleNode("//span[@class='span_right']").InnerHtml;
+                                string openTime = Date.Split('：')[1].Split('兑')[0];
+                                issue.OpenTime = openTime;
+                                sys_issue.Add(issue);
+                                break;
+                            case 2:
+                                var tdindex = item2.SelectSingleNode("td").SelectSingleNode("table").SelectSingleNode("tr").SelectNodes("td");
+                                foreach (var item3 in tdindex)
+                                {
+                                            var lilist = tdindex[1].SelectSingleNode("div").SelectSingleNode("ul").SelectNodes("li");
+                                            foreach (var item4 in lilist)
+                                            {
+                                                issue.OpenCode += item4.InnerHtml + ",";
+                                            }
+                                            issue.OpenCode = issue.OpenCode.Trim(',');
+                                            break;
+                                }
+                                break;
+
+                        }
+                        k = k + 1;
+
+                    }
+                }
+                Console.WriteLine(index);
+            }
+
+            int count = await _IXML_DataService.AddSDhtml(sys_issue, gameCode);
+            return count;
+
         }
 
         /// <summary>
