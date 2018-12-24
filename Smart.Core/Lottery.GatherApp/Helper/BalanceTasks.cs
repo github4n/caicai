@@ -193,16 +193,16 @@ namespace Lottery.GatherApp
                         Thread.Sleep(new Random().Next(1000, 5000));
                     }
                     count = await manager.LoadSDhtml("sd");
-                Console.WriteLine("福彩3D采集完毕.新采集了" + count + "条");
-                count = await manager.LoadPlsHtml("pls");
-                Console.WriteLine("排列3采集完毕.新采集了" + count + "条");
-                Thread.Sleep(60 * 1000);
-            
+                    Console.WriteLine("福彩3D采集完毕.新采集了" + count + "条");
+                    count = await manager.LoadPlsHtml("pls");
+                    Console.WriteLine("排列3采集完毕.新采集了" + count + "条");
+                    Thread.Sleep(60 * 1000);
 
-             
+
+
+                }
             }
         }
-
 
     }
 }
