@@ -4,20 +4,7 @@ using System.Text;
 
 namespace EntityModel.Model
 {
-   public class fc3D:BaseInfo
-    {
-        public fc3D()
-        {
-            LotteryInfo = new LotteryInfo();
-        }
-        /// <summary>
-        /// 奖项
-        /// </summary>
-        public string Prize { get; set; }
-     
-        public LotteryInfo LotteryInfo { get; set; }
-    }
-    public class LotteryInfo
+    public class fc3D
     {
         /// <summary>
         /// 期号
@@ -47,5 +34,25 @@ namespace EntityModel.Model
         /// 本期销量
         /// </summary>
         public string SalesVolume { get; set; }
+        public List<LotteryInfo> SubItemList { get; set; }
+    }
+    public class LotteryInfo
+    {
+        /// <summary>
+        /// 奖项
+        /// </summary>
+        public string Prize { get; set; }
+        /// <summary>
+        /// 注数
+        /// </summary>
+        public string BettingCount { get; set; }
+        /// <summary>
+        /// 奖金
+        /// </summary>
+        public string Bonus { get; set; }
+        /// <summary>
+        /// 奖项子项
+        /// </summary>
+        public string PrizeSubItem { get; set; }
     }
 }
