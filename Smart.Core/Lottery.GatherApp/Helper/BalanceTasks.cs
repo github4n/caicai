@@ -147,7 +147,7 @@ namespace Lottery.GatherApp
         public void SportData(Object source, ElapsedEventArgs e)
         {
             var manager = new SportData(_sport_DataService);
-            manager.Start();
+            //manager.Start();
         }
         //辽宁快乐12  广东快乐十分  广西快乐10分 重庆时时彩 是网页版
         //gdklsf(广东快乐十分)  bjsyxw(北京11选5)  kl8(北京快乐8)   bjkzhc(北京快中彩)  bjpkshi(北京PK拾) bjk3(北京快3)  tjsyxw(天津11选5)
@@ -180,15 +180,23 @@ namespace Lottery.GatherApp
             {
                 foreach (var item in _xml_DataService.GetHighFrequency())
                 {
-                    count = await manager.LoadXml(item.LotteryCode);
-                    Console.WriteLine(item.LotteryName + "采集完毕.新采集了" + count + "条");
-                    Thread.Sleep(new Random().Next(1000, 5000));
+                    //if (item.HighFrequency == 1)
+                    //{
+                    //    count = await manager.LoadXml(item.LotteryCode);
+                    //    Console.WriteLine(item.LotteryName + "采集完毕.新采集了" + count + "条");
+                    //    Thread.Sleep(new Random().Next(1000, 5000));
+                    //}
+                    if (item.HighFrequency == 2)
+                    {
+                        //if (item.LotteryCode== "hdswxw") {
+                        count = await manager.LoadDFCXml(item.LotteryCode);
+                        Console.WriteLine(item.LotteryName + "采集完毕.新采集了" + count + "条");
+                        Thread.Sleep(new Random().Next(1000, 5000));
+                        //}
+                    }
                 }
                 Thread.Sleep(60 * 1000);
             }
-
-            
-
         }
     }
 }

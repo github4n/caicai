@@ -4,6 +4,7 @@ using Lottery.Services.Abstractions;
 using Smart.Core.Repository.SqlSugar;
 using SqlSugar;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
@@ -71,8 +72,57 @@ namespace Lottery.Services
             return await Task.FromResult(count);
         }
 
+        public async Task<int> AddDFCXMLAsync(XmlNodeList xmlNodeList, string gameCode)
+        {
+            int count = 0;
+            int insertCount = 0;
+            var lottery = GetLottery(gameCode);
+            sys_issue sys_issue = GetNowIssuNo(gameCode);
+            //ArrayList arrNodeList = new ArrayList();
+            //foreach (XmlNode item in xmlNodeList)
+            //{
+            //    arrNodeList.Add(item);
+            //}
+            //arrNodeList.Reverse();
+            foreach (XmlNode item in xmlNodeList)
+            {
 
-        public async Task<int> AddBjdcIssue(HtmlNodeCollection htmlNodeCollection, string gameCode)
+                if (sys_issue != null)
+                {
+                   if (sys_issue.IssueNo == item.Attributes["expect"].Value)
+                    {
+                        break;
+                    }
+                }
+                sys_issue issue = new sys_issue();
+                issue.IssueNo = item.Attributes["expect"].Value;
+
+                if (item.Attributes["specail"] != null)
+                {
+                    issue.OpenCode = item.Attributes["opencode"].Value + "|" + item.Attributes["specail"].Value;
+                }
+                else if (item.Attributes["opencode_specail"] != null)
+                {
+
+                    issue.OpenCode = item.Attributes["opencode"].Value + "|" + item.Attributes["opencode_specail"].Value;
+                }
+                else
+                {
+                    issue.OpenCode = item.Attributes["opencode"].Value;
+                }
+
+                issue.OpenTime = item.Attributes["opentime"].Value;
+                issue.LotteryId = lottery.Lottery_Id;
+                issue.LotteryCode = lottery.LotteryCode;
+                issue.CreateTime = DateTime.Now;
+                issue.UpdateTime = DateTime.Now;
+                count=db.Insertable(issue).ExecuteCommand();
+                insertCount += count;
+            }
+            return await Task.FromResult(insertCount);
+        }
+
+            public async Task<int> AddBjdcIssue(HtmlNodeCollection htmlNodeCollection, string gameCode)
         {
             int count = 0;
             var lottery = GetLottery(gameCode);

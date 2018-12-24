@@ -1,6 +1,7 @@
 ﻿using HtmlAgilityPack;
 using Lottery.Modes.Entity;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,5 +18,7 @@ namespace Lottery.Services.Abstractions
         Task<int> AddBjdcIssue(HtmlNodeCollection htmlNodeCollection, string gameCode);
 
         List<sys_lottery> GetHighFrequency();
+
+        Task<int> AddDFCXMLAsync(XmlNodeList xmlNodeList, string gameCode);
     }
 }

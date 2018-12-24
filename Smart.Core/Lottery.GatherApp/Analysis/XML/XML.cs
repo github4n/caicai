@@ -2,6 +2,7 @@
 using HtmlAgilityPack;
 using Lottery.Services.Abstractions;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
@@ -20,7 +21,6 @@ namespace Lottery.GatherApp
         {
             _IXML_DataService = XML_DataService;
         }
-        public CookieContainer CookiesContainer { get; set; }//定义Cookie容器
         public async Task<int> LoadXml(string gameCode)
         {
             string htmlCode;
@@ -101,6 +101,54 @@ namespace Lottery.GatherApp
 
 
             return await Task.FromResult(InsertCount);
+        }
+
+        public async Task<int> LoadDFCXml(string gameCode)
+        {
+            string htmlCode;
+            XmlNodeList list = null;
+            HttpWebRequest request;
+            HttpWebResponse response = null;
+            int count = 0; 
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            string Url = "http://kaijiang.500.com/static/info/kaijiang/xml/"+ gameCode + "/list.xml";
+            try
+            {
+                request = (HttpWebRequest)WebRequest.Create(Url);
+
+                response = CommonHelper.SettingProxyCookit(request, response);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            if (response.ContentEncoding != null && response.ContentEncoding.ToLower() == "gzip")
+            {
+
+                System.IO.Stream streamReceive = response.GetResponseStream();
+                var zipStream = new System.IO.Compression.GZipStream(streamReceive, System.IO.Compression.CompressionMode.Decompress);
+                StreamReader sr = new System.IO.StreamReader(zipStream, Encoding.UTF8);
+                htmlCode = sr.ReadToEnd();
+
+            }
+            else
+            {
+                System.IO.Stream streamReceive = response.GetResponseStream();
+
+                StreamReader sr = new System.IO.StreamReader(streamReceive, Encoding.UTF8);
+
+                htmlCode = sr.ReadToEnd();
+            }
+            XmlDocument doc = new System.Xml.XmlDocument();//新建对象
+            doc.LoadXml(htmlCode);
+            //List<DataModel> lists = new List<DataModel>();
+
+            list = doc.SelectNodes("//row");
+          
+            count = await _IXML_DataService.AddDFCXMLAsync(list, gameCode);
+            Thread.Sleep(new Random().Next(1000, 5000));
+            return await Task.FromResult(count);
         }
 
         /// <summary>
