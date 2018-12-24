@@ -21,7 +21,7 @@ namespace Smart.Core.Encrypt
             /// <summary>
             /// AES秘钥
             /// </summary>
-            private const string aesKey = "0kdQ2";
+            private const string aesKey = "CountUTellMeWay1";
 
             /// <summary>
             /// AES偏移向量

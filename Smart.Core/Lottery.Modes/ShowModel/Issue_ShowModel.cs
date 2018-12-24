@@ -17,15 +17,11 @@ namespace Lottery.Modes.ShowModel
         /// <summary>
         /// 彩种码
         ///</summary>
+        public string LotteryName { get; set; }
+        /// <summary>
+        /// 彩种码
+        ///</summary>
         public string LotteryCode { get; set; }
-        /// <summary>
-        /// 创建时间
-        ///</summary>
-        public DateTime CreateTime { get; set; }
-        /// <summary>
-        /// 更新时间
-        ///</summary>
-        public DateTime? UpdateTime { get; set; }
         /// <summary>
         /// 开奖时间
         ///</summary>
@@ -34,5 +30,26 @@ namespace Lottery.Modes.ShowModel
         /// 开奖号码
         ///</summary>
         public string OpenCode { get; set; }
+
+        /// <summary>
+        /// 地区名
+        ///</summary>
+
+        public string RegionName { get; set; }
+        /// <summary>
+        /// 开奖日
+        ///</summary>
+
+        public string LotteryDay { get; set; }
+        /// <summary>
+        /// 每日期数
+        ///</summary>
+
+        public string NumberPeriods { get; set; }
+      
+        /// <summary>
+        /// 滚存
+        /// </summary>
+        public string PrizePool { get; set; }
     }
 }

@@ -2,7 +2,7 @@
   "Lottery": {
     "Data": {
       "Database": {
-        "Connection": "Server=10.0.3.6;Port=3306;Database=ecp_newcai;Username=root;Password=!@#123456abc;Pooling=True;MinimumPoolSize=8;MaximumPoolsize=512;Charset=utf8;SSLMode=None"
+        "Connection": "Server=10.0.3.6;Port=3306;Database=caipiao_data;Username=root;Password=!@#123456abc;Pooling=True;MinimumPoolSize=8;MaximumPoolsize=512;Charset=utf8;SSLMode=None"
       },
       "DistributedCache": {
         "Connection": "192.168.1.233:6379"
@@ -14,5 +14,11 @@
       "System": "Trace",
       "Default": "Trace"
     }
+  },
+  "RedisConfig": {
+    "EnableRedis": true,
+    "RedisHost": "10.0.3.27",
+    "RedisPost": 9370,
+    "RedisPassword": "a123456"
   }
 }
