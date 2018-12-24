@@ -19,6 +19,10 @@ namespace Lottery.Services.Abstractions
 
         List<sys_lottery> GetHighFrequency();
 
-        Task<int> AddDFCXMLAsync(XmlNodeList xmlNodeList, string gameCode);
+        Task<int> AddQGDFCXMLAsync(XmlNodeList xmlNodeList, string gameCode);
+
+        Task<int> AddQGhtml(List<sys_issue> sys_Issues, string gameCode);
+
+        sys_issue GetDescIssuNo(string LotteryCode);
     }
 }

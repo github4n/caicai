@@ -1,6 +1,9 @@
 ﻿using EntityModel.Common;
 using HtmlAgilityPack;
+using Lottery.Modes.Entity;
 using Lottery.Services.Abstractions;
+using Smart.Core.Repository.SqlSugar;
+using SqlSugar;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -15,11 +18,14 @@ namespace Lottery.GatherApp
 {
     public class XML
     {
+      
+       
         protected IXML_DataService _IXML_DataService;
 
         public XML(IXML_DataService XML_DataService)
         {
             _IXML_DataService = XML_DataService;
+         
         }
         public async Task<int> LoadXml(string gameCode)
         {
@@ -103,7 +109,7 @@ namespace Lottery.GatherApp
             return await Task.FromResult(InsertCount);
         }
 
-        public async Task<int> LoadDFCXml(string gameCode)
+        public async Task<int> LoadQGDFCXml(string gameCode)
         {
             string htmlCode;
             XmlNodeList list = null;
@@ -120,7 +126,8 @@ namespace Lottery.GatherApp
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Console.WriteLine(gameCode+"没有"+ex.Message);
+                return 0;
             }
 
             if (response.ContentEncoding != null && response.ContentEncoding.ToLower() == "gzip")
@@ -146,9 +153,82 @@ namespace Lottery.GatherApp
 
             list = doc.SelectNodes("//row");
           
-            count = await _IXML_DataService.AddDFCXMLAsync(list, gameCode);
+            count = await _IXML_DataService.AddQGDFCXMLAsync(list, gameCode);
             Thread.Sleep(new Random().Next(1000, 5000));
             return await Task.FromResult(count);
+        }
+
+        public async Task<int> LoadQGhtml(string gameCode)
+        {
+            var anode = CommonHelper.GetExpect("http://kaijiang.500.com/sd.shtml");
+            List<sys_issue> sys_issue = new List<sys_issue>();
+            
+            int index = 0;
+            foreach (HtmlNode item in anode)
+            {
+                index++;
+                if (index < 31)
+                {
+                    if (_IXML_DataService.GetDescIssuNo(gameCode) != null)
+                    {
+                        if (item.InnerHtml == _IXML_DataService.GetDescIssuNo(gameCode).IssueNo)
+                        {
+                            break;
+                        }
+                    }
+                    sys_issue issue = new sys_issue();
+                    issue.IssueNo = item.InnerHtml;
+                    var htmlDoc = CommonHelper.LoadGziphtml("http://kaijiang.500.com/shtml/sd/" + item.InnerHtml + ".shtml");
+
+                    var FirstTableTrNode = htmlDoc.DocumentNode.SelectNodes("//table[@class='kj_tablelist02']")[0].SelectNodes("tr");
+                    int k = 1;
+                    foreach (var item2 in FirstTableTrNode)//遍历第一个table下的tr
+                    {
+                        switch (k)
+                        {
+                            case 1:
+                                var Date = item2.SelectSingleNode("//span[@class='span_right']").InnerHtml;
+                                string openTime = Date.Split('：')[1].Split('兑')[0];
+                                issue.OpenTime = openTime;
+                                sys_issue.Add(issue);
+                                break;
+                            case 2:
+                                int j = 1;
+                                var tdindex = item2.SelectSingleNode("td").SelectSingleNode("table").SelectSingleNode("tr").SelectNodes("td");
+                                foreach (var item3 in tdindex)
+                                {
+                                    switch (j)
+                                    {
+                                        case 1:
+                                            var lilist = tdindex[1].SelectSingleNode("div").SelectSingleNode("ul").SelectNodes("li");
+                                            foreach (var item4 in lilist)
+                                            {
+                                                issue.OpenCode += item4.InnerHtml + ",";
+
+                                            }
+                                            issue.OpenCode = issue.OpenCode.Trim(',');
+                                            break;
+                                        case 2:
+                                            issue.OpenCode += "|";
+                                            issue.OpenCode += tdindex[2].SelectSingleNode("div").InnerHtml.Split('：')[1];
+                                            break;
+
+                                    }
+                                    j++;
+                                }
+
+                                break;
+
+                        }
+                        k = k + 1;
+
+                    }
+                }
+                Console.WriteLine(index);
+            }
+
+            int count = await _IXML_DataService.AddQGhtml(sys_issue, gameCode);
+            return count;
         }
 
         /// <summary>

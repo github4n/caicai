@@ -72,7 +72,7 @@ namespace Lottery.Services
             return await Task.FromResult(count);
         }
 
-        public async Task<int> AddDFCXMLAsync(XmlNodeList xmlNodeList, string gameCode)
+        public async Task<int> AddQGDFCXMLAsync(XmlNodeList xmlNodeList, string gameCode)
         {
             int count = 0;
             int insertCount = 0;
@@ -122,7 +122,8 @@ namespace Lottery.Services
             return await Task.FromResult(insertCount);
         }
 
-            public async Task<int> AddBjdcIssue(HtmlNodeCollection htmlNodeCollection, string gameCode)
+
+        public async Task<int> AddBjdcIssue(HtmlNodeCollection htmlNodeCollection, string gameCode)
         {
             int count = 0;
             var lottery = GetLottery(gameCode);
@@ -155,6 +156,37 @@ namespace Lottery.Services
             return await Task.FromResult(count);
         }
 
+        public async Task<int> AddQGhtml(List<sys_issue> sys_Issues, string gameCode)
+        {
+            int count = 0;
+            int insertCount = 0;
+            var lottery = GetLottery(gameCode);
+            sys_issue sys_issue = GetNowIssuNo(gameCode);
+            foreach (var item in sys_Issues)
+            {
+                if (sys_issue != null)
+                {
+                    if (sys_issue.IssueNo == item.IssueNo)
+                    {
+                        break;
+                    }
+                }
+                sys_issue issue = new sys_issue();
+                issue.IssueNo = item.IssueNo;
+
+               issue.OpenCode = item.OpenCode;
+
+
+                issue.OpenTime = item.OpenTime;
+                issue.LotteryId = lottery.Lottery_Id;
+                issue.LotteryCode = lottery.LotteryCode;
+                issue.CreateTime = DateTime.Now;
+                issue.UpdateTime = DateTime.Now;
+                count = db.Insertable(issue).ExecuteCommand();
+                insertCount += count;
+            }
+            return await Task.FromResult(insertCount);
+        }
         /// <summary>
         /// 获取彩种
         /// </summary>
@@ -167,7 +199,7 @@ namespace Lottery.Services
         }
 
         /// <summary>
-        /// 获取彩种最新信息
+        /// 根据彩种，采集日期并且期号降序最新信息
         /// </summary>
         /// <returns></returns>
         public sys_issue GetNowGpcIssuNo(string LotteryCode,string LotteryTime)
@@ -184,7 +216,7 @@ namespace Lottery.Services
             
         }
         /// <summary>
-        /// 获取彩种最新信息
+        /// 根据彩种并且开奖时间降序最新信息
         /// </summary>
         /// <returns></returns>
         public sys_issue GetNowIssuNo(string LotteryCode)
@@ -201,10 +233,27 @@ namespace Lottery.Services
 
         }
 
+        /// <summary>
+        /// 根据彩种并且期号降序获取最新期号
+        /// </summary>
+        /// <param name="LotteryCode"></param>
+        /// <returns></returns>
+        public sys_issue GetDescIssuNo(string LotteryCode)
+        {
+            sys_issue issue = db.Queryable<sys_issue>().Where(n => n.LotteryCode == LotteryCode).OrderBy(n => n.IssueNo, OrderByType.Desc).Take(1).First();
+            if (issue == null)
+            {
+                return null;
+            }
+            else
+            {
+                return issue;
+            }
+        }
 
         public List<sys_lottery> GetHighFrequency()
         {
-            return db.Queryable<sys_lottery>().Where(n => n.HighFrequency != 0).ToList();
+            return db.Queryable<sys_lottery>().ToList();
         }
 
     }

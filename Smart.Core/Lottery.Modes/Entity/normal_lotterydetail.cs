@@ -71,5 +71,10 @@ namespace Lottery.Modes.Entity
         ///</summary>
 
         public int? Sys_IssueId{ get; set; }
+
+        /// <summary>
+        /// 本期销量
+        /// </summary>
+        public string CurrentSales { get; set; }
     }
 }
