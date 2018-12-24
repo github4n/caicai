@@ -274,28 +274,6 @@ namespace Lottery.Services
                 throw new Exception(ex.Message);
             }
         }
-        public List<string> GetJCZQResultsByIssueNo(string IssueNo)
-        {
-            try
-            {
-                return db.Queryable<jczq_result>().Where(x => x.JCDate == IssueNo).Select(x=>x.MatchId).ToList();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-        public List<string> GetJCLQResultsByIssueNo(string IssueNo)
-        {
-            try
-            {
-                return db.Queryable<jclq_result>().Where(x => x.JCDate == IssueNo).Select(x => x.MatchId).ToList();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
         /// <summary>
         /// 获取数据库最迟的竞彩时间(JCLQ)
         /// </summary>
@@ -321,26 +299,6 @@ namespace Lottery.Services
             {
                 Console.WriteLine($"{GameCode}奖期{Issue}成功新增数据{Count}条");
             }
-        }
-        public bool IsExist(string IssureNo,Type type)
-        {
-            if (type == typeof(bjdc_result))
-            {
-                return db.Queryable<bjdc_result>().Where(x => x.IssueNo == IssureNo).Count()>0? true:false;
-            }
-            else if (type == typeof(jczq_result))
-            {
-                return db.Queryable<jczq_result>().Where(x => x.JCDate == IssureNo).Count() > 0 ? true : false;
-            }
-            else if (type == typeof(jclq_result))
-            {
-                return db.Queryable<jclq_result>().Where(x => x.JCDate == IssureNo).Count() > 0 ? true : false;
-            }
-            return false;
-        }
-        public List<bjdc_result> Exist_bjdc_List(string IssureNo)
-        {
-            return db.Queryable<bjdc_result>().Where(x => x.IssueNo == IssureNo&&x.IsFinish==false).ToList();
         }
     }
 }
