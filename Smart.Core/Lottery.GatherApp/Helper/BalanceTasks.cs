@@ -5,7 +5,9 @@ using Smart.Core.Logger;
 using Smart.Core.NoSql.Redis;
 using Smart.Core.Utils;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace Lottery.GatherApp
 {
@@ -16,6 +18,7 @@ namespace Lottery.GatherApp
         protected readonly RedisManager _redisManager;
         protected readonly ISport_DataService _sport_DataService;
         protected readonly IXML_DataService _xml_DataService;
+        protected static System.Timers.Timer timer;
 
         //public BalanceTasks(IUsersService usersSvc, ILogger logger,ISport_DataService sport_DataService , IXML_DataService xml_DataService,RedisManager redisManager)
         //{
@@ -32,7 +35,6 @@ namespace Lottery.GatherApp
             this._logger = logger;
             _sport_DataService = sport_DataService;
             _xml_DataService = xml_DataService;
-
         }
         public async Task CQSSC()
         {
@@ -142,10 +144,10 @@ namespace Lottery.GatherApp
             _redisManager.RedisDb(0).Publish("chan1", "123123123");
             _redisManager.RedisDb(0).Subscribe(("chan1", msg => Console.WriteLine(msg.Body)));
         }
-        public async Task SportData()
+        public void SportData(Object source, ElapsedEventArgs e)
         {
             var manager = new SportData(_sport_DataService);
-            manager.Start();
+            //manager.Start();
         }
         //辽宁快乐12  广东快乐十分  广西快乐10分 重庆时时彩 是网页版
         //gdklsf(广东快乐十分)  bjsyxw(北京11选5)  kl8(北京快乐8)   bjkzhc(北京快中彩)  bjpkshi(北京PK拾) bjk3(北京快3)  tjsyxw(天津11选5)
@@ -162,29 +164,45 @@ namespace Lottery.GatherApp
         {
             int count = 0;
             var manager = new XML(_xml_DataService);
-            count = await manager.GetBjdcAsync();
+            //count = await manager.GetBjdcAsync();
             Console.WriteLine("北京单场采集完毕.新采集了" + count + "条");
-            count = await manager.GetSfggAsync();
+            //count = await manager.GetSfggAsync();
             Console.WriteLine("北京单场——胜负过关采集完毕.新采集了" + count + "条");
-            count = await manager.LoadXml("gdklsf");
-            Console.WriteLine("广东快乐10分采集完毕.新采集了" + count + "条");
-            count = await manager.LoadXml("bjsyxw");
-            Console.WriteLine("北京11选5采集完毕.新采集了" + count + "条");
-            count = await manager.LoadXml("kl8");
-            Console.WriteLine("北京快乐8采集完毕.新采集了" + count + "条");
-            count = await manager.LoadXml("bjkzhc");
-            Console.WriteLine("北京快中彩采集完毕.新采集了" + count + "条");
-            count = await manager.LoadXml("bjpkshi");
-            Console.WriteLine("北京PK拾采集完毕.新采集了" + count + "条");
-            count = await manager.LoadXml("bjk3");
-            Console.WriteLine("北京快3采集完毕.新采集了" + count + "条");
-            count = await manager.LoadXml("tjsyxw");
-            Console.WriteLine("天津11选5采集完毕.新采集了" + count + "条");
-            count = await manager.LoadXml("klsf");
-            Console.WriteLine("天津快乐十分采集完毕.新采集了" + count + "条");
-            count = await manager.LoadXml("tjssc");
-            Console.WriteLine("天津时时彩采集完毕.新采集了" + count + "条");
 
+            timer = new System.Timers.Timer(60 * 1000)
+            {
+                Enabled = true//自动执行
+            };//一小时执行一次
+            timer.Elapsed += SportData;
+            timer.AutoReset = true;//自动重置
+            GC.KeepAlive(timer);
+            while (true)
+            {
+                foreach (var item in _xml_DataService.GetHighFrequency())
+                {
+                    if (item.HighFrequency == 1)
+                    {
+                        count = await manager.LoadXml(item.LotteryCode);
+                        Console.WriteLine(item.LotteryName + "采集完毕.新采集了" + count + "条");
+                        Thread.Sleep(new Random().Next(1000, 5000));
+                    }
+                    else
+                    {
+                        count = await manager.LoadQGDFCXml(item.LotteryCode);
+                        Console.WriteLine(item.LotteryName + "采集完毕.新采集了" + count + "条");
+                        Thread.Sleep(new Random().Next(1000, 5000));
+                    }
+                    count = await manager.LoadSDhtml("sd");
+                    Console.WriteLine("福彩3D采集完毕.新采集了" + count + "条");
+                    count = await manager.LoadPlsHtml("pls");
+                    Console.WriteLine("排列3采集完毕.新采集了" + count + "条");
+                    Thread.Sleep(60 * 1000);
+
+
+
+                }
+            }
         }
+
     }
 }
