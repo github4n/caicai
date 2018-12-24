@@ -62,7 +62,7 @@ namespace Lottery.GatherApp
                     List<jczq> jczqs = new List<jczq>();
                     var tableNode = CommonHelper.LoadGziphtml("http://zx.500.com/zqdc/kaijiang.php?&expect=" + code).DocumentNode.SelectSingleNode("//table[@class='ld_table']");
                     if (tableNode == null)
-                    {
+                    {  
                         Console.WriteLine($"奖期{code}北京单场获取根节点失败");
                         continue;
                     }

@@ -122,17 +122,14 @@ namespace Lottery.Services
         {
             try
             {
+                int i = 0;
                 model.ForEach((a) => {
                     a.MatchId = a.MatchId + a.MatchNumber;
                     a.CreateTime = DateTime.Now;
-                });
-                int i = 0;
-                model.ForEach((b) =>
-                {
-                    bool d = db.Queryable<jclq_result>().Where(x => x.MatchId == b.MatchId).Count() > 0 ? true : false;
-                    if (d)
+                    bool d = db.Queryable<jclq_result>().Where(x => x.MatchId == a.MatchId).Count() > 0 ? true : false;
+                    if (!d)
                     {
-                        db.Insertable(b).ExecuteCommand();
+                        db.Insertable(a).ExecuteCommand();
                         i++;
                     }
                 });
@@ -202,7 +199,7 @@ namespace Lottery.Services
                 int i = 0;
                 jczq_Results.ForEach((a) => {
                     bool b = db.Queryable<jczq_result>().Where(x => x.MatchId == a.MatchId).Count() > 0 ? true : false;
-                    if (b)
+                    if (!b)
                     {
                         db.Insertable(a).ExecuteCommand();
                         i++;
