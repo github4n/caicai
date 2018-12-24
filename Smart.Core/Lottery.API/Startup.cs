@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json.Serialization;
 using Smart.Core.Repository.SqlSugar;
 using Smart.Core.Throttle;
 using Smart.Core.Utils;
@@ -45,7 +46,11 @@ namespace Lottery.API
         /// <param name="services"></param>
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc(options=> { options.Filters.Add(typeof(ApiThrottleActionFilter)); }).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc(options=> { options.Filters.Add(typeof(ApiThrottleActionFilter)); }).SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddJsonOptions(options =>
+            {
+                options.SerializerSettings.ContractResolver = new DefaultContractResolver();
+                options.SerializerSettings.DateFormatString = "yyyy-MM-dd HH:mm:ss";
+            }); ;
             ConfigFileHelper.Set("config.json");
             #region CORS
             //跨域第二种方法，声明策略，记得下边app中配置
@@ -63,14 +68,14 @@ namespace Lottery.API
                 //↑↑↑↑↑↑↑注意正式环境不要使用这种全开放的处理↑↑↑↑↑↑↑↑↑↑
 
 
-                //一般采用这种方法
-                c.AddPolicy("LimitRequests", policy =>
-                {
-                    policy
-                    .WithOrigins("http://127.0.0.1:1818", "http://localhost:8080", "http://localhost:8021", "http://localhost:8081", "http://localhost:1818")//支持多个域名端口，注意端口号后不要带/斜杆：比如localhost:8000/，是错的
-                    .AllowAnyHeader()//Ensures that the policy allows any header.
-                    .AllowAnyMethod();
-                });
+                ////一般采用这种方法
+                //c.AddPolicy("LimitRequests", policy =>
+                //{
+                //    policy
+                //    .WithOrigins("http://127.0.0.1:1818", "http://localhost:8080", "http://localhost:8021", "http://localhost:8081", "http://localhost:1818")//支持多个域名端口，注意端口号后不要带/斜杆：比如localhost:8000/，是错的
+                //    .AllowAnyHeader()//Ensures that the policy allows any header.
+                //    .AllowAnyMethod();
+                //});
             });
 
             //跨域第一种办法，注意下边 Configure 中进行配置
@@ -145,8 +150,15 @@ namespace Lottery.API
             services.AddServices();
             services.AddCSRedis(options =>
             {
-                options.Add(new Smart.Core.NoSql.Redis.RedisConfig() { C_IP = "10.0.3.27", C_Post = 6379, C_Password = "a123456", C_Defaultdatabase = 0 });
-                options.Add(new Smart.Core.NoSql.Redis.RedisConfig() { C_IP = "10.0.3.27", C_Post = 6379, C_Password = "a123456", C_Defaultdatabase = 1 });
+                var RedisHost = ConfigFileHelper.Get("RedisConfig:RedisHost");
+                var RedisPost = ConfigFileHelper.Get("RedisConfig:RedisPost");
+                var RedisPassword = ConfigFileHelper.Get("RedisConfig:RedisPassword");
+                for (int i = 0; i < 16; i++)
+                {
+                    options.Add(new Smart.Core.NoSql.Redis.RedisConfig() { C_IP = RedisHost, C_Post = Convert.ToInt32(RedisPost), C_Password = RedisPassword, C_Defaultdatabase = i });
+                }
+                //options.Add(new Smart.Core.NoSql.Redis.RedisConfig() { C_IP = "10.0.3.27", C_Post = 6379, C_Password = "a123456", C_Defaultdatabase = 0 });
+                //options.Add(new Smart.Core.NoSql.Redis.RedisConfig() { C_IP = "10.0.3.27", C_Post = 6379, C_Password = "a123456", C_Defaultdatabase = 1 });
             });
             services.AddConsoleLogger(options => { });
 

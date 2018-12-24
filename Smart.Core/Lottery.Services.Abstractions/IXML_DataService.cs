@@ -21,7 +21,7 @@ namespace Lottery.Services.Abstractions
 
         Task<int> AddQGDFCXMLAsync(XmlNodeList xmlNodeList, string gameCode);
 
-        Task<int> AddQGhtml(List<sys_issue> sys_Issues, string gameCode);
+        Task<int> AddSDhtml(List<sys_issue> sys_Issues, string gameCode);
 
         sys_issue GetDescIssuNo(string LotteryCode);
     }

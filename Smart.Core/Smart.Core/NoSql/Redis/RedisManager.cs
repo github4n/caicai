@@ -48,5 +48,45 @@ namespace Smart.Core.NoSql.Redis
             return redis;
         }
 
+        private static CSRedis.CSRedisClient _DB_NoTicket_Order;
+        /// <summary>
+        /// 未出票的订单库
+        /// </summary>
+        public static CSRedis.CSRedisClient DB_NoTicket_Order
+        {
+            get
+            {
+                if (_DB_NoTicket_Order == null)
+                    _DB_NoTicket_Order = redisClients[0] as CSRedis.CSRedisClient;
+                return _DB_NoTicket_Order;
+
+            }
+        }
+        private static CSRedis.CSRedisClient _DB_Match;
+        /// <summary>
+        /// 竞彩、传统、北单的比赛数据和比赛结果库
+        /// </summary>
+        public static CSRedis.CSRedisClient DB_Match
+        {
+            get
+            {;
+                if (_DB_Match == null)
+                    _DB_Match = redisClients[1] as CSRedis.CSRedisClient;
+                return _DB_Match;
+            }
+        }
+        private static CSRedis.CSRedisClient _DB_Other;
+        /// <summary>
+        /// 其它
+        /// </summary>
+        public static CSRedis.CSRedisClient DB_Other
+        {
+            get
+            {
+                if (_DB_Other == null)
+                    _DB_Other = redisClients[13] as CSRedis.CSRedisClient;
+                return _DB_Other;
+            }
+        }
     }
 }

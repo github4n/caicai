@@ -94,7 +94,7 @@ namespace Smart.Core.Extensions
         public static DateTime StampToDateTime(string timeStamp)
         {
             var t = Convert.ToUInt32(timeStamp);
-            return UTCOrigin.AddSeconds(t);
+            return UTCOrigin.AddSeconds(t).AddHours(8);
         }
     }
 }
