@@ -1,4 +1,5 @@
 ﻿using Lottery.GatherApp.Analysis;
+using Lottery.GatherApp.Analysis.LotteryDetail;
 using Lottery.GatherApp.Helper;
 using Lottery.Services.Abstractions;
 using Smart.Core.Logger;
@@ -18,6 +19,7 @@ namespace Lottery.GatherApp
         protected readonly RedisManager _redisManager;
         protected readonly ISport_DataService _sport_DataService;
         protected readonly IXML_DataService _xml_DataService;
+        protected readonly ILotteryDetailService _ILotteryDetailService;
         protected static System.Timers.Timer timer;
 
         //public BalanceTasks(IUsersService usersSvc, ILogger logger,ISport_DataService sport_DataService , IXML_DataService xml_DataService,RedisManager redisManager)
@@ -29,11 +31,12 @@ namespace Lottery.GatherApp
         //    _xml_DataService = xml_DataService;
 
         //}
-        public BalanceTasks(IUsersService usersSvc, ILogger logger, ISport_DataService sport_DataService, IXML_DataService xml_DataService)
+        public BalanceTasks(IUsersService usersSvc, ILogger logger, ISport_DataService sport_DataService, IXML_DataService xml_DataService, ILotteryDetailService ILotteryDetailService)
         {
             this._userSvc = usersSvc;
             this._logger = logger;
             _sport_DataService = sport_DataService;
+            _ILotteryDetailService = ILotteryDetailService;
             _xml_DataService = xml_DataService;
         }
         public async Task CQSSC()
@@ -164,9 +167,12 @@ namespace Lottery.GatherApp
         {
             int count = 0;
             var manager = new XML(_xml_DataService);
-            //count = await manager.GetBjdcAsync();
+            var LotteryDetal = new NormalLotteryDetail(_ILotteryDetailService);
+            count= await LotteryDetal.LoadLotteryDetal("pls");
+            Console.WriteLine("排列3详情采集完毕.新采集了" + count + "条");
+            count = await manager.GetBjdcAsync();
             Console.WriteLine("北京单场采集完毕.新采集了" + count + "条");
-            //count = await manager.GetSfggAsync();
+            count = await manager.GetSfggAsync();
             Console.WriteLine("北京单场——胜负过关采集完毕.新采集了" + count + "条");
 
             timer = new System.Timers.Timer(60 * 1000)
@@ -178,6 +184,10 @@ namespace Lottery.GatherApp
             GC.KeepAlive(timer);
             while (true)
             {
+                //count = await manager.LoadSDhtml("sd");
+                Console.WriteLine("福彩3D采集完毕.新采集了" + count + "条");
+                count = await manager.LoadPlsHtml("pls");
+                Console.WriteLine("排列3采集完毕.新采集了" + count + "条");
                 foreach (var item in _xml_DataService.GetHighFrequency())
                 {
                     if (item.HighFrequency == 1)
@@ -192,16 +202,13 @@ namespace Lottery.GatherApp
                         Console.WriteLine(item.LotteryName + "采集完毕.新采集了" + count + "条");
                         Thread.Sleep(new Random().Next(1000, 5000));
                     }
-                    count = await manager.LoadSDhtml("sd");
-                    Console.WriteLine("福彩3D采集完毕.新采集了" + count + "条");
-                    count = await manager.LoadPlsHtml("pls");
-                    Console.WriteLine("排列3采集完毕.新采集了" + count + "条");
+                }
                     Thread.Sleep(60 * 1000);
 
-
-
-                }
+                
             }
+
+         
         }
 
     }

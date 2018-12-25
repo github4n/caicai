@@ -26,6 +26,12 @@ namespace EntityModel.Model
         /// 期号
         /// </summary>
         public string expect { get; set; }
+
+        /// <summary>
+        /// 开奖号码
+        /// </summary>
+        public string openCode { get; set; }
+
         /// <summary>
         /// 开奖时间
         /// </summary>
@@ -44,6 +50,11 @@ namespace EntityModel.Model
         /// 奖池滚存
         /// </summary>
         public string PoolRolling { get; set; }
+
+        /// <summary>
+        /// 号码类型
+        /// </summary>
+        public string NumberType { get; set; }
     }
 
     public class LotteryDetails
