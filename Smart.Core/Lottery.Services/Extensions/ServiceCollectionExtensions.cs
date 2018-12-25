@@ -13,6 +13,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 services.AddSingleton<IXML_DataService, XML_DataService>();
                 services.AddSingleton<IApi_DataService, Api_DataService>();
                 services.AddSingleton<IDigitalLotteryService, DigitalLotteryService>();
+
             }
 
             return services;
