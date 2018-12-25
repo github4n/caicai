@@ -20,8 +20,6 @@ namespace Lottery.GatherApp
         protected readonly ISport_DataService _sport_DataService;
         protected readonly IDigitalLotteryService _digitalLotteryService;
         protected readonly IXML_DataService _xml_DataService;
-        protected static System.Timers.Timer Sport_Data_timer;
-        protected static System.Timers.Timer Lottery_Data_timer;
         //public BalanceTasks(IUsersService usersSvc, ILogger logger,ISport_DataService sport_DataService , IXML_DataService xml_DataService,RedisManager redisManager)
         //{
         //    this._userSvc = usersSvc;
@@ -147,36 +145,27 @@ namespace Lottery.GatherApp
             _redisManager.RedisDb(0).Publish("chan1", "123123123");
             _redisManager.RedisDb(0).Subscribe(("chan1", msg => Console.WriteLine(msg.Body)));
         }
-        public void SportData(Object source, ElapsedEventArgs e)
+        public void SportData()
         {
             var manager = new SportData(_sport_DataService);
             manager.Start();
-            
         }
-        public void LotteryData(Object source, ElapsedEventArgs e)
+        public void LotteryData()
         {
             var manager = new DigitalLottery(_digitalLotteryService);
             manager.Start();
         }
-        public void SetTimer()
+        public void StartTask()
         {
-            //体育彩
-            Sport_Data_timer = new System.Timers.Timer(60 * 1000 * 60)
+            Task.Factory.StartNew(() =>
             {
-                Enabled = true
-            };
-            Sport_Data_timer.Elapsed += SportData;
-            Sport_Data_timer.AutoReset = true;
-            GC.KeepAlive(Sport_Data_timer);
-
-            //数字彩
-            Lottery_Data_timer = new System.Timers.Timer(60 * 1000 * 60 *3)
-            {
-                Enabled = true
-            };
-            Lottery_Data_timer.Elapsed += LotteryData;
-            Lottery_Data_timer.AutoReset = true;
-            GC.KeepAlive(Lottery_Data_timer);
+                while (true)
+                {
+                    SportData();
+                    LotteryData();
+                    Task.Delay(60 * 1000 * 60);
+                }
+            });
         }
         //辽宁快乐12  广东快乐十分  广西快乐10分 重庆时时彩 是网页版
         //gdklsf(广东快乐十分)  bjsyxw(北京11选5)  kl8(北京快乐8)   bjkzhc(北京快中彩)  bjpkshi(北京PK拾) bjk3(北京快3)  tjsyxw(天津11选5)
@@ -197,7 +186,7 @@ namespace Lottery.GatherApp
             Console.WriteLine("北京单场采集完毕.新采集了" + count + "条");
             //count = await manager.GetSfggAsync();
             Console.WriteLine("北京单场——胜负过关采集完毕.新采集了" + count + "条");
-            SetTimer();
+            StartTask();
             while (true)
             {
                 foreach (var item in _xml_DataService.GetHighFrequency())

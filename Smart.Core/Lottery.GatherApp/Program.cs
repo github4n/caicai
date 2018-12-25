@@ -55,9 +55,9 @@ namespace Lottery.GatherApp
             var provider = services.BuildServiceProvider();
             var tasks = provider.GetRequiredService<BalanceTasks>();
             await Task.WhenAll(new Task[] {
-                //tasks.HK6Issue(),
                 tasks.XML(),
             });
+            
             Console.WriteLine("Done.");
             Console.ReadLine();
             Console.ReadLine();
