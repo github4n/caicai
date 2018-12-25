@@ -55,7 +55,7 @@ namespace Lottery.Services
                     }
                 }
             });
-            Console.WriteLine($"FC3D奖期{Issue}成功更新数据{i}条");
+            Console.WriteLine($"FC3D奖期{Issue}成功新增数据{i}条");
         } 
     }
 }
