@@ -512,7 +512,13 @@ namespace Lottery.GatherApp
         {
             _digitalLotteryService = DigitalLotteryService;
         }
-        public void GetFc3Ds()
+        public void Start()
+        {
+            Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~★福彩3D开始爬取★~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            GetFc3Ds();
+            Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~★福彩3D爬取数据完成★~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        }
+        private void GetFc3Ds()
         {
             var anode = CommonHelper.GetExpect("http://kaijiang.500.com/sd.shtml");
             List<fc3D> fc3Ds = new List<fc3D>();
