@@ -29,7 +29,7 @@ namespace Lottery.Api.Controllers.CommonFilterActtribute
                 context.HttpContext.Response.Headers.Add("Access-Control-Allow-Credentials", "true");
             };
             action();
-            if (context.HttpContext.Request.Path.Value.ToLower() == "api/data/getnowdate")
+            if (context.HttpContext.Request.Path.Value.ToLower() == "/api/data/getnowdate")
             {
                 base.OnActionExecuting(context);
             }

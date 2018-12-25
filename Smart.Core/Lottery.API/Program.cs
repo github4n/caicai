@@ -14,10 +14,18 @@ namespace Lottery.API
     {
         public static void Main(string[] args)
         {
+            var host = new WebHostBuilder()
+                        .UseKestrel()
+                        .UseContentRoot(Directory.GetCurrentDirectory())
+                        .UseStartup<Startup>()
+                        .UseUrls("http://*:31777")
+                        .Build();
 
 
+            host.Run();
 
-            CreateWebHostBuilder(args).Build().Run();
+
+            //CreateWebHostBuilder(args).Build().Run();
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>

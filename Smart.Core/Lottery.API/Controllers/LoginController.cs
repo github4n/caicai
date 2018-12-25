@@ -9,7 +9,7 @@ using Smart.Core.JWT;
 
 namespace Lottery.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class LoginController : ControllerBase
     {

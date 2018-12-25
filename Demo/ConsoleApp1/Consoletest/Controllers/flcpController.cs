@@ -23,8 +23,9 @@ namespace Consoletest.Controllers
             List<fc3D> fc3Ds = new List<fc3D>();
             foreach (HtmlNode item in anode)
             {
-                LotteryInfo info = new LotteryInfo();
-                info.expect = item.InnerHtml;
+                fc3D fc3D = new fc3D();
+                List<LotteryInfo> lotteries = new List<LotteryInfo>();
+                fc3D.expect = item.InnerHtml;
                 if (Convert.ToInt32(item.InnerHtml) == 2018333)
                 {
                     return fc3Ds;
@@ -35,9 +36,9 @@ namespace Consoletest.Controllers
                 var htmlDoc = web.Load(html);
                 #region 第一个表格
                 var GameTime = htmlDoc.DocumentNode.SelectNodes("//table[@class='kj_tablelist02']")[0].SelectNodes("tr")[0].SelectSingleNode("//span[@class='span_right']").InnerHtml;
-                info.LotteryDate = GameTime.Split("：")[1].Split('兑')[0];
-                info.AwardDeadline = GameTime.Split("：")[2];
-                info.SalesVolume = htmlDoc.DocumentNode.SelectNodes("//table[@class='kj_tablelist02']").FirstOrDefault().SelectNodes("tr")[2].SelectSingleNode("//span[@class='cfont1 ']").InnerHtml.Replace("元","");
+                fc3D.LotteryDate = GameTime.Split("：")[1].Split('兑')[0];
+                fc3D.AwardDeadline = GameTime.Split("：")[2];
+                fc3D.SalesVolume = htmlDoc.DocumentNode.SelectNodes("//table[@class='kj_tablelist02']").FirstOrDefault().SelectNodes("tr")[2].SelectSingleNode("//span[@class='cfont1 ']").InnerHtml.Replace("元","");
 
                 var firstTableNode = htmlDoc.DocumentNode.SelectNodes("//table[@class='kj_tablelist02']")[0].SelectNodes("tr")[1].SelectSingleNode("td").SelectSingleNode("table").SelectSingleNode("tr").SelectNodes("td");
                 int i = 0;
@@ -54,9 +55,9 @@ namespace Consoletest.Controllers
                         {
                             foreach (var Sub_subitem in Subitem.SelectNodes("//li[@class='ball_orange']"))
                             {
-                                info.opencode += Sub_subitem.InnerHtml + ",";
+                                fc3D.opencode += Sub_subitem.InnerHtml + ",";
                             }
-                            info.opencode = info.opencode.Remove(info.opencode.Length - 1, 1);
+                            fc3D.opencode = fc3D.opencode.Remove(fc3D.opencode.Length - 1, 1);
                             i++;
                         }
                         else if (i == 2)
@@ -64,17 +65,17 @@ namespace Consoletest.Controllers
                             var textNumber = Subitem.SelectSingleNode("div").InnerHtml.Split("：")[1].Replace(' ', ',');
                             if (textNumber.StartsWith(','))
                             {
-                                info.TestNumber = textNumber.Remove(0, 1);
+                                fc3D.TestNumber = textNumber.Remove(0, 1);
                             }
                             else
                             {
-                                info.TestNumber = textNumber;
+                                fc3D.TestNumber = textNumber;
                             }
                             i++;
                         }
                         else
                         {
-                            info.numberType = Subitem.SelectSingleNode("//font[@class='cfont1']").InnerHtml;
+                            fc3D.numberType = Subitem.SelectSingleNode("//font[@class='cfont1']").InnerHtml;
                             i++;
                         }
                     }
@@ -100,40 +101,39 @@ namespace Consoletest.Controllers
 
                                     if (n == 0)
                                     {
-                                        fc3D fc = new fc3D();
+                                        LotteryInfo fc = new LotteryInfo();
                                         fc.Prize = table_tr[m].SelectNodes("td")[0].InnerHtml.Trim();
-                                        fc.PrizeType = table_tr[m].SelectNodes("td")[1].InnerHtml.Trim();
+                                        fc.PrizeSubItem = table_tr[m].SelectNodes("td")[1].InnerHtml.Trim();
                                         fc.BettingCount = table_tr[m].SelectNodes("td")[2].InnerHtml.Trim();
                                         fc.Bonus = table_tr[m].SelectNodes("td")[3].InnerHtml.TrimStart().Trim();
-                                        fc.LotteryInfo = info;
-                                        fc3Ds.Add(fc);
+                                        lotteries.Add(fc);
                                     }
                                     if (n >= 1)
                                     {
-                                        fc3D fc = new fc3D();
+                                        LotteryInfo fc = new LotteryInfo();
                                         fc.Prize = table_tr[m].SelectNodes("td")[0].InnerHtml;
-                                        fc.PrizeType = table_tr[m + n].SelectNodes("td")[0].InnerHtml.TrimStart().TrimEnd();
-                                        fc.BettingCount = table_tr[m + n].SelectNodes("td")[1].InnerHtml.TrimStart().TrimEnd();
-                                        fc.Bonus = table_tr[m + n].SelectNodes("td")[2].InnerHtml.TrimStart().TrimEnd();
-                                        fc.LotteryInfo = info;
-                                        fc3Ds.Add(fc);
+                                        fc.PrizeSubItem = table_tr[m + n].SelectNodes("td")[0].InnerHtml.Trim();
+                                        fc.BettingCount = table_tr[m + n].SelectNodes("td")[1].InnerHtml.Trim();
+                                        fc.Bonus = table_tr[m + n].SelectNodes("td")[2].InnerHtml.Trim();
+                                        lotteries.Add(fc);
                                     }
                                 }
                                 m = m + Convert.ToInt32(table_tr[m].SelectNodes("td")[0].Attributes[0].Value) - 1;
                             }
                             else
                             {
-                                fc3D fc = new fc3D();
-                                fc.Prize = table_tr[m].SelectNodes("td")[0].InnerHtml.TrimStart().TrimEnd();
-                                fc.BettingCount = table_tr[m].SelectNodes("td")[1].InnerHtml.TrimStart().TrimEnd();
-                                fc.Bonus = table_tr[m].SelectNodes("td")[2].InnerHtml.TrimStart().TrimEnd();
-                                fc.LotteryInfo = info;
-                                fc3Ds.Add(fc);
+                                LotteryInfo fc = new LotteryInfo();
+                                fc.Prize = table_tr[m].SelectNodes("td")[0].InnerHtml.Trim();
+                                fc.BettingCount = table_tr[m].SelectNodes("td")[1].InnerHtml.Trim();
+                                fc.Bonus = table_tr[m].SelectNodes("td")[2].InnerHtml.Trim();
+                                lotteries.Add(fc);
                             }
                         }
                     }
                 }
                 #endregion
+                fc3D.SubItemList = lotteries;
+                fc3Ds.Add(fc3D);
             }
             return fc3Ds;
         }

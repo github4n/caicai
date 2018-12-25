@@ -4,7 +4,7 @@ using System.Text;
 
 namespace EntityModel.Model
 {
-   public class BaseInfo
+    public class BaseInfo
     {
         /// <summary>
         /// 注数
@@ -17,7 +17,7 @@ namespace EntityModel.Model
         /// <summary>
         /// 奖项子项
         /// </summary>
-        public string PrizeType { get; set; }
+        public string PrizeSubItem { get; set; }
     }
 
     public class LotteryBase
