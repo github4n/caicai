@@ -28,6 +28,7 @@ namespace Lottery.API.Controllers
         /// 获取当前时间
         /// </summary>
         /// <returns></returns>
+        [HttpGet]
         public IActionResult GetNowDate()
         {
             return Ok(new LotteryServiceResponse()
