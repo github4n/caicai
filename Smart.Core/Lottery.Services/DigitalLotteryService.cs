@@ -29,23 +29,33 @@ namespace Lottery.Services
                 return;
             }
             List<normal_lotterydetail> result = new List<normal_lotterydetail>();
+            int i=0;
+            string Issue=string.Empty;
             ModelList.ForEach((a) =>
             {
                bool b=db.Queryable<normal_lotterydetail>().Where(x => x.LotteryCode == LotteryCode.LotteryCode && x.IssueNo == a.expect).Count() > 0 ? true : false;
                 if (!b)
                 {
-                    normal_lotterydetail _Lotterydetail = new normal_lotterydetail();
-                    _Lotterydetail.LotteryId = LotteryCode.Lottery_Id;
-                    _Lotterydetail.LotteryCode = LotteryCode.LotteryCode;
-                    _Lotterydetail.IssueNo = a.expect;
-                    _Lotterydetail.LotteryDataDetail = JsonConvert.SerializeObject(a.SubItemList);
-                    _Lotterydetail.LotteryResultDetail = a.opencode + "|" + a.TestNumber + "|" + a.numberType;
-                    _Lotterydetail.OpenTime = a.LotteryDate;
-                    _Lotterydetail.AwardDeadlineTime = a.AwardDeadline;
-                    _Lotterydetail.CurrentSales = a.SalesVolume;
+                    normal_lotterydetail _Lotterydetail = new normal_lotterydetail
+                    {
+                        LotteryId = LotteryCode.Lottery_Id,
+                        LotteryCode = LotteryCode.LotteryCode,
+                        IssueNo = a.expect,
+                        LotteryDataDetail = JsonConvert.SerializeObject(a.SubItemList),
+                        LotteryResultDetail = a.opencode + "|" + a.TestNumber + "|" + a.numberType,
+                        OpenTime = a.LotteryDate,
+                        AwardDeadlineTime = a.AwardDeadline,
+                        CurrentSales = a.SalesVolume
+                    };
                     db.Insertable(_Lotterydetail);
+                    i++;
+                    if (string.IsNullOrEmpty(Issue))
+                    {
+                        Issue = a.expect;
+                    }
                 }
             });
+            Console.WriteLine($"FC3D奖期{Issue}成功更新数据{i}条");
         } 
     }
 }
