@@ -586,7 +586,7 @@ namespace Lottery.GatherApp
                     }
                     else//第二个tr开始爬取数据
                     {
-                        if (m < 21)
+                        if (m<19)
                         {
                             if (table_tr[m].SelectNodes("td")[0].OuterHtml.Contains("rowspan"))
                             {
