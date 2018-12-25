@@ -23,6 +23,10 @@ namespace EntityModel.Model
     public class LotteryBase
     {
         /// <summary>
+        /// 期号id
+        /// </summary>
+        public long Sys_IssueId { get; set; }
+        /// <summary>
         /// 期号
         /// </summary>
         public string expect { get; set; }
@@ -72,6 +76,49 @@ namespace EntityModel.Model
         /// 单注奖金
         /// </summary>
         public string openSingleBonus { get; set; }
+
+    }
+
+    public class ttcx4Details
+    {
+        /// <summary>
+        /// 投注
+        /// </summary>
+        public string Betting { get; set; }
+
+        /// <summary>
+        /// 奖项
+        /// </summary>
+        public string openPrize { get; set; }
+
+        /// <summary>
+        /// 开奖号码
+        /// </summary>
+        public string openCode { get; set; }
+
+        /// <summary>
+        /// 直选
+        /// </summary>
+        public string directlySelection { get; set; }
+
+        /// <summary>
+        /// 组选24
+        /// </summary>
+        public string GroupSelection24  { get; set; }
+
+        /// <summary>
+        /// 组选12
+        /// </summary>
+        public string GroupSelection12 { get; set; }
+        /// <summary>
+        /// 组选6
+        /// </summary>
+        public string GroupSelection6 { get; set; }
+
+        /// <summary>
+        /// 组选4
+        /// </summary>
+        public string GroupSelection4 { get; set; }
     }
 
     public class Team

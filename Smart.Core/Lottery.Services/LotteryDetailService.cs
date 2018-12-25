@@ -42,6 +42,8 @@ namespace Lottery.Services
                 lotterydetail.AwardDeadlineTime = item.endTime;
                 lotterydetail.LotteryDataDetail = item.openCode+"|"+item.NumberType;
                 lotterydetail.CurrentSales = item.SalesVolume;
+                lotterydetail.PrizePool = item.PoolRolling;
+                lotterydetail.Sys_IssueId = item.Sys_IssueId;
                 lotterydetail.LotteryResultDetail= JsonConvert.SerializeObject(item.openLotteryDetails);
                 lotterydetail.CreateTime = DateTime.Now;
 
@@ -86,5 +88,10 @@ namespace Lottery.Services
             }
 
         }
+        public sys_issue GetIssue(string IssueNo)
+        {
+            return db.Queryable<sys_issue>().Where(x => x.IssueNo == IssueNo).First();
+        }
+    
     }
 }

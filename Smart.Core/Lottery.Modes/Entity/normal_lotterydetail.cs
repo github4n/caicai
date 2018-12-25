@@ -70,7 +70,7 @@ namespace Lottery.Modes.Entity
         /// 期号Id
         ///</summary>
 
-        public int? Sys_IssueId{ get; set; }
+        public long Sys_IssueId{ get; set; }
 
         /// <summary>
         /// 本期销量
