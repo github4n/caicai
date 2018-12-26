@@ -9,12 +9,19 @@ namespace Lottery.Modes.Model
     {
         public lotterydetail()
         {
+            teams = new List<Team>();
             openLotteryDetails = new List<LotteryDetails>();
             ttcx4Details = new List<ttcx4Details>();
+            dltLists = new List<dltList>();
         }
-
-
-
+        /// <summary>
+        /// 球队信息
+        /// </summary>
+        public List<dltList> dltLists { get; set; }
+        /// <summary>
+        /// 球队信息
+        /// </summary>
+        public List<Team> teams { get; set; }
         /// <summary>
         /// 开奖详情
         /// </summary>

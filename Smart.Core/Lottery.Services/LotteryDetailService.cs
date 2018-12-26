@@ -40,11 +40,11 @@ namespace Lottery.Services
                 lotterydetail.LotteryCode = LotteryCode.LotteryCode;
                 lotterydetail.OpenTime = item.openTime;
                 lotterydetail.AwardDeadlineTime = item.endTime;
-                lotterydetail.LotteryDataDetail = item.openCode+"|"+item.NumberType;
+                lotterydetail.LotteryDataDetail = item.teams==null?(item.NumberType!=null?item.openCode+"|"+item.NumberType: item.openCode): JsonConvert.SerializeObject(item.teams);
                 lotterydetail.CurrentSales = item.SalesVolume;
                 lotterydetail.PrizePool = item.PoolRolling;
                 lotterydetail.Sys_IssueId = item.Sys_IssueId;
-                lotterydetail.LotteryResultDetail= JsonConvert.SerializeObject(item.openLotteryDetails);
+                lotterydetail.LotteryResultDetail= gameCode!= "ttcx4"?JsonConvert.SerializeObject(item.openLotteryDetails): JsonConvert.SerializeObject(item.ttcx4Details);
                 lotterydetail.CreateTime = DateTime.Now;
 
                 count = db.Insertable(lotterydetail).ExecuteCommand();
@@ -59,7 +59,7 @@ namespace Lottery.Services
         /// <returns></returns>
         public List<sys_issue> GetLotteryCodeList(string LotteryCode)
         {
-            List<sys_issue> issue = db.Queryable<sys_issue>().Where(n => n.LotteryCode == LotteryCode).OrderBy(n => n.IssueNo, OrderByType.Desc).ToList();
+            List<sys_issue> issue = db.Queryable<sys_issue>().Where(n => n.LotteryCode == LotteryCode).OrderBy(n => n.OpenTime, OrderByType.Desc).ToList();
             if (issue == null)
             {
                 return null;

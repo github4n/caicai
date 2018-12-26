@@ -1141,5 +1141,30 @@ namespace Consoletest.Controllers
             return zqdc_Sfgg_Results;
         }
 
+
+        public void student()
+        {
+            var student = new List<student> {
+
+                new student
+                {
+                     id=1,
+                      name="wewe",
+                },
+           new student
+                {
+                     id=2,
+                      name="3333333",
+           }
+            };
+            foreach (var item in student)
+            {
+                var str = item;
+                str.name = "rere";
+                Console.WriteLine(str);
+            }
+
+
+        }
     }
 }

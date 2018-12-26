@@ -207,7 +207,7 @@ namespace Lottery.GatherApp
                 foreach (var item in _xml_DataService.GetHighFrequency())
                 {
 
-                    if (item.HighFrequency == 2)
+                    if (item.HighFrequency != 1 && item.LotteryCode!= "zqdc" && item.LotteryCode != "jczq" && item.LotteryCode != "jclq")
                     {
                         count = await LotteryDetal.LoadLotteryDetal(item.LotteryCode);
                         Console.WriteLine(item.LotteryName + "详情采集完毕.新采集了" + count + "条");

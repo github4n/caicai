@@ -59,6 +59,11 @@ namespace EntityModel.Model
         /// 号码类型
         /// </summary>
         public string NumberType { get; set; }
+
+        /// <summary>
+        /// DLT合计金额
+        /// </summary>
+        public decimal TotalBonus { get; set; }
     }
 
     public class LotteryDetails
