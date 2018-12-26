@@ -9,3 +9,7 @@ namespace Lottery.GatherApp.Analysis.JDD
 
     }
 }
+
+
+
+
