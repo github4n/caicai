@@ -24,7 +24,6 @@ namespace Lottery.API
 
             host.Run();
 
-
             //CreateWebHostBuilder(args).Build().Run();
         }
 

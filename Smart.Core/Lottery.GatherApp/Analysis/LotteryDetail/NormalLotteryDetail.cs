@@ -1,4 +1,4 @@
-﻿using EntityModel.Common;
+﻿
 using HtmlAgilityPack;
 using Lottery.Services.Abstractions;
 using System;
@@ -10,6 +10,7 @@ using Lottery.Modes.Model;
 using EntityModel.Model;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Lottery.GatherApp.Helper;
 
 namespace Lottery.GatherApp.Analysis.LotteryDetail
 {
