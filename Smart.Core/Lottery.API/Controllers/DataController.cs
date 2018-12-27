@@ -12,6 +12,7 @@ using Smart.Core.Extensions;
 using Smart.Core.Filter;
 using Smart.Core.JWT;
 using Smart.Core.Throttle;
+using Smart.Core.Extensions;
 
 namespace Lottery.API.Controllers
 {
@@ -130,7 +131,7 @@ namespace Lottery.API.Controllers
                             Value = issuesList.Select(c => new
                             {
                                 IssueNo = c.IssueNo,
-                                OpenTime = c.OpenTime,
+                                OpenTime = c.OpenTime.FormatDate(),
                                 OpenCode = c.OpenCode
                             }),
                             Message = "获取成功"
