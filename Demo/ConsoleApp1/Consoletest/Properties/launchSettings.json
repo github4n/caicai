@@ -12,7 +12,7 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "api/values/GetZqdc_SfggExpect",
+      "launchUrl": "api/values/Getzc6",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

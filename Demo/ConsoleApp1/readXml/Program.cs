@@ -18,21 +18,69 @@ namespace readXml
     {
         static void Main(string[] args)
         {
-            Task parent = new Task(() =>
+
+
+            Task taskTest = Task.Factory.StartNew(() =>
             {
-                CancellationTokenSource cts = new CancellationTokenSource(5000);
-                //创建任务工厂
-                TaskFactory tf = new TaskFactory(cts.Token, TaskCreationOptions.AttachedToParent,
-                TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Default);
-                //添加一组具有相同状态的子任务
-                Task[] task = new Task[]{
-              tf.StartNew(() => { Console.WriteLine("我是任务工厂里的第一个任务。"); }),
-              tf.StartNew(() => { Console.WriteLine("我是任务工厂里的第二个任务。"); }),
-              tf.StartNew(() => { Console.WriteLine("我是任务工厂里的第三个任务。"); })
-          };
-            });
-            parent.Start();
-           
+                for (int i = 0; i < 100; i++)
+                {
+                    Console.WriteLine("第一种" + i);
+                }
+               
+            }, TaskCreationOptions.None);
+            taskTest.Wait();
+            Task taskTwo = Task.Factory.StartNew(() =>
+            {
+                for (int i = 0; i < 100; i++)
+                {
+                    Console.WriteLine("第二种" + i);
+                }
+
+            }, TaskCreationOptions.None);
+            taskTwo.Wait();
+            Task taskTwo2 = Task.Factory.StartNew(() =>
+            {
+                for (int i = 0; i < 100; i++)
+                {
+                    Console.WriteLine("第三种" + i);
+                }
+            }, TaskCreationOptions.None);
+          
+            taskTwo2.Wait();
+          
+
+            // Console.WriteLine("123");
+            //ThreadPool.QueueUserWorkItem(StartCode, taskTest);
+            //    ThreadPool.QueueUserWorkItem(StartCode, taskTwo);
+            //Task.ContinueWith(taskTest, taskTwo, taskTwo2);
+
+            Console.WriteLine("等待taskTest和taskTwo执行后再执行");
+
+
+          //  Task parent = new Task(() =>
+          //  {
+          //      CancellationTokenSource cts = new CancellationTokenSource(5000);
+          //        //创建任务工厂
+          //        TaskFactory tf = new TaskFactory(cts.Token, TaskCreationOptions.AttachedToParent,
+          //      TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Default);
+          //        //添加一组具有相同状态的子任务
+          //        Task[] task = new Task[]{
+          //      tf.StartNew(() => { for (int i = 0; i < 100; i++)
+          //      {
+          //          Console.WriteLine("第一种" + i);
+          //      } }),
+          //      tf.StartNew(() => {     for (int i = 0; i < 100; i++)
+          //      {
+          //          Console.WriteLine("第二种"+i);
+          //      } }),
+          //      tf.StartNew(() => {     for (int i = 0; i < 100; i++)
+          //      {
+          //          Console.WriteLine("第三种"+i);
+          //      } })
+          //};
+          //  });
+          //  parent.Start();
+
             //Console.WriteLine("Time Job Start");
             //RunProgram().GetAwaiter().GetResult();
             //Console.WriteLine("Hello World!");
@@ -40,7 +88,11 @@ namespace readXml
             Console.ReadKey();
         }
 
-
+        private static void StartCode(object i)
+        {
+            Console.WriteLine("开始执行子线程...{0}", i);
+            Thread.Sleep(1000);//模拟代码操作    
+        }
 
         //读取xml
         public static void readXml()

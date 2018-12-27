@@ -1,5 +1,7 @@
 ﻿using Lottery.GatherApp.Analysis;
+using Lottery.GatherApp.Analysis.LotteryDetail;
 using Lottery.GatherApp.Helper;
+using Lottery.Services;
 using Lottery.Services.Abstractions;
 using Smart.Core.Logger;
 using Smart.Core.NoSql.Redis;
@@ -17,9 +19,9 @@ namespace Lottery.GatherApp
         protected readonly ILogger _logger;
         protected readonly RedisManager _redisManager;
         protected readonly ISport_DataService _sport_DataService;
+        protected readonly IDigitalLotteryService _digitalLotteryService;
         protected readonly IXML_DataService _xml_DataService;
-        protected static System.Timers.Timer timer;
-
+        protected readonly ILotteryDetailService _ILotteryDetailService;
         //public BalanceTasks(IUsersService usersSvc, ILogger logger,ISport_DataService sport_DataService , IXML_DataService xml_DataService,RedisManager redisManager)
         //{
         //    this._userSvc = usersSvc;
@@ -29,12 +31,14 @@ namespace Lottery.GatherApp
         //    _xml_DataService = xml_DataService;
 
         //}
-        public BalanceTasks(IUsersService usersSvc, ILogger logger, ISport_DataService sport_DataService, IXML_DataService xml_DataService)
+        public BalanceTasks(IUsersService usersSvc, ILogger logger, ISport_DataService sport_DataService, IXML_DataService xml_DataService, IDigitalLotteryService digitalLotteryService, ILotteryDetailService lotteryDetailService)
         {
             this._userSvc = usersSvc;
             this._logger = logger;
             _sport_DataService = sport_DataService;
             _xml_DataService = xml_DataService;
+            _digitalLotteryService = digitalLotteryService;
+            _ILotteryDetailService = lotteryDetailService;
         }
         public async Task CQSSC()
         {
@@ -144,10 +148,27 @@ namespace Lottery.GatherApp
             _redisManager.RedisDb(0).Publish("chan1", "123123123");
             _redisManager.RedisDb(0).Subscribe(("chan1", msg => Console.WriteLine(msg.Body)));
         }
-        public void SportData(Object source, ElapsedEventArgs e)
+        public void SportData()
         {
             var manager = new SportData(_sport_DataService);
-            //manager.Start();
+            manager.Start();
+        }
+        public void LotteryData()
+        {
+            var manager = new DigitalLottery(_digitalLotteryService);
+            manager.Start();
+        }
+        public void StartTask()
+        {
+            Task.Factory.StartNew(() =>
+            {
+                while (true)
+                {
+                    SportData();
+                    LotteryData();
+                    Task.Delay(60 * 1000 * 60);
+                }
+            });
         }
         //辽宁快乐12  广东快乐十分  广西快乐10分 重庆时时彩 是网页版
         //gdklsf(广东快乐十分)  bjsyxw(北京11选5)  kl8(北京快乐8)   bjkzhc(北京快中彩)  bjpkshi(北京PK拾) bjk3(北京快3)  tjsyxw(天津11选5)
@@ -164,43 +185,51 @@ namespace Lottery.GatherApp
         {
             int count = 0;
             var manager = new XML(_xml_DataService);
+            var LotteryDetal = new NormalLotteryDetail(_ILotteryDetailService);
             //count = await manager.GetBjdcAsync();
             Console.WriteLine("北京单场采集完毕.新采集了" + count + "条");
-            //count = await manager.GetSfggAsync();
+           // count = await manager.GetSfggAsync();
             Console.WriteLine("北京单场——胜负过关采集完毕.新采集了" + count + "条");
 
-            timer = new System.Timers.Timer(60 * 1000)
-            {
-                Enabled = true//自动执行
-            };//一小时执行一次
-            timer.Elapsed += SportData;
-            timer.AutoReset = true;//自动重置
-            GC.KeepAlive(timer);
+            //timer = new System.Timers.Timer(60 * 1000)
+            //{
+            //    Enabled = true//自动执行
+            //};//一小时执行一次
+            //timer.Elapsed += SportData;
+            //timer.AutoReset = true;//自动重置
+            //GC.KeepAlive(timer);
             while (true)
             {
+                //count = await manager.LoadSDhtml("sd");
+                Console.WriteLine("福彩3D采集完毕.新采集了" + count + "条");
+               // count = await manager.LoadPlsHtml("pls");
+                Console.WriteLine("排列3采集完毕.新采集了" + count + "条");
                 foreach (var item in _xml_DataService.GetHighFrequency())
                 {
-                    if (item.HighFrequency == 1)
+
+                    if (item.HighFrequency != 1 && item.LotteryCode!= "zqdc" && item.LotteryCode != "jczq" && item.LotteryCode != "jclq")
                     {
-                        count = await manager.LoadXml(item.LotteryCode);
-                        Console.WriteLine(item.LotteryName + "采集完毕.新采集了" + count + "条");
-                        Thread.Sleep(new Random().Next(1000, 5000));
+                        count = await LotteryDetal.LoadLotteryDetal(item.LotteryCode);
+                        Console.WriteLine(item.LotteryName + "详情采集完毕.新采集了" + count + "条");
                     }
-                    else
-                    {
-                        count = await manager.LoadQGDFCXml(item.LotteryCode);
-                        Console.WriteLine(item.LotteryName + "采集完毕.新采集了" + count + "条");
-                        Thread.Sleep(new Random().Next(1000, 5000));
-                    }
-                    count = await manager.LoadSDhtml("sd");
-                    Console.WriteLine("福彩3D采集完毕.新采集了" + count + "条");
-                    count = await manager.LoadPlsHtml("pls");
-                    Console.WriteLine("排列3采集完毕.新采集了" + count + "条");
-                    Thread.Sleep(60 * 1000);
 
+                    //if (item.HighFrequency == 1)
+                    //{
+                    //    count = await manager.LoadXml(item.LotteryCode);
+                    //    Console.WriteLine(item.LotteryName + "采集完毕.新采集了" + count + "条");
+                    //    Thread.Sleep(new Random().Next(1000, 5000));
+                    //}
+                    //else
+                    //{
 
-
+                    //    count = await manager.LoadQGDFCXml(item.LotteryCode);
+                    //    Console.WriteLine(item.LotteryName + "采集完毕.新采集了" + count + "条");
+                    //    Thread.Sleep(new Random().Next(1000, 5000));
+                    //}
                 }
+                Thread.Sleep(60 * 1000);
+
+
             }
         }
 

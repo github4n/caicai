@@ -189,7 +189,7 @@ namespace Lottery.GatherApp
                             case 1:
                                 var Date = item2.SelectSingleNode("//span[@class='span_right']").InnerHtml;
                                 string openTime = Date.Split('：')[1].Split('兑')[0];
-                                issue.OpenTime = openTime;
+                                issue.OpenTime = Convert.ToDateTime(openTime).ToString("yyyy-MM-dd"); ;
                                 sys_issue.Add(issue);
                                 break;
                             case 2:
@@ -210,7 +210,14 @@ namespace Lottery.GatherApp
                                             break;
                                         case 2:
                                             issue.OpenCode += "|";
-                                            issue.OpenCode += tdindex[2].SelectSingleNode("div").InnerHtml.Split('：')[1];
+                                            StringBuilder sb = new StringBuilder();
+                                            string str= tdindex[2].SelectSingleNode("div").InnerHtml.Split('：')[1];
+                                            for (int i = 0; i < str.ToString().Replace(" ","").Length; i++)
+                                            {
+                                                sb.Append(str.ToString().Replace(" ", "")[i]).Append(",");
+                                            }
+                                            String value = sb.ToString().Trim(',');
+                                            issue.OpenCode += value;
                                             break;
 
                                     }
@@ -261,7 +268,7 @@ namespace Lottery.GatherApp
                             case 1:
                                 var Date = item2.SelectSingleNode("//span[@class='span_right']").InnerHtml;
                                 string openTime = Date.Split('：')[1].Split('兑')[0];
-                                issue.OpenTime = openTime;
+                                issue.OpenTime = Convert.ToDateTime(openTime).ToString("yyyy-MM-dd");
                                 sys_issue.Add(issue);
                                 break;
                             case 2:
