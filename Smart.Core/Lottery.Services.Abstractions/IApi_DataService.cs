@@ -51,6 +51,38 @@ namespace Lottery.Services.Abstractions
         /// <param name="LotteryCode"></param>
         /// <param name="LotteryTime"></param>
         /// <returns></returns>
-        List<sys_issue> GetLotteryIssuesByCodeAndTime(string LotteryCode, DateTime LotteryTime);
+        List<sys_issue> GetLotteryIssuesByCodeAndTime(string LotteryCode, string LotteryTime);
+
+        /// <summary>
+        /// 获取普通彩票详情（除足球篮球及高频彩外）
+        /// </summary>
+        /// <param name="LotteryCode"></param>
+        /// <param name="IssueNo"></param>
+        /// <returns></returns>
+        NormalDetail_ShowModel GetLotteryDetail(string LotteryCode, string IssueNo);
+
+        /// <summary>
+        /// 根据时间获取竞彩足球详情
+        /// </summary>
+        /// <param name="LotteryDate"></param>
+        /// <returns></returns>
+        List<jczq_result> GetJCZQDetail(string LotteryDate);
+
+        /// <summary>
+        /// 根据时间获取竞彩篮球详情
+        /// </summary>
+        /// <param name="LotteryDate"></param>
+        /// <returns></returns>
+        List<jclq_result> GetJCLQDetail(string LotteryDate);
+
+        /// <summary>
+        /// 根据期号获取北京单场列表
+        /// </summary>
+        /// <param name="IssueNo"></param>
+        /// <returns></returns>
+        List<bjdc_result> GetZQDCDetail(string IssueNo);
+
+
+        List<bjdc_result> GetZQDCSFGGDetail(string IssueNo);
     }
 }

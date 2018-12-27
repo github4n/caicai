@@ -1,5 +1,6 @@
-﻿using EntityModel.Common;
+﻿
 using HtmlAgilityPack;
+using Lottery.GatherApp.Helper;
 using Lottery.Modes.Entity;
 using Lottery.Services.Abstractions;
 using Smart.Core.Repository.SqlSugar;

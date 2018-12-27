@@ -29,11 +29,11 @@ namespace Smart.Core.Repository.SqlSugar
             {
                 Aop =
                  {
-                        OnExecutingChangeSql = onExecutingChangeSqlEvent,
+                    OnExecutingChangeSql = onExecutingChangeSqlEvent,
                         //OnError = onErrorEvent ?? ((Exception ex) => { this._logger.LogError(ex, "ExecuteSql Error"); }),
-                        OnLogExecuted =onExecutedEvent?? ((string sql, SugarParameter[] pars) =>
-                        {
-                            var keyDic = new KeyValuePair<string, SugarParameter[]>(sql, pars);
+                        OnLogExecuted = onExecutedEvent ?? ((string sql, SugarParameter[] pars) =>
+                          {
+                              var keyDic = new KeyValuePair<string, SugarParameter[]>(sql, pars);
                             //this._logger.LogInformation($"ExecuteSql：【{keyDic.ToJson()}】");
                         })
                  }

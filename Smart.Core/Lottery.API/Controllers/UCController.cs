@@ -1,11 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.IO;
+using System.IO.Compression;
+using System.Net;
+using System.Text;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+using System.Xml;
+using System.Xml.Linq;
 using Microsoft.AspNetCore.Mvc;
-using Smart.Core.Utils;
-
 namespace Lottery.API.Controllers
 {
     [Route("uc/[action]")]
@@ -20,8 +21,25 @@ namespace Lottery.API.Controllers
         [HttpGet]
         public async Task<string> Common()
         {
-          
-            return await Task.Run(() => "1111");
+            try
+            {
+                XmlDocument xmlDoc = new XmlDocument();
+                HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create("http://lottery.jdddata.com/uc/common");
+                HttpWebResponse webResponse = (HttpWebResponse)webRequest.GetResponse();
+                using (Stream streamReceive = webResponse.GetResponseStream())
+                {
+                    using (StreamReader sr = new StreamReader(streamReceive, Encoding.UTF8))
+                    {
+                        xmlDoc.Load(sr);
+                    }
+                }
+                webResponse.Close();
+            }
+            catch (Exception ex)
+            { 
+                throw new Exception(ex.Message);
+            }
+            return await Task.Run(() =>"");
         }
 
         /// <summary>

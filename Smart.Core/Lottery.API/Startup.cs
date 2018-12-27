@@ -143,9 +143,10 @@ namespace Lottery.API
             {
                 op.ConnectionString = ConfigFileHelper.Get("Lottery:Data:Database:Connection");
                 op.DbType = DbType.MySql;
-                op.IsAutoCloseConnection = false;
+                op.IsAutoCloseConnection = true;
                 op.InitKeyType = InitKeyType.Attribute;
-                op.IsShardSameThread = true;
+                op.IsShardSameThread = false;
+                //op.MoreSettings = new ConnMoreSettings() { IsAutoRemoveDataCache = true, IsWithNoLockQuery = false };
             });
             services.AddServices();
             services.AddCSRedis(options =>

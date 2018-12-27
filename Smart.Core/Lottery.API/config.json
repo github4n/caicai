@@ -20,5 +20,96 @@
     "RedisHost": "10.0.3.27",
     "RedisPost": 9370,
     "RedisPassword": "a123456"
-  }
+  },
+  "Coomon": [
+    {
+      "key": "热门",
+      "Title": "热门开奖结果",
+      "Item": [
+        {
+          "Lottery": "双色球",
+          "DetailLinkUrl": "",
+          "RemarkLinkUrl": ""
+        },
+        {
+          "Lottery": "大乐透",
+          "DetailLinkUrl": "",
+          "RemarkLinkUrl": ""
+        },
+        {
+          "Lottery": "福彩3D",
+          "DetailLinkUrl": "",
+          "RemarkLinkUrl": ""
+        }
+      ]
+    },
+    {
+      "key": "福彩",
+      "Title": "福彩开奖结果",
+      "Item": [
+        {
+          "Lottery": "双色球",
+          "DetailLinkUrl": "",
+          "RemarkLinkUrl": ""
+        },
+        {
+          "Lottery": "福彩3D",
+          "DetailLinkUrl": "",
+          "RemarkLinkUrl": ""
+        },
+        {
+          "Lottery": "七乐彩",
+          "DetailLinkUrl": "",
+          "RemarkLinkUrl": ""
+        }
+      ]
+    },
+    {
+      "key": "体彩",
+      "Title": "体彩开奖结果",
+      "Item": [
+        {
+          "Lottery": "大乐透",
+          "DetailLinkUrl": "",
+          "RemarkLinkUrl": ""
+        },
+        {
+          "Lottery": "排列三",
+          "DetailLinkUrl": "",
+          "RemarkLinkUrl": ""
+        },
+        {
+          "Lottery": "排列五",
+          "DetailLinkUrl": "",
+          "RemarkLinkUrl": ""
+        }
+      ]
+    },
+    {
+      "key": "快彩",
+      "Title": "快彩开奖结果",
+      "Item": [
+        {
+          "Lottery": "江西快3",
+          "DetailLinkUrl": "",
+          "RemarkLinkUrl": ""
+        },
+        {
+          "Lottery": "山东十一运夺金",
+          "DetailLinkUrl": "",
+          "RemarkLinkUrl": ""
+        },
+        {
+          "Lottery": "广东11选5",
+          "DetailLinkUrl": "",
+          "RemarkLinkUrl": ""
+        }
+      ]
+    },
+    {
+      "key": "足彩",
+      "Title": "足彩开奖结果",
+      "Item": []
+    }
+  ]
 }
