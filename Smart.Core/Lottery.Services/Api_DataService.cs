@@ -176,7 +176,7 @@ namespace Lottery.Services
                 {
                     foreach (var item in lotteryList)
                     {
-                        querysql.Append($@"(SELECT i.IssueNo,i.LotteryCode,i.OpenCode,i.OpenTime,n.PrizePool
+                        querysql.Append($@"(SELECT i.IssueNo,i.LotteryCode,i.OpenCode,i.OpenTime,n.PrizePool,n.CurrentSales
  FROM sys_issue i LEFT JOIN normal_lotterydetail n ON(i.IssueNo = n.IssueNo)
  WHERE i.lotteryCode = '{item.LotteryCode}' ORDER BY i.OpenTime DESC, i.IssueNo DESC LIMIT 0, 1)");
                         querysql.Append("union");
@@ -234,7 +234,7 @@ namespace Lottery.Services
             {
                 return JsonHelper.Deserialize<List<Issue_ShowModel>>(str);
             }
-            var sql = @"SELECT i.IssueNo,i.LotteryCode,i.OpenCode,i.OpenTime,n.PrizePool
+            var sql = @"SELECT i.IssueNo,i.LotteryCode,i.OpenCode,i.OpenTime,n.PrizePool,n.CurrentSales
  FROM sys_issue i LEFT JOIN normal_lotterydetail n ON(i.IssueNo= n.IssueNo) 
 WHERE i.lotteryCode = @LotteryCode ORDER BY i.OpenTime DESC,i.IssueNo DESC LIMIT 0,1";
             var localType = (int)HighFrequencyType.Country;
