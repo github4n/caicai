@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using EntityModel.Model;
 using Lottery.Api.Controllers.CommonFilterActtribute;
+using Lottery.Modes.Entity;
 using Lottery.Services.Abstractions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -16,7 +17,7 @@ namespace Lottery.API.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    [ReusltFilter]
+    //[ReusltFilter]
     public class DataController : ControllerBase
     {
         protected IApi_DataService _api_DataService;
@@ -102,7 +103,7 @@ namespace Lottery.API.Controllers
         /// <summary>
         /// 根据彩种Code获取期号
         /// </summary>
-        /// <param name="Param"></param>
+        /// <param name="entity"></param>
         /// <returns></returns>
         /// 
         [HttpPost]
@@ -126,10 +127,11 @@ namespace Lottery.API.Controllers
                         new LotteryServiceResponse()
                         {
                             Code = ResponseCode.成功,
-                            Value = issuesList.Select(c=>new {
-                                IssueNo=c.IssueNo,
-                                OpenTime=c.OpenTime,
-                                OpenCode=c.OpenCode
+                            Value = issuesList.Select(c => new
+                            {
+                                IssueNo = c.IssueNo,
+                                OpenTime = c.OpenTime,
+                                OpenCode = c.OpenCode
                             }),
                             Message = "获取成功"
                         });
@@ -141,7 +143,7 @@ namespace Lottery.API.Controllers
                         {
                             Code = ResponseCode.失败,
                             Message = "获取失败",
-                             Value=ex.Message
+                            Value = ex.Message
                         });
             }
         }
@@ -239,6 +241,184 @@ namespace Lottery.API.Controllers
             }
         }
 
-        //public IActionResult GetLotteryIssuesByCodeAndTime()
+        /// <summary>
+        /// 根据时间和彩种拿高频彩列表
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public IActionResult GetLotteryIssuesByCodeAndTime([FromForm] LotteryServiceRequest entity)
+        {
+            try
+            {
+                var p = JsonHelper.Decode(entity.Param);
+                string LotteryCode = p.LotteryCode;
+                string LotteryTime = p.LotteryTime;
+                var list = _api_DataService.GetLotteryIssuesByCodeAndTime(LotteryCode, LotteryTime);
+                return Ok(
+                               new LotteryServiceResponse()
+                               {
+                                   Code = ResponseCode.成功,
+                                   Value = list,
+                                   Message = "获取成功"
+                               });
+            }
+            catch (Exception ex)
+            {
+                return Ok(
+                    new LotteryServiceResponse()
+                    {
+                        Code = ResponseCode.失败,
+                        Message = "获取失败",
+                        Value = ex.Message
+                    });
+            }
+        }
+
+
+        /// <summary>
+        /// 获取普通彩票详情（除足球篮球及高频彩外）
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        /// 
+        [HttpPost]
+        public IActionResult GetLotteryDetail([FromForm] LotteryServiceRequest entity)
+        {
+            try
+            {
+                var p = JsonHelper.Decode(entity.Param);
+                string LotteryCode = p.LotteryCode;
+                string IssueNo = p.IssueNo;
+                var list = _api_DataService.GetLotteryDetail(LotteryCode, IssueNo);
+                return Ok(
+                           new LotteryServiceResponse()
+                           {
+                               Code = ResponseCode.成功,
+                               Value = list,
+                               Message = "获取成功"
+                           });
+            }
+            catch (Exception ex)
+            {
+                return Ok(
+                    new LotteryServiceResponse()
+                    {
+                        Code = ResponseCode.失败,
+                        Message = "获取失败",
+                        Value = ex.Message
+                    });
+            }
+        }
+
+        /// <summary>
+        /// 获取竞彩足球详情列表
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        /// 
+        [HttpPost]
+        public IActionResult GetJCZQList([FromForm] LotteryServiceRequest entity)
+        {
+            try
+            {
+                var p = JsonHelper.Decode(entity.Param);
+                string LotteryDate = p.LotteryDate;
+                var list = _api_DataService.GetJCZQDetail(LotteryDate);
+                return Ok(
+                           new LotteryServiceResponse()
+                           {
+                               Code = ResponseCode.成功,
+                               Value = list,
+                               Message = "获取成功"
+                           });
+            }
+            catch (Exception ex)
+            {
+                return Ok(
+                    new LotteryServiceResponse()
+                    {
+                        Code = ResponseCode.失败,
+                        Message = "获取失败",
+                        Value = ex.Message
+                    });
+            }
+        }
+
+
+        /// <summary>
+        /// 获取竞彩足球详情列表
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        /// 
+        [HttpPost]
+        public IActionResult GetJCLQList([FromForm] LotteryServiceRequest entity)
+        {
+            try
+            {
+                var p = JsonHelper.Decode(entity.Param);
+                string LotteryDate = p.LotteryDate;
+                var list = _api_DataService.GetJCLQDetail(LotteryDate);
+                return Ok(
+                           new LotteryServiceResponse()
+                           {
+                               Code = ResponseCode.成功,
+                               Value = list,
+                               Message = "获取成功"
+                           });
+            }
+            catch (Exception ex)
+            {
+                return Ok(
+                    new LotteryServiceResponse()
+                    {
+                        Code = ResponseCode.失败,
+                        Message = "获取失败",
+                        Value = ex.Message
+                    });
+            }
+        }
+        /// <summary>
+        /// 足球单场列表
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        /// 
+        [HttpPost]
+        public IActionResult GetZQDCDetail([FromForm] LotteryServiceRequest entity)
+        {
+            try
+            {
+                var p = JsonHelper.Decode(entity.Param);
+                string ZQDCType = p.ZQDCType;
+                string IssueNo = p.IssueNo;
+                var result = new List<bjdc_result>();
+                if (ZQDCType == "0")
+                {
+                    result = _api_DataService.GetZQDCDetail(IssueNo);
+                }
+                else
+                {
+                    result = _api_DataService.GetZQDCSFGGDetail(IssueNo);
+                }
+                return Ok(
+                           new LotteryServiceResponse()
+                           {
+                               Code = ResponseCode.成功,
+                               Value = result,
+                               Message = "获取成功"
+                           });
+            }
+            catch (Exception ex)
+            {
+                return Ok(
+                    new LotteryServiceResponse()
+                    {
+                        Code = ResponseCode.失败,
+                        Message = "获取失败",
+                        Value = ex.Message
+                    });
+            }
+        }
     }
 }
