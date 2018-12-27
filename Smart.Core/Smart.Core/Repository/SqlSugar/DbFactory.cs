@@ -25,19 +25,19 @@ namespace Smart.Core.Repository.SqlSugar
         public SqlSugarClient GetDbContext(Func<string, SugarParameter[], KeyValuePair<string, SugarParameter[]>> onExecutingChangeSqlEvent) => GetDbContext(null, onExecutingChangeSqlEvent);
         public SqlSugarClient GetDbContext(Action<string, SugarParameter[]> onExecutedEvent = null, Func<string, SugarParameter[], KeyValuePair<string, SugarParameter[]>> onExecutingChangeSqlEvent = null, Action<Exception> onErrorEvent = null)
         {
-            SqlSugarClient db = new SqlSugarClient(_config);
-            //{
-            //    Aop =
-            //     {
-            //            OnExecutingChangeSql = onExecutingChangeSqlEvent,
-            //            //OnError = onErrorEvent ?? ((Exception ex) => { this._logger.LogError(ex, "ExecuteSql Error"); }),
-            //            OnLogExecuted =onExecutedEvent?? ((string sql, SugarParameter[] pars) =>
-            //            {
-            //                var keyDic = new KeyValuePair<string, SugarParameter[]>(sql, pars);
-            //                //this._logger.LogInformation($"ExecuteSql：【{keyDic.ToJson()}】");
-            //            })
-            //     }
-            //};
+            SqlSugarClient db = new SqlSugarClient(_config)
+            {
+                Aop =
+                 {
+                    OnExecutingChangeSql = onExecutingChangeSqlEvent,
+                        //OnError = onErrorEvent ?? ((Exception ex) => { this._logger.LogError(ex, "ExecuteSql Error"); }),
+                        OnLogExecuted = onExecutedEvent ?? ((string sql, SugarParameter[] pars) =>
+                          {
+                              var keyDic = new KeyValuePair<string, SugarParameter[]>(sql, pars);
+                            //this._logger.LogInformation($"ExecuteSql：【{keyDic.ToJson()}】");
+                        })
+                 }
+            };
             return db;
         }
     }
