@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using EntityModel.Common;
 using EntityModel.Model;
 using HtmlAgilityPack;
 using Lottery.Services;
 using Lottery.Services.Abstractions;
 using Lottery.Modes.Entity;
 using System.Threading;
+using Lottery.GatherApp.Helper;
 
 namespace Lottery.GatherApp
 {
