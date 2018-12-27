@@ -13,44 +13,49 @@ namespace Lottery.Services
 {
     public class LotteryDetailService : Repository<DbFactory>, ILotteryDetailService
     {
-        protected SqlSugarClient db = null;
+        //protected SqlSugarClient db = null;
+        protected DbFactory BaseFactory;
         public LotteryDetailService(DbFactory factory) : base(factory)
         {
-            db = factory.GetDbContext();
+            BaseFactory = factory;
+            //db = factory.GetDbContext();
         }
 
         public async Task<int> AddLotteryDetal(List<lotterydetail> lotterydetails,string gameCode)
         {
-            int count = 0;
-            int insertCount = 0;
-            var LotteryCode = db.Queryable<sys_lottery>().Where(x => x.LotteryCode == gameCode).First();
-            normal_lotterydetail nld = GetNowIssuNo(gameCode);
-            foreach (var item in lotterydetails)
+            using (var db = BaseFactory.GetDbContext())
             {
-                if (nld != null)
+                int count = 0;
+                int insertCount = 0;
+                var LotteryCode = db.Queryable<sys_lottery>().Where(x => x.LotteryCode == gameCode).First();
+                normal_lotterydetail nld = GetNowIssuNo(gameCode);
+                foreach (var item in lotterydetails)
                 {
-                    if (nld.IssueNo == item.expect)
+                    if (nld != null)
                     {
-                        break;
+                        if (nld.IssueNo == item.expect)
+                        {
+                            break;
+                        }
                     }
-                }
-                normal_lotterydetail lotterydetail = new normal_lotterydetail();
-                lotterydetail.IssueNo = item.expect;
-                lotterydetail.LotteryId = LotteryCode.Lottery_Id;
-                lotterydetail.LotteryCode = LotteryCode.LotteryCode;
-                lotterydetail.OpenTime = item.openTime;
-                lotterydetail.AwardDeadlineTime = item.endTime;
-                lotterydetail.LotteryDataDetail = item.teams==null?(item.NumberType!=null?item.openCode+"|"+item.NumberType: item.openCode): JsonConvert.SerializeObject(item.teams);
-                lotterydetail.CurrentSales = item.SalesVolume;
-                lotterydetail.PrizePool = item.PoolRolling;
-                lotterydetail.Sys_IssueId = item.Sys_IssueId;
-                lotterydetail.LotteryResultDetail= gameCode!= "ttcx4"?JsonConvert.SerializeObject(item.openLotteryDetails): JsonConvert.SerializeObject(item.ttcx4Details);
-                lotterydetail.CreateTime = DateTime.Now;
+                    normal_lotterydetail lotterydetail = new normal_lotterydetail();
+                    lotterydetail.IssueNo = item.expect;
+                    lotterydetail.LotteryId = LotteryCode.Lottery_Id;
+                    lotterydetail.LotteryCode = LotteryCode.LotteryCode;
+                    lotterydetail.OpenTime = item.openTime;
+                    lotterydetail.AwardDeadlineTime = item.endTime;
+                    lotterydetail.LotteryDataDetail = item.teams.Count == 0 ? (item.NumberType != null ? item.openCode + "|" + item.NumberType : item.openCode) : JsonConvert.SerializeObject(item.teams);
+                    lotterydetail.CurrentSales = item.SalesVolume;
+                    lotterydetail.PrizePool = item.PoolRolling;
+                    lotterydetail.Sys_IssueId = item.Sys_IssueId;
+                    lotterydetail.LotteryResultDetail = item.dltLists.Count == 0?gameCode != "ttcx4" ? JsonConvert.SerializeObject(item.openLotteryDetails) : JsonConvert.SerializeObject(item.ttcx4Details): JsonConvert.SerializeObject(item.dltLists);
+                    lotterydetail.CreateTime = DateTime.Now;
 
-                count = db.Insertable(lotterydetail).ExecuteCommand();
-                insertCount += count;
+                    count = db.Insertable(lotterydetail).ExecuteCommand();
+                    insertCount += count;
+                }
+                return await Task.FromResult(insertCount);
             }
-            return await Task.FromResult(insertCount);
         }
 
         /// <summary>
@@ -59,16 +64,18 @@ namespace Lottery.Services
         /// <returns></returns>
         public List<sys_issue> GetLotteryCodeList(string LotteryCode)
         {
-            List<sys_issue> issue = db.Queryable<sys_issue>().Where(n => n.LotteryCode == LotteryCode).OrderBy(n => n.OpenTime, OrderByType.Desc).ToList();
-            if (issue == null)
+            using (var db = BaseFactory.GetDbContext())
             {
-                return null;
+                List<sys_issue> issue = db.Queryable<sys_issue>().Where(n => n.LotteryCode == LotteryCode).OrderBy(n => n.OpenTime, OrderByType.Desc).ToList();
+                if (issue == null)
+                {
+                    return null;
+                }
+                else
+                {
+                    return issue;
+                }
             }
-            else
-            {
-                return issue;
-            }
-
         }
 
         /// <summary>
@@ -77,20 +84,25 @@ namespace Lottery.Services
         /// <returns></returns>
         public normal_lotterydetail GetNowIssuNo(string LotteryCode)
         {
-            normal_lotterydetail issue = db.Queryable<normal_lotterydetail>().Where(n => n.LotteryCode == LotteryCode).OrderBy(n => n.OpenTime, OrderByType.Desc).Take(1).First();
-            if (issue == null)
+            using (var db = BaseFactory.GetDbContext())
             {
-                return null;
+                normal_lotterydetail issue = db.Queryable<normal_lotterydetail>().Where(n => n.LotteryCode == LotteryCode).OrderBy(n => n.OpenTime, OrderByType.Desc).Take(1).First();
+                if (issue == null)
+                {
+                    return null;
+                }
+                else
+                {
+                    return issue;
+                }
             }
-            else
-            {
-                return issue;
-            }
-
         }
         public sys_issue GetIssue(string IssueNo)
         {
-            return db.Queryable<sys_issue>().Where(x => x.IssueNo == IssueNo).First();
+            using (var db = BaseFactory.GetDbContext())
+            {
+                return db.Queryable<sys_issue>().Where(x => x.IssueNo == IssueNo).First();
+            }
         }
     
     }

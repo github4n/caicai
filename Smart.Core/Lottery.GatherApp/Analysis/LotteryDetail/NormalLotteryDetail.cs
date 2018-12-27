@@ -75,7 +75,7 @@ namespace Lottery.GatherApp.Analysis.LotteryDetail
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.Message);
+                    Console.WriteLine(gameCode+"彩种"+ex.Message);
                     continue;
                 }
                 Console.WriteLine(index);
@@ -111,7 +111,12 @@ namespace Lottery.GatherApp.Analysis.LotteryDetail
                             teams.openTeam = item.SelectNodes("td")[i].InnerHtml.Replace("&nbsp;", "");
                             lotterydetail.teams.Add(teams);
 
-                        }
+                            if (gameCode == "zc6")
+                            {
+                                lotterydetail.teams.Add(teams);
+                            }
+
+                            }
                         break;
 
                     case 3:
@@ -123,9 +128,10 @@ namespace Lottery.GatherApp.Analysis.LotteryDetail
                                 for (int i = 0; i < item.SelectNodes("td").Count; i++)
                                 {
                                     lotterydetail.teams[i].halfull = item.SelectNodes("td")[i].InnerHtml;
+                                   
                                 }
                                 TF = false;
-                                k--;
+                                continue;
                             }
                         }
 
@@ -172,7 +178,7 @@ namespace Lottery.GatherApp.Analysis.LotteryDetail
                         lotterydetails.Add(lotterydetail);
                         break;
                     case 2:
-                        if (gameCode == "dlt")
+                        if (gameCode == "dlt" || gameCode == "eexw" || gameCode == "ssq" || gameCode == "qlc")
                         {
                             int j = 1;
                             foreach (var itemTr in item2.SelectSingleNode("td").SelectSingleNode("table").SelectNodes("tr"))
@@ -186,7 +192,7 @@ namespace Lottery.GatherApp.Analysis.LotteryDetail
                                             lotterydetail.openCode += item3.InnerHtml + ",";
 
                                         }
-                                        lotterydetail.openCode.Trim(',');
+                                        lotterydetail.openCode=lotterydetail.openCode.Trim(',');
                                         break;
                                     case 2:
                                         lotterydetail.openCode += "|"+ itemTr.SelectNodes("td")[1].InnerHtml;
@@ -233,6 +239,10 @@ namespace Lottery.GatherApp.Analysis.LotteryDetail
                             {
                                 lotterydetail.PoolRolling = item2.SelectSingleNode("td").SelectNodes("span")[2].InnerHtml;
                             }
+                            else if (gameCode == "plw")
+                            {
+                                lotterydetail.PoolRolling = item2.SelectSingleNode("td").SelectNodes("span")[1].SelectSingleNode("//span[@class='cfont1']").InnerHtml;
+                            }
                             else
                             {
                                 lotterydetail.PoolRolling = item2.SelectSingleNode("td").SelectNodes("span")[1].InnerHtml;
@@ -263,7 +273,7 @@ namespace Lottery.GatherApp.Analysis.LotteryDetail
                     minLnode = 1;
                     lnode = 3;
                 }
-               else if (gameCode == "pls" || gameCode == "sfc" || gameCode == "jq4" || gameCode == "zc6")
+               else if (gameCode == "pls" || gameCode == "sfc" || gameCode == "jq4" || gameCode == "zc6" || gameCode == "qxc" || gameCode == "plw" || gameCode == "qlc" || gameCode == "ssq")
                 {
                     minLnode = 2;
                     lnode = SecondTable_trnode.Count();
