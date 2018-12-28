@@ -57,7 +57,14 @@ namespace Lottery.API.Controllers
                                 {
                                     if (Sub_subItem.Name == "link")
                                     {
-                                        Sub_subItem.SetAttribute("linkurl", Common.Item.Where(x => x.Lottery == Lottery).FirstOrDefault().DetailLinkUrl);
+                                        if (Sub_subItem.Attributes["linkcontent"].InnerText == "开奖详情")
+                                        {
+                                            Sub_subItem.SetAttribute("linkurl", Common.Item.Where(x => x.Lottery == Lottery).FirstOrDefault().DetailLinkUrl);
+                                        }
+                                        else if (Sub_subItem.Attributes["linkcontent"].InnerText == "玩法说明")
+                                        {
+                                            Sub_subItem.SetAttribute("linkurl", Common.Item.Where(x => x.Lottery == Lottery).FirstOrDefault().RemarkLinkUrl);
+                                        }
                                     }
                                 }
                             }
@@ -65,7 +72,7 @@ namespace Lottery.API.Controllers
                     }
                     MemoryStream ms = new MemoryStream();
                     serializer.Serialize(ms, xmlDoc);
-                    RedisManager.DB_Other.Set("UC_Common", ms.ToArray(),60*3);
+                    RedisManager.DB_Other.Set("UC_Common", ms.ToArray(), 60 * 3);
                 }
                 else
                 {
@@ -119,18 +126,17 @@ namespace Lottery.API.Controllers
                                   ((XmlElement)Sub_element.LastChild).InnerText = remark.url;
                             }
                             if (Sub_element.Name == "foot_group")
-                            {
+                           {
                                 foreach (XmlElement Sub_foot_group in Sub_element.ChildNodes)
                                 {
-                                    //if (Sub_foot_group.Attributes["name"].InnerText == "开奖详情")
-                                    //{
-                                    Sub_foot_group.SetAttribute("url", Common.foot_group.Where(x => x.remark == Sub_foot_group.Attributes["name"].InnerText).FirstOrDefault().url);
-                                    //}
-                                    //else if (Sub_foot_group.Attributes["name"].InnerText == "玩法说明")
-                                    //{
-                                    //Sub_foot_group.SetAttribute("url", Common.foot_group.Where(x => x.remark == Sub_foot_group.Attributes["name"].InnerText).FirstOrDefault().url);
-                                    //}
-
+                                    if (Sub_foot_group.Attributes["name"].InnerText == "开奖详情")
+                                    {
+                                        Sub_foot_group.SetAttribute("url", Common.foot_group.Where(x => x.remark == Sub_foot_group.Attributes["name"].InnerText).FirstOrDefault().url);
+                                    }
+                                    else if (Sub_foot_group.Attributes["name"].InnerText == "玩法说明")
+                                    {
+                                        Sub_foot_group.SetAttribute("url", Common.foot_group.Where(x => x.remark == Sub_foot_group.Attributes["name"].InnerText).FirstOrDefault().url);
+                                    }
                                 }
                             }
                         }
@@ -261,23 +267,29 @@ namespace Lottery.API.Controllers
                         }
                         foreach (XmlElement Sub_element in element.LastChild)
                         {
-                            switch (Sub_element.Name)
+                            if (Sub_element.Name == "url")
                             {
-                                case "url":
-                                    Sub_element.InnerText = Common.url; break;
-                                case "links":
-                                    foreach (XmlElement Sub_Sub_element in Sub_element.ChildNodes)
+                                Sub_element.InnerText = Common.url;
+                            }
+                            else if (Sub_element.Name == "links")
+                            {
+                                foreach (XmlElement Sub_item in Sub_element.ChildNodes)
+                                {
+                                    if (Sub_item.FirstChild.InnerText == "更多赛果")
                                     {
-
-                                        Sub_Sub_element.LastChild.InnerText = Common.links.Where(x => x.key == Sub_Sub_element.FirstChild.InnerText).FirstOrDefault().value;
+                                        Sub_item.LastChild.InnerText = Common.links.Where(x => x.key == Sub_item.FirstChild.InnerText).FirstOrDefault().title_url;
                                     }
-                                    ; break;
+                                    else 
+                                    {
+                                        Sub_item.LastChild.InnerText = Common.links.Where(x => x.key == Sub_item.FirstChild.InnerText).FirstOrDefault().title_url;
+                                    }
+                                }
                             }
                         }
                     }
-                    MemoryStream ms = new MemoryStream();
-                    serializer.Serialize(ms, xmlDoc);
-                    RedisManager.DB_Other.Set("UC_jingcai", ms.ToArray(), 60 * 3);
+                    //MemoryStream ms = new MemoryStream();
+                    //serializer.Serialize(ms, xmlDoc);
+                    //RedisManager.DB_Other.Set("UC_jingcai", ms.ToArray(), 60 * 3);
                 }
                 else
                 {

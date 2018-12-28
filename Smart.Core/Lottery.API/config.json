@@ -28,18 +28,18 @@
       "Item": [
         {
           "Lottery": "双色球",
-          "DetailLinkUrl": "www.baidu.com",
-          "RemarkLinkUrl": "www.QQ.com"
+          "DetailLinkUrl": "1",
+          "RemarkLinkUrl": "2"
         },
         {
           "Lottery": "大乐透",
-          "DetailLinkUrl": "www.baidu.com",
-          "RemarkLinkUrl": "www.QQ.com"
+          "DetailLinkUrl": "1",
+          "RemarkLinkUrl": "2"
         },
         {
           "Lottery": "福彩3D",
-          "DetailLinkUrl": "www.baidu.com",
-          "RemarkLinkUrl": "www.QQ.com"
+          "DetailLinkUrl": "1",
+          "RemarkLinkUrl": "2"
         }
       ]
     },
@@ -1247,11 +1247,11 @@
       "morelink": "www.weixin.com", //更多开奖详情
       "foot_group": [
         {
-          "url": "www.163.com",
+          "url": "1",
           "remark": "开奖详情"
         },
         {
-          "url": "www.163.com",
+          "url": "2",
           "remark": "玩法说明"
         }
       ]
@@ -1996,7 +1996,7 @@
   "JingCai": [
     {
       "key": "竞彩足球",
-      "url": "www.163.com",
+      "url": "1",
       "links": [
         {
           "key": "更多赛果",
@@ -2004,13 +2004,13 @@
         },
         {
           "key": "玩法说明",
-          "title_url": "www.9755.com"
+          "title_url": "www..com"
         }
       ]
     },
     {
       "key": "竞彩篮球",
-      "url": "www.163.com",
+      "url": "2",
       "links": [
         {
           "key": "更多赛果",
@@ -2018,13 +2018,13 @@
         },
         {
           "key": "玩法说明",
-          "title_url": "www.9755.com"
+          "title_url": "www..com"
         }
       ]
     },
     {
       "key": "足球单场",
-      "url": "www.163.com",
+      "url": "3",
       "links": [
         {
           "key": "更多赛果",
@@ -2032,7 +2032,7 @@
         },
         {
           "key": "玩法说明",
-          "title_url": "www.9755.com"
+          "title_url": "www..com"
         }
       ]
     }

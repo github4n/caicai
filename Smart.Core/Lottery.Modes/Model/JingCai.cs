@@ -13,6 +13,6 @@ namespace Lottery.Modes.Model
     public class links
     {
         public string key { get; set; }
-        public string value { get; set; }
+        public string title_url { get; set; }
     }
 }
