@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Result\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
@@ -38,6 +39,6 @@
     <ProjectReference Include="..\Smart.Core\Smart.Core.csproj" />
   </ItemGroup>
 
-  <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JSONSchema="" /></VisualStudio></ProjectExtensions>
+  <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JSONSchema="" config_1json__JSONSchema="http://json.schemastore.org/bootstraprc" /></VisualStudio></ProjectExtensions>
 
 </Project>
