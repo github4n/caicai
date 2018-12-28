@@ -287,9 +287,9 @@ namespace Lottery.API.Controllers
                             }
                         }
                     }
-                    //MemoryStream ms = new MemoryStream();
-                    //serializer.Serialize(ms, xmlDoc);
-                    //RedisManager.DB_Other.Set("UC_jingcai", ms.ToArray(), 60 * 3);
+                    MemoryStream ms = new MemoryStream();
+                    serializer.Serialize(ms, xmlDoc);
+                    RedisManager.DB_Other.Set("UC_jingcai", ms.ToArray(), 60 * 3);
                 }
                 else
                 {
