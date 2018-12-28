@@ -219,7 +219,7 @@ namespace Lottery.GatherApp
                         continue;
                     }
                     //获取平均欧赔
-                    var trNodess = CommonHelper.LoadGziphtml("http://zx.500.com/jczq/kaijiang.php?playid=1&d=" + olddate.AddDays(h).ToString("yyyy-MM-dd")).DocumentNode.SelectSingleNode("//table[@class='ld_table']");
+                    var trNodess = CommonHelper.LoadGziphtml("http://zx.500.com/jczq/kaijiang.php?playid=4&d=" + olddate.AddDays(h).ToString("yyyy-MM-dd")).DocumentNode.SelectSingleNode("//table[@class='ld_table']");
                     if (trNodess == null)
                     {
                         Console.WriteLine($"奖期{olddate.AddDays(h).ToString("yyyy-MM-dd")}竞猜足球获取平均欧赔失败");
@@ -252,6 +252,7 @@ namespace Lottery.GatherApp
                                     jczq.TournamentNumber = strText;
                                     break;
                                 case 2:
+                                    jczq.League_Color = item2.SelectSingleNode("a").Attributes["style"].Value.Replace("background-color:", "");
                                     jczq.TournamentType = strText;
                                     break;
                                 case 3:
@@ -270,6 +271,8 @@ namespace Lottery.GatherApp
                                     jczq.Score = strText;
                                     break;
                                 case 8:
+                                    GameTypes.Clear();
+                                    game = new GameType();
                                     game.game = Game.让球胜平负;
                                     game.FruitColor = strText;
 
@@ -304,7 +307,6 @@ namespace Lottery.GatherApp
                                 case 15:
                                     game.Bonus = strText;
                                     GameTypes.Add(game);
-                                    jczq.gameTypes.AddRange(GameTypes);
                                     break;
                             }
                             tdIndex = tdIndex + 1;
@@ -319,6 +321,20 @@ namespace Lottery.GatherApp
                             }
                             for (int i = 0; i < item3.SelectNodes("td").Count(); i++)
                             {
+                                if (i == 7)
+                                {
+                                    game = new GameType();
+                                    game.game = Game.比分;
+                                    game.FruitColor = item3.SelectNodes("td")[i].InnerHtml;
+                                }
+                                if (i == 9)
+                                {
+                                    game.Bonus = item3.SelectNodes("td")[i].InnerHtml;
+                                    GameTypes.Add(game);
+                                    jczq.gameTypes.AddRange(GameTypes);
+                                  
+                                }
+
                                 if (i > 10 && i < 14)
                                 {
                                     jczq.AvgOuCompensation += item3.SelectNodes("td")[i].InnerHtml + ",";
@@ -333,6 +349,7 @@ namespace Lottery.GatherApp
                         }
                         jczq.AvgOuCompensation = jczq.AvgOuCompensation.Substring(0, jczq.AvgOuCompensation.Length - 1);
                         jczqs.Add(jczq);
+                        
                     }
                     _SportService.Add_JCZQ(jczqs);
                 }

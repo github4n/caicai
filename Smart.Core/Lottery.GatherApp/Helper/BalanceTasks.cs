@@ -213,7 +213,7 @@ namespace Lottery.GatherApp
                         Console.WriteLine(item.LotteryName + "采集完毕.新采集了" + count + "条");
                         Thread.Sleep(new Random().Next(1000, 5000));
                     }
-                    else
+                    else if (item.HighFrequency != 1 && item.LotteryCode != "zqdc" && item.LotteryCode != "sd" && item.LotteryCode != "pls" && item.LotteryCode != "jczq" && item.LotteryCode != "jclq" && item.LotteryCode != "zqdcsfgg")
                     {
 
                         count = await manager.LoadQGDFCXml(item.LotteryCode);
