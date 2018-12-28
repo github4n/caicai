@@ -18,7 +18,7 @@ namespace Lottery.API.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    [ReusltFilter]
+    //[ReusltFilter]
     public class DataController : ControllerBase
     {
         protected IApi_DataService _api_DataService;

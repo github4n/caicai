@@ -84,5 +84,9 @@ namespace Lottery.Services.Abstractions
 
 
         List<bjdc_result> GetZQDCSFGGDetail(string IssueNo);
+
+        void AddRedisHighLottery();
+        void AddRedisLocalLottery();
+        void AddRedisCountryLottery();
     }
 }
