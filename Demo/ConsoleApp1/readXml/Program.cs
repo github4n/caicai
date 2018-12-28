@@ -18,43 +18,106 @@ namespace readXml
     {
         static void Main(string[] args)
         {
+            //普通模式
+            var csredis = new CSRedis.CSRedisClient("127.0.0.1:6379,defaultDatabase=1,poolsize=50,ssl=false,writeBuffer=10240");
+            //初始化 RedisHelper
+            RedisHelper.Initialization(csredis);
+            //Install-Package Caching.CSRedis (本篇不需要) 
+            //注册mvc分布式缓存
+            //services.AddSingleton<IDistributedCache>(new Microsoft.Extensions.Caching.Redis.CSRedisCache(RedisHelper.Instance));
+            Test();
+            Console.ReadKey();
+        }
+
+        static void Test()
+        {
+
+            RedisHelper.Set("name", "祝雷");//设置值。默认永不过期
+            //RedisHelper.SetAsync("name", "祝雷");//异步操作
+            Console.WriteLine(RedisHelper.Get<String>("name"));
+
+            RedisHelper.Set("time", DateTime.Now, 1);
+            Console.WriteLine(RedisHelper.Get<DateTime>("time"));
+            Thread.Sleep(1100);
+            Console.WriteLine(RedisHelper.Get<DateTime>("time"));
+
+            // 列表
+            RedisHelper.RPush("list", "第一个元素");
+            RedisHelper.RPush("list", "第二个元素");
+            RedisHelper.LInsertBefore("list", "第二个元素", "我是新插入的第二个元素！");
+            Console.WriteLine($"list的长度为{RedisHelper.LLen("list")}");
+            //Console.WriteLine($"list的长度为{RedisHelper.LLenAsync("list")}");//异步
+            Console.WriteLine($"list的第二个元素为{RedisHelper.LIndex("list", 1)}");
+            //Console.WriteLine($"list的第二个元素为{RedisHelper.LIndexAsync("list",1)}");//异步
+            // 哈希
+            RedisHelper.HSet("person", "name", "zhulei");
+            RedisHelper.HSet("person", "sex", "男");
+            RedisHelper.HSet("person", "age", "28");
+            RedisHelper.HSet("person", "adress", "hefei");
+            Console.WriteLine($"person这个哈希中的age为{RedisHelper.HGet<int>("person", "age")}");
+            //Console.WriteLine($"person这个哈希中的age为{RedisHelper.HGetAsync<int>("person", "age")}");//异步
 
 
-            Task taskTest = Task.Factory.StartNew(() =>
-            {
-                for (int i = 0; i < 100; i++)
-                {
-                    Console.WriteLine("第一种" + i);
-                }
-               
-            }, TaskCreationOptions.None);
-            taskTest.Wait();
-            Task taskTwo = Task.Factory.StartNew(() =>
-            {
-                for (int i = 0; i < 100; i++)
-                {
-                    Console.WriteLine("第二种" + i);
-                }
+            // 集合
+            RedisHelper.SAdd("students", "zhangsan", "lisi");
+            RedisHelper.SAdd("students", "wangwu");
+            RedisHelper.SAdd("students", "zhaoliu");
+            Console.WriteLine($"students这个集合的大小为{RedisHelper.SCard("students")}");
+            Console.WriteLine($"students这个集合是否包含wagnwu:{RedisHelper.SIsMember("students", "wangwu")}");
 
-            }, TaskCreationOptions.None);
-            taskTwo.Wait();
-            Task taskTwo2 = Task.Factory.StartNew(() =>
-            {
-                for (int i = 0; i < 100; i++)
-                {
-                    Console.WriteLine("第三种" + i);
-                }
-            }, TaskCreationOptions.None);
-          
-            taskTwo2.Wait();
-          
 
-            // Console.WriteLine("123");
-            //ThreadPool.QueueUserWorkItem(StartCode, taskTest);
-            //    ThreadPool.QueueUserWorkItem(StartCode, taskTwo);
-            //Task.ContinueWith(taskTest, taskTwo, taskTwo2);
+            //普通订阅
+            RedisHelper.Subscribe(
+              ("chan1", msg => Console.WriteLine(msg.Body)),
+              ("chan2", msg => Console.WriteLine(msg.Body)));
 
-            Console.WriteLine("等待taskTest和taskTwo执行后再执行");
+            //模式订阅（通配符）
+            RedisHelper.PSubscribe(new[] { "test*", "*test001", "test*002" }, msg => {
+                Console.WriteLine($"PSUB   {msg.MessageId}:{msg.Body}    {msg.Pattern}: chan:{msg.Channel}");
+            });
+            //模式订阅已经解决的难题：
+            //1、分区的节点匹配规则，导致通配符最大可能匹配全部节点，所以全部节点都要订阅
+            //2、本组 "test*", "*test001", "test*002" 订阅全部节点时，需要解决同一条消息不可执行多次
+
+            //发布
+            
+            Console.WriteLine(RedisHelper.Publish("chan1", "129993123123"));
+
+           //Task taskTest = Task.Factory.StartNew(() =>
+           //{
+           //    for (int i = 0; i < 100; i++)
+           //    {
+           //        Console.WriteLine("第一种" + i);
+           //    }
+
+           //}, TaskCreationOptions.None);
+           //taskTest.Wait();
+           //Task taskTwo = Task.Factory.StartNew(() =>
+           //{
+           //    for (int i = 0; i < 100; i++)
+           //    {
+           //        Console.WriteLine("第二种" + i);
+           //    }
+
+           //}, TaskCreationOptions.None);
+           //taskTwo.Wait();
+           //Task taskTwo2 = Task.Factory.StartNew(() =>
+           //{
+           //    for (int i = 0; i < 100; i++)
+           //    {
+           //        Console.WriteLine("第三种" + i);
+           //    }
+           //}, TaskCreationOptions.None);
+
+           //taskTwo2.Wait();
+
+
+           // Console.WriteLine("123");
+           //ThreadPool.QueueUserWorkItem(StartCode, taskTest);
+           //    ThreadPool.QueueUserWorkItem(StartCode, taskTwo);
+           //Task.ContinueWith(taskTest, taskTwo, taskTwo2);
+
+           Console.WriteLine("等待taskTest和taskTwo执行后再执行");
 
 
           //  Task parent = new Task(() =>
