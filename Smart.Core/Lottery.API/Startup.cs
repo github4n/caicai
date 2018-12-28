@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Lottery.API.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -34,6 +35,8 @@ namespace Lottery.API
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            //var t1 = new Task(() => new AutoTask().AutoAddToRedis_LotteryList());
+            //t1.Start();
         }
         /// <summary>
         /// Configuration 属性
@@ -182,6 +185,8 @@ namespace Lottery.API
                    PolicyKey = "throttle"
                });
             });
+            var t1 = new Task(() => new AutoTask().AutoAddToRedis_LotteryList());
+            t1.Start();
         }
 
         /// <summary>

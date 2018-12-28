@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Lottery.API.Tasks;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -18,11 +19,13 @@ namespace Lottery.API
                         .UseKestrel()
                         .UseContentRoot(Directory.GetCurrentDirectory())
                         .UseStartup<Startup>()
-                        .UseUrls("http://*:31777")
+                        .UseUrls("http://*:31778")
                         .Build();
 
-
             host.Run();
+            
+
+            //执行定时任务
 
             //CreateWebHostBuilder(args).Build().Run();
         }

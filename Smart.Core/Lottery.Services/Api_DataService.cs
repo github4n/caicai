@@ -74,77 +74,17 @@ namespace Lottery.Services
                 //           join sys_lottery l on (i.LotteryCode = l.LotteryCode)  where l.HighFrequency = 1
                 //ORDER BY i.OpenTime DESC limit 0,100000000)  t
                 //GROUP BY t.LotteryCode ORDER BY OpenTime DESC
-                var highType = (int)HighFrequencyType.High;
                 var key = "KJ_GetHighLotteryIssues";
                 var str = RedisManager.DB_Other.Get(key);
                 if (!string.IsNullOrEmpty(str))
                 {
                     return JsonHelper.Deserialize<List<Issue_ShowModel>>(str);
                 }
-                using (var db = basFactory.GetDbContext())
-                {
-                    var lotteryList = db.Queryable<sys_lottery>().Where(p => p.IsShow == true && p.HighFrequency == highType).ToList();
-                    //db.Close();
-                    var result = new List<Issue_ShowModel>();
-                    StringBuilder querysql = new StringBuilder();
-                    if (lotteryList.Count > 0)
-                    {
-                        foreach (var item in lotteryList)
-                        {
-                            querysql.Append($"(select * from sys_issue where LotteryCode = '{item.LotteryCode}' order by openTime desc, IssueNo desc limit 0, 1)");
-                            querysql.Append("union");
-                            //var model= db.Queryable<sys_issue>().Where(p => p.LotteryCode == item.LotteryCode).OrderBy(p => p.OpenTime, OrderByType.Desc).OrderBy(p => p.IssueNo, OrderByType.Desc).First();
-                            //if (model != null)
-                            //{
-                            //    result.Add(new Issue_ShowModel()
-                            //    {
-                            //        IssueNo = model.IssueNo,
-                            //        LotteryCode = model.LotteryCode,
-                            //        LotteryDay = item.LotteryDay,
-                            //        LotteryId = item.Lottery_Id,
-                            //        NumberPeriods = item.NumberPeriods,
-                            //        OpenCode = model.OpenCode.Trim('|'),
-                            //        OpenTime = model.OpenTime.FormatDate(),
-                            //        RegionName = item.RegionName,
-                            //        LotteryName = item.LotteryName
-                            //    });
-                            //}
-                            //db.Close();
-                        }
-                        var sql = querysql.ToString();
-                        sql = sql.Substring(0, sql.Length - 5);
-                        var list = db.SqlQueryable<sys_issue>(sql).ToList();
-                        foreach (var item in lotteryList)
-                        {
-                            var model = list.FirstOrDefault(p => p.LotteryCode == item.LotteryCode);
-                            if (model != null)
-                            {
-                                result.Add(new Issue_ShowModel()
-                                {
-                                    IssueNo = model.IssueNo,
-                                    LotteryCode = model.LotteryCode,
-                                    LotteryDay = item.LotteryDay,
-                                    LotteryId = item.Lottery_Id,
-                                    NumberPeriods = item.NumberPeriods,
-                                    OpenCode = model.OpenCode.Trim('|'),
-                                    OpenTime = model.OpenTime.FormatDate(),
-                                    RegionName = item.RegionName,
-                                    LotteryName = item.LotteryName
-                                });
-                            }
-                        }
-                    }
-
-                    if (result.Count > 0)
-                    {
-                        RedisManager.DB_Other.Set(key, result.ToJson(), 60 * 5);
-                    }
-                    return result;
-                }
+                var result = GetHighLotteryList();
+                return result;
             }
             catch (Exception ex)
             {
-
                 throw;
             }
         }
@@ -161,65 +101,12 @@ namespace Lottery.Services
             {
                 return JsonHelper.Deserialize<List<Issue_ShowModel>>(str);
             }
-            //            var sql = @"SELECT i.IssueNo,i.LotteryCode,i.OpenCode,i.OpenTime,n.PrizePool
-            // FROM sys_issue i LEFT JOIN normal_lotterydetail n ON(i.IssueNo= n.IssueNo) WHERE i.lotteryCode = @LotteryCode ORDER BY i.OpenTime DESC,i.IssueNo DESC LIMIT 0,1
-            //";
-
-            var localType = (int)HighFrequencyType.Local;
-            using (var db = basFactory.GetDbContext())
+            var result = GetLocalLotteryList();
+            if (result.Count > 0)
             {
-                var lotteryList = db.Queryable<sys_lottery>().Where(p => p.IsShow == true && p.HighFrequency == localType).ToList();
-                //db.Close();
-                var result = new List<Issue_ShowModel>();
-                StringBuilder querysql = new StringBuilder();
-                if (lotteryList.Count > 0)
-                {
-                    foreach (var item in lotteryList)
-                    {
-                        querysql.Append($@"(SELECT i.IssueNo,i.LotteryCode,i.OpenCode,i.OpenTime,n.PrizePool,n.CurrentSales
- FROM sys_issue i LEFT JOIN normal_lotterydetail n ON(i.IssueNo = n.IssueNo)
- WHERE i.lotteryCode = '{item.LotteryCode}' ORDER BY i.OpenTime DESC, i.IssueNo DESC LIMIT 0, 1)");
-                        querysql.Append("union");
-                    }
-                    var newsql = querysql.ToString();
-                    newsql = newsql.Substring(0, newsql.Length - 5);
-                    var list = db.SqlQueryable<Issue_ShowModel>(newsql).ToList();
-                    foreach (var item in lotteryList)
-                    {
-                        //var model = db.SqlQueryable<Issue_ShowModel>(sql).AddParameters(new { LotteryCode = item.LotteryCode }).First();
-                        var model = list.FirstOrDefault(p => p.LotteryCode == item.LotteryCode);
-                        if (model != null)
-                        {
-                            model.LotteryDay = item.LotteryDay;
-                            model.LotteryId = item.Lottery_Id;
-                            model.NumberPeriods = item.NumberPeriods;
-                            model.RegionName = item.RegionName;
-                            model.LotteryName = item.LotteryName;
-                            model.OpenTime = model.OpenTime.FormatDate();
-                            result.Add(model);
-                            //result.Add(new Issue_ShowModel()
-                            //{
-                            //    IssueNo = model.IssueNo,
-                            //    LotteryCode = model.LotteryCode,
-                            //    LotteryDay = item.LotteryDay,
-                            //    LotteryId = item.Lottery_Id,
-                            //    NumberPeriods = item.NumberPeriods,
-                            //    OpenCode = model.OpenCode.Trim('|'),
-                            //    OpenTime = model.OpenTime.FormatDate(),
-                            //    RegionName = item.RegionName,
-                            //    LotteryName = item.LotteryName,
-                            //     PrizePool=
-                            //});
-                        }
-                        //db.Close();
-                    }
-                }
-                if (result.Count > 0)
-                {
-                    RedisManager.DB_Other.Set(key, result.ToJson(), 60 * 30);
-                }
-                return result;
+                RedisManager.DB_Other.Set(key, result.ToJson(), 60 * 10);
             }
+            return result;
         }
 
         /// <summary>
@@ -234,55 +121,8 @@ namespace Lottery.Services
             {
                 return JsonHelper.Deserialize<List<Issue_ShowModel>>(str);
             }
-            var sql = @"SELECT i.IssueNo,i.LotteryCode,i.OpenCode,i.OpenTime,n.PrizePool,n.CurrentSales
- FROM sys_issue i LEFT JOIN normal_lotterydetail n ON(i.IssueNo= n.IssueNo) 
-WHERE i.lotteryCode = @LotteryCode ORDER BY i.OpenTime DESC,i.IssueNo DESC LIMIT 0,1";
-            var localType = (int)HighFrequencyType.Country;
-            using (var db = basFactory.GetDbContext())
-            {
-                var lotteryList = db.Queryable<sys_lottery>().Where(p => p.IsShow == true && p.HighFrequency == localType).ToList();
-                //db.Close();
-                var result = new List<Issue_ShowModel>();
-                if (lotteryList.Count > 0)
-                {
-                    foreach (var item in lotteryList)
-                    {
-                        if (item.LotteryCode == "jczq")
-                        {
-                            result.Add(GetJCZQNewModel());
-                        }
-                        if (item.LotteryCode == "jclq")
-                        {
-                            result.Add(GetJCLQNewModel());
-                        }
-                        if (item.LotteryCode == "zqdc")
-                        {
-                            result.Add(GetZQDCNewModel());
-                        }
-                        if (item.LotteryCode == "zqdcsfgg")
-                        {
-                            continue;
-                        }
-                        var model = db.SqlQueryable<Issue_ShowModel>(sql).AddParameters(new { LotteryCode = item.LotteryCode }).First();
-                        if (model != null)
-                        {
-                            model.LotteryDay = item.LotteryDay;
-                            model.LotteryId = item.Lottery_Id;
-                            model.NumberPeriods = item.NumberPeriods;
-                            model.RegionName = item.RegionName;
-                            model.LotteryName = item.LotteryName;
-                            model.OpenTime = model.OpenTime.FormatDate();
-                            result.Add(model);
-                        }
-                        //db.Close();
-                    }
-                }
-                if (result.Count > 0)
-                {
-                    RedisManager.DB_Other.Set(key, result.ToJson(), 60 * 30);
-                }
-                return result;
-            }
+            var result = GetCountryLotteryList();
+            return result;
         }
 
         private Issue_ShowModel GetJCZQNewModel()
@@ -487,6 +327,199 @@ on (ni.LotteryCode=n.LotteryCode and ni.issueNo=n.IssueNo)";
                 }
                 var list = db.Queryable<bjdc_result>().Where(p => p.IssueNo == IssueNo).ToList();
                 return list;
+            }
+        }
+
+        #region 把数据加载到redis
+
+        /// <summary>
+        /// 加载高频彩数据
+        /// </summary>
+        public void AddRedisHighLottery()
+        {
+            try
+            {
+                var key = "KJ_GetHighLotteryIssues";
+                var result = GetHighLotteryList();
+                if (result.Count > 0)
+                {
+                    RedisManager.DB_Other.Set(key, result.ToJson(), 60 * 10);
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
+        /// <summary>
+        /// 加载地方彩种数据
+        /// </summary>
+        public void AddRedisLocalLottery()
+        {
+            try
+            {
+                var key = "KJ_GetLocalLotteryIssues";
+                var result = GetLocalLotteryList();
+                if (result.Count > 0)
+                {
+                    RedisManager.DB_Other.Set(key, result.ToJson(), 60 * 10);
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
+        /// <summary>
+        /// 加载全国彩种数据
+        /// </summary>
+        public void AddRedisCountryLottery()
+        {
+            try
+            {
+                var key = "KJ_GetCountryLotteryIssues";
+                var result = GetCountryLotteryList();
+                if (result.Count > 0)
+                {
+                    RedisManager.DB_Other.Set(key, result.ToJson(), 60 * 10);
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+        #endregion
+
+        private List<Issue_ShowModel> GetHighLotteryList()
+        {
+            var highType = (int)HighFrequencyType.High;
+            using (var db = basFactory.GetDbContext())
+            {
+                var lotteryList = db.Queryable<sys_lottery>().Where(p => p.IsShow == true && p.HighFrequency == highType).ToList();
+                //db.Close();
+                var result = new List<Issue_ShowModel>();
+                StringBuilder querysql = new StringBuilder();
+                if (lotteryList.Count > 0)
+                {
+                    foreach (var item in lotteryList)
+                    {
+                        querysql.Append($"(select * from sys_issue where LotteryCode = '{item.LotteryCode}' order by openTime desc, IssueNo desc limit 0, 1)");
+                        querysql.Append("union");
+                    }
+                    var sql = querysql.ToString();
+                    sql = sql.Substring(0, sql.Length - 5);
+                    var list = db.SqlQueryable<sys_issue>(sql).ToList();
+                    foreach (var item in lotteryList)
+                    {
+                        var model = list.FirstOrDefault(p => p.LotteryCode == item.LotteryCode);
+                        if (model != null)
+                        {
+                            result.Add(new Issue_ShowModel()
+                            {
+                                IssueNo = model.IssueNo,
+                                LotteryCode = model.LotteryCode,
+                                LotteryDay = item.LotteryDay,
+                                LotteryId = item.Lottery_Id,
+                                NumberPeriods = item.NumberPeriods,
+                                OpenCode = model.OpenCode.Trim('|'),
+                                OpenTime = model.OpenTime.FormatDate(),
+                                RegionName = item.RegionName,
+                                LotteryName = item.LotteryName
+                            });
+                        }
+                    }
+                }
+                return result;
+            }
+        }
+
+        private List<Issue_ShowModel> GetLocalLotteryList()
+        {
+            var localType = (int)HighFrequencyType.Local;
+            using (var db = basFactory.GetDbContext())
+            {
+                var lotteryList = db.Queryable<sys_lottery>().Where(p => p.IsShow == true && p.HighFrequency == localType).ToList();
+                var result = new List<Issue_ShowModel>();
+                StringBuilder querysql = new StringBuilder();
+                if (lotteryList.Count > 0)
+                {
+                    foreach (var item in lotteryList)
+                    {
+                        querysql.Append($@"(SELECT i.IssueNo,i.LotteryCode,i.OpenCode,i.OpenTime,n.PrizePool,n.CurrentSales
+ FROM sys_issue i LEFT JOIN normal_lotterydetail n ON(i.IssueNo = n.IssueNo)
+ WHERE i.lotteryCode = '{item.LotteryCode}' ORDER BY i.OpenTime DESC, i.IssueNo DESC LIMIT 0, 1)");
+                        querysql.Append("union");
+                    }
+                    var newsql = querysql.ToString();
+                    newsql = newsql.Substring(0, newsql.Length - 5);
+                    var list = db.SqlQueryable<Issue_ShowModel>(newsql).ToList();
+                    foreach (var item in lotteryList)
+                    {
+                        var model = list.FirstOrDefault(p => p.LotteryCode == item.LotteryCode);
+                        if (model != null)
+                        {
+                            model.LotteryDay = item.LotteryDay;
+                            model.LotteryId = item.Lottery_Id;
+                            model.NumberPeriods = item.NumberPeriods;
+                            model.RegionName = item.RegionName;
+                            model.LotteryName = item.LotteryName;
+                            model.OpenTime = model.OpenTime.FormatDate();
+                            result.Add(model);
+                        }
+                    }
+                }
+                return result;
+            }
+        }
+
+        private List<Issue_ShowModel> GetCountryLotteryList()
+        {
+            var sql = @"SELECT i.IssueNo,i.LotteryCode,i.OpenCode,i.OpenTime,n.PrizePool,n.CurrentSales
+ FROM sys_issue i LEFT JOIN normal_lotterydetail n ON(i.IssueNo= n.IssueNo) 
+WHERE i.lotteryCode = @LotteryCode ORDER BY i.OpenTime DESC,i.IssueNo DESC LIMIT 0,1";
+            var localType = (int)HighFrequencyType.Country;
+            using (var db = basFactory.GetDbContext())
+            {
+                var lotteryList = db.Queryable<sys_lottery>().Where(p => p.IsShow == true && p.HighFrequency == localType).ToList();
+                //db.Close();
+                var result = new List<Issue_ShowModel>();
+                if (lotteryList.Count > 0)
+                {
+                    foreach (var item in lotteryList)
+                    {
+                        if (item.LotteryCode == "jczq")
+                        {
+                            result.Add(GetJCZQNewModel());
+                            continue;
+                        }
+                        if (item.LotteryCode == "jclq")
+                        {
+                            result.Add(GetJCLQNewModel());
+                            continue;
+                        }
+                        if (item.LotteryCode == "zqdc")
+                        {
+                            result.Add(GetZQDCNewModel());
+                            continue;
+                        }
+                        if (item.LotteryCode == "zqdcsfgg")
+                        {
+                            continue;
+                        }
+                        var model = db.SqlQueryable<Issue_ShowModel>(sql).AddParameters(new { LotteryCode = item.LotteryCode }).First();
+                        if (model != null)
+                        {
+                            model.LotteryDay = item.LotteryDay;
+                            model.LotteryId = item.Lottery_Id;
+                            model.NumberPeriods = item.NumberPeriods;
+                            model.RegionName = item.RegionName;
+                            model.LotteryName = item.LotteryName;
+                            model.OpenTime = model.OpenTime.FormatDate();
+                            result.Add(model);
+                        }
+                    }
+                }
+                return result;
             }
         }
     }
