@@ -1,12 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
-using System.Xml.Linq;
+using System.Linq;
+using Lottery.Modes.Model;
+
 using Microsoft.AspNetCore.Mvc;
+
+using Newtonsoft.Json;
+using Smart.Core.NoSql.Redis;
+using Smart.Core.Redis;
+using Smart.Core.Utils;
+
 namespace Lottery.API.Controllers
 {
     [Route("uc/[action]")]
@@ -34,12 +42,43 @@ namespace Lottery.API.Controllers
                     }
                 }
                 webResponse.Close();
+                var commonConfig = ConfigFileHelper.Get<List<CommonModel>>("Common");
+                var nodes = xmlDoc.DocumentElement.ChildNodes[0].ChildNodes;
+                foreach (XmlElement CurrenNode in nodes)
+                {
+                    var Common = commonConfig.Find((x) => x.key == CurrenNode.ChildNodes[0].InnerText);
+                    var item = CurrenNode.ChildNodes[2];
+                    foreach (XmlElement Subitem in item.ChildNodes)
+                    {
+                        if (Subitem.Name == "item")
+                        {
+                            var Lottery = Subitem.ChildNodes[0].Attributes["col0"].InnerText;
+                            foreach (XmlElement Sub_subItem in Subitem)
+                            {
+                                if (Sub_subItem.Name == "link")
+                                {
+                                    
+                                    if (Sub_subItem.Attributes["linkcontent"].InnerText == "开奖详情")
+                                    {
+                                        Sub_subItem.SetAttribute("linkurl", Common.Item.Where(x => x.Lottery == Lottery).FirstOrDefault().DetailLinkUrl);
+                                    }
+                                    else if(Sub_subItem.Attributes["linkcontent"].InnerText == "玩法说明")
+                                    {
+                                        Sub_subItem.SetAttribute("linkurl", Common.Item.Where(x => x.Lottery == Lottery).FirstOrDefault().RemarkLinkUrl);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                RedisManager.DB_Other.Set("UC_Common", xmlDoc.InnerXml);
+                var b = RedisManager.DB_Other.Get("UC_Common");
+                return await Task.Run(() => b);
             }
             catch (Exception ex)
             { 
                 throw new Exception(ex.Message);
             }
-            return await Task.Run(() =>"");
         }
 
         /// <summary>
