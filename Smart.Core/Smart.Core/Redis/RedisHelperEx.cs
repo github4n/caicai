@@ -27,11 +27,11 @@ namespace Smart.Core.Redis
         private static readonly object redisLock = new object();
         private static System.Collections.Hashtable RedisHas = System.Collections.Hashtable.Synchronized(new Hashtable());
 
-        
 
 
 
-        static byte[] Serialize(object o)
+
+        public static byte[] Serialize(object o)
         {
             if (o == null)
             {
@@ -47,7 +47,7 @@ namespace Smart.Core.Redis
             }
         }
 
-        static T Deserialize<T>(byte[] stream)
+        public static T Deserialize<T>(byte[] stream)
         {
             if (stream == null)
             {
@@ -69,7 +69,7 @@ namespace Smart.Core.Redis
             }
         }
 
-        static List<T> Deserializes<T>(byte[] stream)
+        public static List<T> Deserializes<T>(byte[] stream)
         {
             try
             {

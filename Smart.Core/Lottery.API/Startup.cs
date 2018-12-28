@@ -53,7 +53,9 @@ namespace Lottery.API
             {
                 options.SerializerSettings.ContractResolver = new DefaultContractResolver();
                 options.SerializerSettings.DateFormatString = "yyyy-MM-dd HH:mm:ss";
-            }); ;
+            })
+            .AddXmlDataContractSerializerFormatters()
+            .AddXmlSerializerFormatters();
             ConfigFileHelper.Set("config.json");
             #region CORS
             //跨域第二种方法，声明策略，记得下边app中配置

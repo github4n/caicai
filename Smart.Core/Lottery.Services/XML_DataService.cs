@@ -14,178 +14,191 @@ namespace Lottery.Services
 {
    public class XML_DataService: Repository<DbFactory>,IXML_DataService
     {
-        protected SqlSugarClient db = null;
+        //protected SqlSugarClient db = null;
+        protected DbFactory BaseFactory;
         public XML_DataService(DbFactory factory) : base(factory)
         {
-            db = factory.GetDbContext();
+            BaseFactory = factory;
         }
        
 
 
         public async Task<int> AddXMLAsync(XmlNodeList xmlNodeList,string gameCode,string LotteryTime)
         {
-            int count = 0;
-            var lottery = GetLottery(gameCode);
-            var insertObjs = new List<sys_issue>();
-            sys_issue sys_issue = GetNowGpcIssuNo(gameCode, LotteryTime);
-            foreach (XmlNode item in xmlNodeList)
+            using (var db = BaseFactory.GetDbContext())
             {
-                if (sys_issue != null)
+                int count = 0;
+                var lottery = GetLottery(gameCode);
+                var insertObjs = new List<sys_issue>();
+                sys_issue sys_issue = GetNowGpcIssuNo(gameCode, LotteryTime);
+                foreach (XmlNode item in xmlNodeList)
                 {
-                    if (sys_issue.IssueNo == item.Attributes["expect"].Value)
+                    if (sys_issue != null)
                     {
-                        break;
+                        if (sys_issue.IssueNo == item.Attributes["expect"].Value)
+                        {
+                            break;
+                        }
                     }
+
+                    sys_issue issue = new sys_issue();
+                    issue.IssueNo = item.Attributes["expect"].Value;
+
+                    if (item.Attributes["specail"] != null)
+                    {
+                        issue.OpenCode = item.Attributes["opencode"].Value + "|" + item.Attributes["specail"].Value;
+                    }
+                    else if (item.Attributes["opencode_specail"] != null)
+                    {
+
+                        issue.OpenCode = item.Attributes["opencode"].Value + "|" + item.Attributes["opencode_specail"].Value;
+                    }
+                    else
+                    {
+                        issue.OpenCode = item.Attributes["opencode"].Value;
+                    }
+
+                    issue.OpenTime = item.Attributes["opentime"].Value;
+                    issue.LotteryId = lottery.Lottery_Id;
+                    issue.LotteryCode = lottery.LotteryCode;
+                    issue.CreateTime = DateTime.Now;
+                    issue.UpdateTime = DateTime.Now;
+                    issue.LotteryTime = LotteryTime;
+                    insertObjs.Add(issue);
                 }
-
-                sys_issue issue = new sys_issue();
-                issue.IssueNo = item.Attributes["expect"].Value;
-
-                if (item.Attributes["specail"] != null)
+                if (insertObjs.Count != 0)
                 {
-                    issue.OpenCode = item.Attributes["opencode"].Value + "|" + item.Attributes["specail"].Value;
-                }
-                else if (item.Attributes["opencode_specail"] != null)
-                {
-
-                    issue.OpenCode = item.Attributes["opencode"].Value + "|" + item.Attributes["opencode_specail"].Value;
-                }
-                else
-                {
-                    issue.OpenCode = item.Attributes["opencode"].Value;
+                    count = db.Insertable(insertObjs).ExecuteCommand();
+                    //await db.InsertRange(insertObjs);
                 }
 
-                issue.OpenTime = item.Attributes["opentime"].Value;
-                issue.LotteryId = lottery.Lottery_Id;
-                issue.LotteryCode = lottery.LotteryCode;
-                issue.CreateTime = DateTime.Now;
-                issue.UpdateTime = DateTime.Now;
-                issue.LotteryTime = LotteryTime;
-                insertObjs.Add(issue);
+                return await Task.FromResult(count);
             }
-            if (insertObjs.Count != 0)
-            {
-                count = db.Insertable(insertObjs).ExecuteCommand();
-                //await db.InsertRange(insertObjs);
-            }
-         
-            return await Task.FromResult(count);
         }
 
         public async Task<int> AddQGDFCXMLAsync(XmlNodeList xmlNodeList, string gameCode)
         {
-            int count = 0;
-            int insertCount = 0;
-            var lottery = GetLottery(gameCode);
-            sys_issue sys_issue = GetNowIssuNo(gameCode);
-            //ArrayList arrNodeList = new ArrayList();
-            //foreach (XmlNode item in xmlNodeList)
-            //{
-            //    arrNodeList.Add(item);
-            //}
-            //arrNodeList.Reverse();
-            foreach (XmlNode item in xmlNodeList)
+            using (var db = BaseFactory.GetDbContext())
             {
-
-                if (sys_issue != null)
+                int count = 0;
+                int insertCount = 0;
+                var lottery = GetLottery(gameCode);
+                sys_issue sys_issue = GetNowIssuNo(gameCode);
+                //ArrayList arrNodeList = new ArrayList();
+                //foreach (XmlNode item in xmlNodeList)
+                //{
+                //    arrNodeList.Add(item);
+                //}
+                //arrNodeList.Reverse();
+                foreach (XmlNode item in xmlNodeList)
                 {
-                   if (sys_issue.IssueNo == item.Attributes["expect"].Value)
+
+                    if (sys_issue != null)
                     {
-                        break;
+                        if (sys_issue.IssueNo == item.Attributes["expect"].Value)
+                        {
+                            break;
+                        }
                     }
-                }
-                sys_issue issue = new sys_issue();
-                issue.IssueNo = item.Attributes["expect"].Value;
+                    sys_issue issue = new sys_issue();
+                    issue.IssueNo = item.Attributes["expect"].Value;
 
-                if (item.Attributes["specail"] != null)
-                {
-                    issue.OpenCode = item.Attributes["opencode"].Value + "|" + item.Attributes["specail"].Value;
-                }
-                else if (item.Attributes["opencode_specail"] != null)
-                {
+                    if (item.Attributes["specail"] != null)
+                    {
+                        issue.OpenCode = item.Attributes["opencode"].Value + "|" + item.Attributes["specail"].Value;
+                    }
+                    else if (item.Attributes["opencode_specail"] != null)
+                    {
 
-                    issue.OpenCode = item.Attributes["opencode"].Value + "|" + item.Attributes["opencode_specail"].Value;
-                }
-                else
-                {
-                    issue.OpenCode = item.Attributes["opencode"].Value;
-                }
+                        issue.OpenCode = item.Attributes["opencode"].Value + "|" + item.Attributes["opencode_specail"].Value;
+                    }
+                    else
+                    {
+                        issue.OpenCode = item.Attributes["opencode"].Value;
+                    }
 
-                issue.OpenTime = item.Attributes["opentime"].Value;
-                issue.LotteryId = lottery.Lottery_Id;
-                issue.LotteryCode = lottery.LotteryCode;
-                issue.CreateTime = DateTime.Now;
-                issue.UpdateTime = DateTime.Now;
-                count=db.Insertable(issue).ExecuteCommand();
-                insertCount += count;
+                    issue.OpenTime = item.Attributes["opentime"].Value;
+                    issue.LotteryId = lottery.Lottery_Id;
+                    issue.LotteryCode = lottery.LotteryCode;
+                    issue.CreateTime = DateTime.Now;
+                    issue.UpdateTime = DateTime.Now;
+                    count = db.Insertable(issue).ExecuteCommand();
+                    insertCount += count;
+                }
+                return await Task.FromResult(insertCount);
             }
-            return await Task.FromResult(insertCount);
         }
 
 
         public async Task<int> AddBjdcIssue(HtmlNodeCollection htmlNodeCollection, string gameCode)
         {
-            int count = 0;
-            var lottery = GetLottery(gameCode);
-            var insertObjs = new List<sys_issue>();
-            sys_issue sys_issue = GetNowIssuNo(gameCode);
-            foreach (var item in htmlNodeCollection)
+            using (var db = BaseFactory.GetDbContext())
             {
-                if (sys_issue != null)
+                int count = 0;
+                var lottery = GetLottery(gameCode);
+                var insertObjs = new List<sys_issue>();
+                sys_issue sys_issue = GetNowIssuNo(gameCode);
+                foreach (var item in htmlNodeCollection)
                 {
-                    if (sys_issue.IssueNo == item.Attributes["value"].Value)
+                    if (sys_issue != null)
                     {
-                        break;
+                        if (sys_issue.IssueNo == item.Attributes["value"].Value)
+                        {
+                            break;
+                        }
+
                     }
+                    sys_issue issue = new sys_issue();
+                    issue.IssueNo = item.Attributes["value"].Value;
+                    issue.LotteryId = lottery.Lottery_Id;
+                    issue.LotteryCode = lottery.LotteryCode;
+                    issue.CreateTime = DateTime.Now;
+                    issue.UpdateTime = DateTime.Now;
+                    insertObjs.Add(issue);
+                }
+                if (insertObjs.Count != 0)
+                {
+                    count = db.Insertable(insertObjs.ToArray()).ExecuteCommand();
 
                 }
-                sys_issue issue = new sys_issue();
-                issue.IssueNo = item.Attributes["value"].Value;
-                issue.LotteryId = lottery.Lottery_Id;
-                issue.LotteryCode = lottery.LotteryCode;
-                issue.CreateTime = DateTime.Now;
-                issue.UpdateTime = DateTime.Now;
-                insertObjs.Add(issue);
-            }
-            if (insertObjs.Count != 0)
-            {
-                count = db.Insertable(insertObjs.ToArray()).ExecuteCommand();
 
+                return await Task.FromResult(count);
             }
-
-            return await Task.FromResult(count);
         }
 
         public async Task<int> AddSDhtml(List<sys_issue> sys_Issues, string gameCode)
         {
-            int count = 0;
-            int insertCount = 0;
-            var lottery = GetLottery(gameCode);
-            sys_issue sys_issue = GetNowIssuNo(gameCode);
-            foreach (var item in sys_Issues)
+            using (var db = BaseFactory.GetDbContext())
             {
-                if (sys_issue != null)
+                int count = 0;
+                int insertCount = 0;
+                var lottery = GetLottery(gameCode);
+                sys_issue sys_issue = GetNowIssuNo(gameCode);
+                foreach (var item in sys_Issues)
                 {
-                    if (sys_issue.IssueNo == item.IssueNo)
+                    if (sys_issue != null)
                     {
-                        break;
+                        if (sys_issue.IssueNo == item.IssueNo)
+                        {
+                            break;
+                        }
                     }
+                    sys_issue issue = new sys_issue();
+                    issue.IssueNo = item.IssueNo;
+
+                    issue.OpenCode = item.OpenCode;
+
+
+                    issue.OpenTime = item.OpenTime;
+                    issue.LotteryId = lottery.Lottery_Id;
+                    issue.LotteryCode = lottery.LotteryCode;
+                    issue.CreateTime = DateTime.Now;
+                    issue.UpdateTime = DateTime.Now;
+                    count = db.Insertable(issue).ExecuteCommand();
+                    insertCount += count;
                 }
-                sys_issue issue = new sys_issue();
-                issue.IssueNo = item.IssueNo;
-
-               issue.OpenCode = item.OpenCode;
-
-
-                issue.OpenTime = item.OpenTime;
-                issue.LotteryId = lottery.Lottery_Id;
-                issue.LotteryCode = lottery.LotteryCode;
-                issue.CreateTime = DateTime.Now;
-                issue.UpdateTime = DateTime.Now;
-                count = db.Insertable(issue).ExecuteCommand();
-                insertCount += count;
+                return await Task.FromResult(insertCount);
             }
-            return await Task.FromResult(insertCount);
         }
         /// <summary>
         /// 获取彩种
@@ -194,8 +207,11 @@ namespace Lottery.Services
         /// <returns></returns>
         public sys_lottery GetLottery(string LotteryCode)
         {
-            sys_lottery lottery = db.Queryable<sys_lottery>().Where(n => n.LotteryCode == LotteryCode).First();
-            return lottery;
+            using (var db = BaseFactory.GetDbContext())
+            {
+                sys_lottery lottery = db.Queryable<sys_lottery>().Where(n => n.LotteryCode == LotteryCode).First();
+                return lottery;
+            }
         }
 
         /// <summary>
@@ -204,14 +220,17 @@ namespace Lottery.Services
         /// <returns></returns>
         public sys_issue GetNowGpcIssuNo(string LotteryCode,string LotteryTime)
         {
-            sys_issue issue = db.Queryable<sys_issue>().Where(n => n.LotteryCode == LotteryCode && n.LotteryTime==LotteryTime).OrderBy(n => n.IssueNo, OrderByType.Desc).Take(1).First();
-            if (issue == null)
+            using (var db = BaseFactory.GetDbContext())
             {
-                return null;
-            }
-            else
-            {
-                return issue;
+                sys_issue issue = db.Queryable<sys_issue>().Where(n => n.LotteryCode == LotteryCode && n.LotteryTime == LotteryTime).OrderBy(n => n.IssueNo, OrderByType.Desc).Take(1).First();
+                if (issue == null)
+                {
+                    return null;
+                }
+                else
+                {
+                    return issue;
+                }
             }
             
         }
@@ -221,14 +240,17 @@ namespace Lottery.Services
         /// <returns></returns>
         public sys_issue GetNowIssuNo(string LotteryCode)
         {
-            sys_issue issue = db.Queryable<sys_issue>().Where(n => n.LotteryCode == LotteryCode).OrderBy(n => n.OpenTime, OrderByType.Desc).Take(1).First();
-            if (issue == null)
+            using (var db = BaseFactory.GetDbContext())
             {
-                return null;
-            }
-            else
-            {
-                return issue;
+                sys_issue issue = db.Queryable<sys_issue>().Where(n => n.LotteryCode == LotteryCode).OrderBy(n => n.OpenTime, OrderByType.Desc).Take(1).First();
+                if (issue == null)
+                {
+                    return null;
+                }
+                else
+                {
+                    return issue;
+                }
             }
 
         }
@@ -240,20 +262,26 @@ namespace Lottery.Services
         /// <returns></returns>
         public sys_issue GetDescIssuNo(string LotteryCode)
         {
-            sys_issue issue = db.Queryable<sys_issue>().Where(n => n.LotteryCode == LotteryCode).OrderBy(n => n.IssueNo, OrderByType.Desc).Take(1).First();
-            if (issue == null)
+            using (var db = BaseFactory.GetDbContext())
             {
-                return null;
-            }
-            else
-            {
-                return issue;
+                sys_issue issue = db.Queryable<sys_issue>().Where(n => n.LotteryCode == LotteryCode).OrderBy(n => n.IssueNo, OrderByType.Desc).Take(1).First();
+                if (issue == null)
+                {
+                    return null;
+                }
+                else
+                {
+                    return issue;
+                }
             }
         }
 
         public List<sys_lottery> GetHighFrequency()
         {
-            return db.Queryable<sys_lottery>().ToList();
+            using (var db = BaseFactory.GetDbContext())
+            {
+                return db.Queryable<sys_lottery>().ToList();
+            }
         }
 
     }

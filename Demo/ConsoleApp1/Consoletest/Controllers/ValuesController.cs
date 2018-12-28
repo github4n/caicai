@@ -474,7 +474,7 @@ namespace Consoletest.Controllers
             string date = DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd");
             var tableNode = CommonHelper.LoadGziphtml("http://zx.500.com/jczq/kaijiang.php?d=" + date).DocumentNode.SelectSingleNode("//table[@class='ld_table']");
             //获取平均欧赔
-            var trNodes = CommonHelper.LoadGziphtml("http://zx.500.com/jczq/kaijiang.php?playid=1&d=" + date).DocumentNode.SelectSingleNode("//table[@class='ld_table']").SelectNodes("tr").Skip(1);
+            var trNodes = CommonHelper.LoadGziphtml("http://zx.500.com/jczq/kaijiang.php?playid=4&d=" + date).DocumentNode.SelectSingleNode("//table[@class='ld_table']").SelectNodes("tr").Skip(1);
 
             var trNode = tableNode.SelectNodes("tr").Skip(1);
         
@@ -557,7 +557,7 @@ namespace Consoletest.Controllers
                         case 15:
                             game.Bonus = strText;
                             GameTypes.Add(game);
-                            jczq.gameTypes.AddRange(GameTypes);
+                           
                             break;
 
                     }
@@ -579,7 +579,19 @@ namespace Consoletest.Controllers
                         }
                         for (int i = 0; i < item3.SelectNodes("td").Count(); i++)
                         {
-                            if (i > 10 && i < 14)
+                        if (i == 7)
+                        {
+                            game = new GameType();
+                            game.game = Game.比分;
+                            game.FruitColor = item3.SelectNodes("td")[i].InnerHtml;
+                        }
+                        if (i == 9)
+                        {
+                            game.Bonus = item3.SelectNodes("td")[i].InnerHtml;
+                            GameTypes.Add(game);
+                            jczq.gameTypes.AddRange(GameTypes);
+                        }
+                        if (i > 10 && i < 14)
                             {
                                 jczq.AvgOuCompensation += item3.SelectNodes("td")[i].InnerHtml + ",";
 
