@@ -252,6 +252,7 @@ namespace Lottery.GatherApp
                                     jczq.TournamentNumber = strText;
                                     break;
                                 case 2:
+                                    jczq.League_Color = item2.SelectSingleNode("a").Attributes["style"].Value.Replace("background-color:", "");
                                     jczq.TournamentType = strText;
                                     break;
                                 case 3:
@@ -270,6 +271,8 @@ namespace Lottery.GatherApp
                                     jczq.Score = strText;
                                     break;
                                 case 8:
+                                    GameTypes.Clear();
+                                    game = new GameType();
                                     game.game = Game.让球胜平负;
                                     game.FruitColor = strText;
 
@@ -329,6 +332,7 @@ namespace Lottery.GatherApp
                                     game.Bonus = item3.SelectNodes("td")[i].InnerHtml;
                                     GameTypes.Add(game);
                                     jczq.gameTypes.AddRange(GameTypes);
+                                  
                                 }
 
                                 if (i > 10 && i < 14)
@@ -345,6 +349,7 @@ namespace Lottery.GatherApp
                         }
                         jczq.AvgOuCompensation = jczq.AvgOuCompensation.Substring(0, jczq.AvgOuCompensation.Length - 1);
                         jczqs.Add(jczq);
+                        
                     }
                     _SportService.Add_JCZQ(jczqs);
                 }
