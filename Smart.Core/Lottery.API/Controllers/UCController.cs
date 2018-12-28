@@ -1,18 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
-using System.Linq;
+using Lottery.API.Result;
 using Lottery.Modes.Model;
 
 using Microsoft.AspNetCore.Mvc;
 
-using Newtonsoft.Json;
 using Smart.Core.NoSql.Redis;
-using Smart.Core.Redis;
 using Smart.Core.Utils;
 
 namespace Lottery.API.Controllers
@@ -27,7 +26,7 @@ namespace Lottery.API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public async Task<string> Common()
+        public XmlResult Common()
         {
             try
             {
@@ -52,14 +51,14 @@ namespace Lottery.API.Controllers
                                 if (Sub_subItem.Name == "link")
                                 {
                                     
-                                    if (Sub_subItem.Attributes["linkcontent"].InnerText == "开奖详情")
-                                    {
+                                    //if (Sub_subItem.Attributes["linkcontent"].InnerText == "开奖详情")
+                                    //{
                                         Sub_subItem.SetAttribute("linkurl", Common.Item.Where(x => x.Lottery == Lottery).FirstOrDefault().DetailLinkUrl);
-                                    }
-                                    else if(Sub_subItem.Attributes["linkcontent"].InnerText == "玩法说明")
-                                    {
-                                        Sub_subItem.SetAttribute("linkurl", Common.Item.Where(x => x.Lottery == Lottery).FirstOrDefault().RemarkLinkUrl);
-                                    }
+                                    //}
+                                    //else if(Sub_subItem.Attributes["linkcontent"].InnerText == "玩法说明")
+                                    //{
+                                    //    Sub_subItem.SetAttribute("linkurl", Common.Item.Where(x => x.Lottery == Lottery).FirstOrDefault().RemarkLinkUrl);
+                                    //}
                                 }
                             }
                         }
@@ -67,7 +66,7 @@ namespace Lottery.API.Controllers
                 }
                 RedisManager.DB_Other.Set("UC_Common", xmlDoc.InnerXml);
                 var b = RedisManager.DB_Other.Get("UC_Common");
-                return await Task.Run(() => b);
+                return new XmlResult(xmlDoc);
             }
             catch (Exception ex)
             { 
@@ -112,14 +111,14 @@ namespace Lottery.API.Controllers
                         {
                             foreach (XmlElement Sub_foot_group in Sub_element.ChildNodes)
                             {
-                                    if (Sub_foot_group.Attributes["name"].InnerText == "开奖详情")
-                                    {
+                                    //if (Sub_foot_group.Attributes["name"].InnerText == "开奖详情")
+                                    //{
                                     Sub_foot_group.SetAttribute("url", Common.foot_group.Where(x => x.remark == Sub_foot_group.Attributes["name"].InnerText).FirstOrDefault().url);
-                                    }
-                                    else if (Sub_foot_group.Attributes["name"].InnerText == "玩法说明")
-                                    {
-                                    Sub_foot_group.SetAttribute("url", Common.foot_group.Where(x => x.remark == Sub_foot_group.Attributes["name"].InnerText).FirstOrDefault().url);
-                                    }
+                                    //}
+                                    //else if (Sub_foot_group.Attributes["name"].InnerText == "玩法说明")
+                                    //{
+                                    //Sub_foot_group.SetAttribute("url", Common.foot_group.Where(x => x.remark == Sub_foot_group.Attributes["name"].InnerText).FirstOrDefault().url);
+                                    //}
 
                             }
                         }
@@ -213,7 +212,42 @@ namespace Lottery.API.Controllers
         [HttpGet]
         public async Task<string> jingcai()
         {
-            return await Task.Run(() => "1111");
+            try
+            {
+                var xmlDoc = LoadXmlDocument("http://lottery.jdddata.com/uc/jingcai");
+                var commonConfig = ConfigFileHelper.Get<List<JingCai>>("JingCai");
+                var nodes = xmlDoc.DocumentElement.ChildNodes;
+                foreach (XmlElement element in nodes)
+                {
+                    var Common = commonConfig.Where(x => x.key == element.FirstChild.InnerText).FirstOrDefault();
+                    if (Common == null)
+                    {
+                        continue;
+                    }
+                    foreach (XmlElement Sub_element in element.LastChild)
+                    {
+                        switch (Sub_element.Name)
+                        {
+                            case "url":
+                                Sub_element.InnerText = Common.url; break;
+                            case "links":
+                                foreach (XmlElement Sub_Sub_element in Sub_element.ChildNodes)
+                                {
+
+                                    Sub_Sub_element.LastChild.InnerText = Common.links.Where(x => x.key == Sub_Sub_element.FirstChild.InnerText).FirstOrDefault().value;
+                                }
+                                ; break;
+                        }
+                    }
+                }
+                RedisManager.DB_Other.Set("UC_jingcai", xmlDoc.InnerXml);
+                var b = RedisManager.DB_Other.Get("UC_jingcai");
+                return await Task.Run(() => xmlDoc.InnerXml);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
         protected XmlDocument LoadXmlDocument(string URI)
         {
