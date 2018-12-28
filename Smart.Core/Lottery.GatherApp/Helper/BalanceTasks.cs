@@ -186,7 +186,7 @@ namespace Lottery.GatherApp
             int count = 0;
             var manager = new XML(_xml_DataService);
             var LotteryDetal = new NormalLotteryDetail(_ILotteryDetailService);
-         
+
             //timer = new System.Timers.Timer(60 * 1000)
             //{
             //    Enabled = true//自动执行

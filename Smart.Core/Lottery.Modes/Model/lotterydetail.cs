@@ -33,4 +33,30 @@ namespace Lottery.Modes.Model
         public List<ttcx4Details> ttcx4Details { get; set; }
         
     }
+
+    public class dltList : LotteryDetails
+    {
+
+
+        public openPrizeType openPrizeType { get; set; }
+
+        /// <summary>
+        /// 应派奖金合计(元)
+        /// </summary>
+        public string openSumBonus { get; set; }
+
+
+    }
+
+    public enum openPrizeType
+    {
+        /// <summary>
+        /// 基本
+        /// </summary>
+        basic = 1,
+        /// <summary>
+        /// 追加
+        /// </summary>
+        Append = 2
+    }
 }
