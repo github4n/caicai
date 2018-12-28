@@ -31,18 +31,8 @@ namespace Lottery.API.Controllers
         {
             try
             {
-                XmlDocument xmlDoc = new XmlDocument();
-                HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create("http://lottery.jdddata.com/uc/common");
-                HttpWebResponse webResponse = (HttpWebResponse)webRequest.GetResponse();
-                using (Stream streamReceive = webResponse.GetResponseStream())
-                {
-                    using (StreamReader sr = new StreamReader(streamReceive, Encoding.UTF8))
-                    {
-                        xmlDoc.Load(sr);
-                    }
-                }
-                webResponse.Close();
-                var commonConfig = ConfigFileHelper.Get<List<CommonModel>>("Common");
+                var xmlDoc = LoadXmlDocument("http://lottery.jdddata.com/uc/common");
+                var commonConfig = ConfigFileHelper.Get<List<CommonModel>>("CommonModel");
                 var nodes = xmlDoc.DocumentElement.ChildNodes[0].ChildNodes;
                 foreach (XmlElement CurrenNode in nodes)
                 {
@@ -88,6 +78,8 @@ namespace Lottery.API.Controllers
         [HttpGet]
         public async Task<string> highfreq()
         {
+            var xmlDoc = LoadXmlDocument("http://lottery.jdddata.com/uc/highfreq");
+            var commonConfig = ConfigFileHelper.Get<List<CommonModel>>("HeightLottery");
             return await Task.Run(() => "1111");
         }
 
@@ -110,6 +102,20 @@ namespace Lottery.API.Controllers
         {
             return await Task.Run(() => "1111");
         }
-
+        protected XmlDocument LoadXmlDocument(string URI)
+        {
+            XmlDocument xmlDoc = new XmlDocument();
+            HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create("http://lottery.jdddata.com/uc/common");
+            HttpWebResponse webResponse = (HttpWebResponse)webRequest.GetResponse();
+            using (Stream streamReceive = webResponse.GetResponseStream())
+            {
+                using (StreamReader sr = new StreamReader(streamReceive, Encoding.UTF8))
+                {
+                    xmlDoc.Load(sr);
+                }
+            }
+            webResponse.Close();
+            return xmlDoc;
+        }
     }
 }
