@@ -186,14 +186,8 @@ namespace Lottery.GatherApp
             int count = 0;
             var manager = new XML(_xml_DataService);
             var LotteryDetal = new NormalLotteryDetail(_ILotteryDetailService);
+            StartTask();
 
-            //timer = new System.Timers.Timer(60 * 1000)
-            //{
-            //    Enabled = true//自动执行
-            //};//一小时执行一次
-            //timer.Elapsed += SportData;
-            //timer.AutoReset = true;//自动重置
-            //GC.KeepAlive(timer);
             while (true)
             {
                 count = await manager.GetBjdcAsync();
