@@ -80,7 +80,7 @@ namespace Lottery.Services
                     {
                         if (!model.IsFinish)
                         {
-                            if (!string.IsNullOrEmpty(x.SF_Result) && !string.IsNullOrEmpty(x.SF_SP) && !string.IsNullOrEmpty(x.FullScore))
+                            if (!string.IsNullOrEmpty(x.SF_Result)&& x.SF_Result!="-" && !string.IsNullOrEmpty(x.SF_SP)&&x.SF_SP != "-" && !string.IsNullOrEmpty(x.FullScore)&&x.FullScore!= "-")
                             {
                                 x.IsFinish = true;
                                 db.Updateable(x).ExecuteCommand();
@@ -90,7 +90,7 @@ namespace Lottery.Services
                     }
                     else
                     {
-                        if (!string.IsNullOrEmpty(x.SF_Result) && !string.IsNullOrEmpty(x.SF_SP) && !string.IsNullOrEmpty(x.FullScore))
+                        if (!string.IsNullOrEmpty(x.SF_Result) && x.SF_Result != "-" && !string.IsNullOrEmpty(x.SF_SP) && x.SF_SP != "-" && !string.IsNullOrEmpty(x.FullScore) && x.FullScore != "-")
                         {
                             x.IsFinish = true;
                         }
