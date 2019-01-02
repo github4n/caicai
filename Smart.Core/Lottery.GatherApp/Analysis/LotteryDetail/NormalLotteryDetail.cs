@@ -37,6 +37,7 @@ namespace Lottery.GatherApp.Analysis.LotteryDetail
 
                 if (_ILotteryDetailService.GetNowIssuNo(gameCode) != null)
                 {
+
                     if (item.IssueNo == _ILotteryDetailService.GetNowIssuNo(gameCode).IssueNo)
                     {
                         break;

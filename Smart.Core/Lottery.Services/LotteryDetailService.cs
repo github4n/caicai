@@ -71,14 +71,9 @@ namespace Lottery.Services
             using (var db = BaseFactory.GetDbContext())
             {
                 List<sys_issue> issue = db.Queryable<sys_issue>().Where(n => n.LotteryCode == LotteryCode).OrderBy(n => n.OpenTime, OrderByType.Desc).ToList();
-                if (issue == null)
-                {
-                    return null;
-                }
-                else
-                {
-                    return issue;
-                }
+               
+                return issue;
+                
             }
         }
 
@@ -91,14 +86,9 @@ namespace Lottery.Services
             using (var db = BaseFactory.GetDbContext())
             {
                 normal_lotterydetail issue = db.Queryable<normal_lotterydetail>().Where(n => n.LotteryCode == LotteryCode).OrderBy(n => n.OpenTime, OrderByType.Desc).Take(1).First();
-                if (issue == null)
-                {
-                    return null;
-                }
-                else
-                {
-                    return issue;
-                }
+                
+                return issue;
+               
             }
         }
         public sys_issue GetIssue(string IssueNo)
