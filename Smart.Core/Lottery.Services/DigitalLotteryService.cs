@@ -46,7 +46,7 @@ namespace Lottery.Services
                             AwardDeadlineTime = a.AwardDeadline,
                             CurrentSales = a.SalesVolume
                         };
-                        db.Insertable(_Lotterydetail);
+                        db.Insertable(_Lotterydetail).ExecuteCommand();
                         i++;
                         if (string.IsNullOrEmpty(Issue))
                         {
