@@ -543,7 +543,7 @@ namespace Lottery.GatherApp
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.StackTrace);
+                throw new Exception(ex.Message);
             }
         }
         private void GetFc3Ds()
@@ -709,7 +709,7 @@ namespace Lottery.GatherApp
                             zqdc_Sfgg_Result.MatchNumber = strText;
                             break;
                         case 2:
-                            zqdc_Sfgg_Result.BallType_Color = item2.SelectSingleNode("a|span").Attributes["style"].Value.Replace("background-color:", "");
+                            zqdc_Sfgg_Result.BallType_Color = item2.SelectSingleNode("a|span").Attributes["style"].Value.Replace("background-color:", "").Split(";",StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
                             zqdc_Sfgg_Result.BallType = strText;
                             break;
                         case 3:
@@ -734,7 +734,7 @@ namespace Lottery.GatherApp
                             zqdc_Sfgg_Result.SF_Result = strText;
                             break;
                         case 10:
-                            zqdc_Sfgg_Result.SPF_SP = strText;
+                            zqdc_Sfgg_Result.SF_SP = strText;
                             break;
                         case 11:
                             zqdc_Sfgg_Result.AvgEu_SP += strText + ",";

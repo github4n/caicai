@@ -44,7 +44,7 @@ namespace Lottery.Modes.Entity
             /// 
             ///</summary>
          
-            public bool? IsFinish{ get; set; }
+            public bool IsFinish{ get; set; }
             /// <summary>
             /// 
             ///</summary>
@@ -69,7 +69,7 @@ namespace Lottery.Modes.Entity
             /// 
             ///</summary>
          
-            public string SPF_SP{ get; set; }
+            public string SF_SP{ get; set; }
             /// <summary>
             /// 
             ///</summary>
