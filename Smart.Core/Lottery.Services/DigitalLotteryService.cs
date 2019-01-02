@@ -20,10 +20,6 @@ namespace Lottery.Services
         }
         public void Addnormal_lotterydetail(List<fc3D> ModelList)
         {
-            if (ModelList == null || ModelList.Count < 0)
-            {
-                return;
-            }
             var LotteryCode = db.Queryable<sys_lottery>().Where(x => x.LotteryCode == "sd").First();
             if (LotteryCode == null)
             {

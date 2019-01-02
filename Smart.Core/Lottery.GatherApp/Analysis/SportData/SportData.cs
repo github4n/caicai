@@ -554,7 +554,7 @@ namespace Lottery.GatherApp
             foreach (HtmlNode item in anode)
             {
                 int.TryParse(item.InnerHtml, out int result);
-                while (result >= Convert.ToInt32(Issue))
+                if (result >= Convert.ToInt32(Issue))
                 {
                     fc3D fc3D = new fc3D();
                     List<LotteryInfo> lotteries = new List<LotteryInfo>();
@@ -659,9 +659,9 @@ namespace Lottery.GatherApp
                     #endregion
                     fc3D.SubItemList = lotteries;
                     fc3Ds.Add(fc3D);
+                    _digitalLotteryService.Addnormal_lotterydetail(fc3Ds);
                 }
             }
-           _digitalLotteryService.Addnormal_lotterydetail(fc3Ds);
         }
         /// <summary>
         /// 足球单场-胜负过关开奖SP
@@ -674,7 +674,7 @@ namespace Lottery.GatherApp
             foreach (HtmlNode item in anode)
             {
                 int.TryParse(item.Attributes["value"].Value, out int result);
-                while (result >=Convert.ToInt32(Issue))
+                if (result >=Convert.ToInt32(Issue))
                 {
                     _digitalLotteryService.AddZqdc_Sfgg(GetZqdc_Sfgg(item.Attributes["value"].Value));
                 }
