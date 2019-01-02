@@ -41,7 +41,7 @@ namespace Lottery.GatherApp
             //    options.DbType = Smart.Data.Dapper.DBProvider.MySQL;
             //});
             ////log4net
-            repository = LogManager.CreateRepository("NETCoreRepository");
+            repository = LogManager.CreateRepository("LotteryRepository");
             ////指定配置文件
             XmlConfigurator.Configure(repository, new FileInfo("log4net.config"));
             services.AddSqlSugarClient<DbFactory>((sp, op) =>

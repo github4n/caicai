@@ -21,7 +21,7 @@ namespace Lottery.Services
         public XML_DataService(DbFactory factory) : base(factory)
         {
             BaseFactory = factory;
-            log = LogManager.GetLogger("NETCoreRepository", typeof(XML_DataService));
+            log = LogManager.GetLogger("LotteryRepository", typeof(XML_DataService));
         }
        
 

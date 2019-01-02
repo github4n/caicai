@@ -20,7 +20,7 @@ namespace Lottery.Services
         public LotteryDetailService(DbFactory factory) : base(factory)
         {
             BaseFactory = factory;
-            log = LogManager.GetLogger("NETCoreRepository", typeof(LotteryDetailService));
+            log = LogManager.GetLogger("LotteryRepository", typeof(LotteryDetailService));
             //db = factory.GetDbContext();
         }
 
