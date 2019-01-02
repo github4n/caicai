@@ -709,7 +709,7 @@ namespace Lottery.GatherApp
                             zqdc_Sfgg_Result.MatchNumber = strText;
                             break;
                         case 2:
-                            zqdc_Sfgg_Result.BallType_Color = item2.SelectSingleNode("a|span").Attributes["style"].Value.Replace("background-color:", "");
+                            zqdc_Sfgg_Result.BallType_Color = item2.SelectSingleNode("a|span").Attributes["style"].Value.Replace("background-color:", "").Split(";",StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
                             zqdc_Sfgg_Result.BallType = strText;
                             break;
                         case 3:

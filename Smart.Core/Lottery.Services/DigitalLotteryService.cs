@@ -107,7 +107,7 @@ namespace Lottery.Services
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.StackTrace);
+                throw new Exception(ex.Message);
             }
         }
         public string Getnormal_lotteryIssue()
