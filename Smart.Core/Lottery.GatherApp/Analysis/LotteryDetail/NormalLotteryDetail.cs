@@ -79,7 +79,7 @@ namespace Lottery.GatherApp.Analysis.LotteryDetail
                     Console.WriteLine(gameCode+"彩种"+ex.Message);
                     continue;
                 }
-                Console.WriteLine(index);
+              
             }
             int count = await _ILotteryDetailService.AddLotteryDetal(lotterydetails, gameCode);
             return count;

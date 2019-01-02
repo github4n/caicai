@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using log4net;
+using log4net.Config;
+using log4net.Repository;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Smart.Core.Repository.SqlSugar;
 using Smart.Core.Utils;
@@ -12,6 +15,7 @@ namespace Lottery.GatherApp
     public class Program
     {
         public static IConfigurationRoot Configuration { get; set; }
+        public static ILoggerRepository repository { get; set; }
         /*
        时时彩：重庆时时彩， 新疆时时彩，天津时时彩  （台湾时时彩，澳门时时彩）
        11x5:   广东11x5,江西11x5,山东11x5,上海11x5    （台湾11x5，澳门11x5）
@@ -36,6 +40,10 @@ namespace Lottery.GatherApp
             //    options.ConnString = ConfigFileHelper.Get("Lottery:Data:Database:Connection");
             //    options.DbType = Smart.Data.Dapper.DBProvider.MySQL;
             //});
+            ////log4net
+            repository = LogManager.CreateRepository("NETCoreRepository");
+            ////指定配置文件
+            XmlConfigurator.Configure(repository, new FileInfo("log4net.config"));
             services.AddSqlSugarClient<DbFactory>((sp, op) =>
              {
                  op.ConnectionString = ConfigFileHelper.Get("Lottery:Data:Database:Connection");
@@ -45,6 +53,9 @@ namespace Lottery.GatherApp
                  op.IsShardSameThread = true;
              });
             services.AddServices();
+
+          
+
             //services.AddCSRedis(options =>
             //{
             //    options.Add(new Smart.Core.NoSql.Redis.RedisConfig() { C_IP = "10.0.3.6", C_Post = 6379, C_Password = "redis123",C_Defaultdatabase=0 });
@@ -57,7 +68,7 @@ namespace Lottery.GatherApp
             await Task.WhenAll(new Task[] {
                 tasks.XML(),
             });
-            
+          
             Console.WriteLine("Done.");
             Console.ReadLine();
             Console.ReadLine();

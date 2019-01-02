@@ -73,7 +73,7 @@ namespace Lottery.GatherApp
                 }
                 catch (Exception  ex)
                 {
-                    Console.WriteLine(ex.Message);
+                 
                     continue;
                   
                 }
@@ -291,7 +291,7 @@ namespace Lottery.GatherApp
 
                     }
                 }
-                Console.WriteLine(index);
+             
             }
 
             int count = await _IXML_DataService.AddSDhtml(sys_issue, gameCode);
