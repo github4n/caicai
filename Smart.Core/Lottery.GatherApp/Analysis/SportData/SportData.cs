@@ -543,7 +543,7 @@ namespace Lottery.GatherApp
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.StackTrace);
+                throw new Exception(ex.Message);
             }
         }
         private void GetFc3Ds()
@@ -734,7 +734,7 @@ namespace Lottery.GatherApp
                             zqdc_Sfgg_Result.SF_Result = strText;
                             break;
                         case 10:
-                            zqdc_Sfgg_Result.SPF_SP = strText;
+                            zqdc_Sfgg_Result.SF_SP = strText;
                             break;
                         case 11:
                             zqdc_Sfgg_Result.AvgEu_SP += strText + ",";

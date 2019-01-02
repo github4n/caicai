@@ -66,21 +66,34 @@ namespace Lottery.Services
         {
             try
             {
+                if (zqdc_Sfggs == null || zqdc_Sfggs.Count() == 0)
+                {
+                    return;
+                }
                 int u = 0, i = 0; string issUe = string.Empty;
                 zqdc_Sfggs.ForEach((x) => {
                     x.MatchId = x.IssueNo + x.MatchNumber;
                     x.CreateTime = DateTime.Now;
+                    x.IsFinish = false;
                     var model = db.Queryable<zqdc_sfgg_result>().Where(k => k.IssueNo == x.IssueNo && k.MatchId == x.MatchId).First();
                     if (model != null)
                     {
-                        if (!model.IsFinish.Value)
+                        if (!model.IsFinish)
                         {
-                            db.Updateable(x).ExecuteCommand();
-                            u++;
+                            if (!string.IsNullOrEmpty(x.SF_Result) && !string.IsNullOrEmpty(x.SF_SP) && !string.IsNullOrEmpty(x.FullScore))
+                            {
+                                x.IsFinish = true;
+                                db.Updateable(x).ExecuteCommand();
+                                u++;
+                            }
                         }
                     }
                     else
                     {
+                        if (!string.IsNullOrEmpty(x.SF_Result) && !string.IsNullOrEmpty(x.SF_SP) && !string.IsNullOrEmpty(x.FullScore))
+                        {
+                            x.IsFinish = true;
+                        }
                         db.Insertable(x).ExecuteCommand();
                         i++;
                     }
