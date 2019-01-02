@@ -1,4 +1,5 @@
 ﻿using HtmlAgilityPack;
+using log4net;
 using Lottery.Modes.Entity;
 using Lottery.Services.Abstractions;
 using Smart.Core.Repository.SqlSugar;
@@ -14,11 +15,13 @@ namespace Lottery.Services
 {
    public class XML_DataService: Repository<DbFactory>,IXML_DataService
     {
-        //protected SqlSugarClient db = null;
+    
+        private ILog log;
         protected DbFactory BaseFactory;
         public XML_DataService(DbFactory factory) : base(factory)
         {
             BaseFactory = factory;
+            log = LogManager.GetLogger("LotteryRepository", typeof(XML_DataService));
         }
        
 
@@ -65,6 +68,7 @@ namespace Lottery.Services
                     issue.UpdateTime = DateTime.Now;
                     issue.LotteryTime = LotteryTime;
                     insertObjs.Add(issue);
+                    log.Info(lottery.LotteryName+"彩种"+issue.IssueNo+ "期期号采集完毕");
                 }
                 if (insertObjs.Count != 0)
                 {
@@ -123,6 +127,7 @@ namespace Lottery.Services
                     issue.CreateTime = DateTime.Now;
                     issue.UpdateTime = DateTime.Now;
                     count = db.Insertable(issue).ExecuteCommand();
+                    log.Info(lottery.LotteryName + "彩种" + issue.IssueNo + "期期号采集完毕");
                     insertCount += count;
                 }
                 return await Task.FromResult(insertCount);
@@ -137,7 +142,7 @@ namespace Lottery.Services
                 int count = 0;
                 var lottery = GetLottery(gameCode);
                 var insertObjs = new List<sys_issue>();
-                sys_issue sys_issue = GetNowIssuNo(gameCode);
+                sys_issue sys_issue = GetDescIssuNo(gameCode);
                 foreach (var item in htmlNodeCollection)
                 {
                     if (sys_issue != null)
@@ -155,6 +160,7 @@ namespace Lottery.Services
                     issue.CreateTime = DateTime.Now;
                     issue.UpdateTime = DateTime.Now;
                     insertObjs.Add(issue);
+                    log.Info(lottery.LotteryName + "彩种" + issue.IssueNo + "期期号采集完毕");
                 }
                 if (insertObjs.Count != 0)
                 {
@@ -195,6 +201,7 @@ namespace Lottery.Services
                     issue.CreateTime = DateTime.Now;
                     issue.UpdateTime = DateTime.Now;
                     count = db.Insertable(issue).ExecuteCommand();
+                    log.Info(lottery.LotteryName + "彩种" + issue.IssueNo + "期期号采集完毕");
                     insertCount += count;
                 }
                 return await Task.FromResult(insertCount);

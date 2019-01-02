@@ -1,4 +1,5 @@
-﻿using Lottery.Modes.Entity;
+﻿using log4net;
+using Lottery.Modes.Entity;
 using Lottery.Modes.Model;
 using Lottery.Services.Abstractions;
 using Newtonsoft.Json;
@@ -14,10 +15,12 @@ namespace Lottery.Services
     public class LotteryDetailService : Repository<DbFactory>, ILotteryDetailService
     {
         //protected SqlSugarClient db = null;
+        private ILog log;
         protected DbFactory BaseFactory;
         public LotteryDetailService(DbFactory factory) : base(factory)
         {
             BaseFactory = factory;
+            log = LogManager.GetLogger("LotteryRepository", typeof(LotteryDetailService));
             //db = factory.GetDbContext();
         }
 
@@ -52,6 +55,7 @@ namespace Lottery.Services
                     lotterydetail.CreateTime = DateTime.Now;
 
                     count = db.Insertable(lotterydetail).ExecuteCommand();
+                    log.Info(LotteryCode.LotteryName + "彩种" + item.expect + "期采集详情完毕");
                     insertCount += count;
                 }
                 return await Task.FromResult(insertCount);
