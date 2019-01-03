@@ -18,7 +18,7 @@ namespace Lottery.API.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    //[ReusltFilter]
+    [ReusltFilter]
     public class DataController : ControllerBase
     {
         protected IApi_DataService _api_DataService;
@@ -30,7 +30,7 @@ namespace Lottery.API.Controllers
         /// 获取当前时间
         /// </summary>
         /// <returns></returns>
-        [HttpGet]
+        [HttpPost]
         public IActionResult GetNowDate()
         {
             return Ok(new LotteryServiceResponse()
