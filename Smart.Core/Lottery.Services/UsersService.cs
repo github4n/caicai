@@ -21,8 +21,14 @@ namespace Lottery.Services
         {
             //获取数据库上下文
             //第一种  
+            //DbContext.Insert<Users>(new Users());
+            //第二种
+            //using (var db = Factory.GetDbContext())
+            //{
+            //}
+
             List<blast_count> list = new List<blast_count>();
-            list =await db.Query<blast_count>();        
+            list = await db.Query<blast_count>();
             blast_count model = new blast_count();
             model.typeid = 1000;
             model.playedId = 10000;

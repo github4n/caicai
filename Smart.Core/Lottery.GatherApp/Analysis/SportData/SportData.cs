@@ -531,121 +531,223 @@ namespace Lottery.GatherApp
         }
         public void Start()
         {
-            Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~★福彩3D开始爬取★~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-            GetFc3Ds();
-            Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~★福彩3D爬取数据完成★~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            try
+            {
+                Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~★福彩3D开始爬取★~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                GetFc3Ds();
+                Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~★福彩3D爬取数据完成★~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+
+                Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~★足球单场胜负过关开始爬取★~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                GetZqdc_SfggExpect();
+                Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~★足球单场胜负过关爬取数据完成★~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
         private void GetFc3Ds()
         {
             var anode = CommonHelper.GetExpect("http://kaijiang.500.com/sd.shtml");
+            var Issue = _digitalLotteryService.Getnormal_lotteryIssue();
             List<fc3D> fc3Ds = new List<fc3D>();
             foreach (HtmlNode item in anode)
             {
-                fc3D fc3D = new fc3D();
-                List<LotteryInfo> lotteries = new List<LotteryInfo>();
-                var htmlDoc = CommonHelper.LoadGziphtml("http://kaijiang.500.com/shtml/sd/" + item.InnerHtml + ".shtml");
-                #region 第一个表格
-                var GameTime = htmlDoc.DocumentNode.SelectNodes("//table[@class='kj_tablelist02']")[0].SelectNodes("tr")[0].SelectSingleNode("//span[@class='span_right']").InnerHtml;
-                fc3D.expect = item.InnerHtml;
-                fc3D.LotteryDate = GameTime.Split("：")[1].Split('兑')[0];
-                fc3D.AwardDeadline = GameTime.Split("：")[2];
-                fc3D.SalesVolume = htmlDoc.DocumentNode.SelectNodes("//table[@class='kj_tablelist02']").FirstOrDefault().SelectNodes("tr")[2].SelectSingleNode("//span[@class='cfont1 ']").InnerHtml.Replace("元", "");
-
-                var firstTableNode = htmlDoc.DocumentNode.SelectNodes("//table[@class='kj_tablelist02']")[0].SelectNodes("tr")[1].SelectSingleNode("td").SelectSingleNode("table").SelectSingleNode("tr").SelectNodes("td");
-                int i = 0;
-                foreach (var Subitem in firstTableNode)
+                int.TryParse(item.InnerHtml, out int result);
+                if (result >= Convert.ToInt32(Issue))
                 {
-                    if (i == 0)
-                    {
-                        i++;
-                        continue;
-                    }
-                    else//第二个开始截取数据
-                    {
-                        if (i == 1)
-                        {
-                            foreach (var Sub_subitem in Subitem.SelectNodes("//li[@class='ball_orange']"))
-                            {
-                                fc3D.opencode += Sub_subitem.InnerHtml + ",";
-                            }
-                            fc3D.opencode = fc3D.opencode.Remove(fc3D.opencode.Length - 1, 1);
-                            i++;
-                        }
-                        else if (i == 2)
-                        {
-                            var textNumber = Subitem.SelectSingleNode("div").InnerHtml.Split("：")[1].Replace(' ', ',');
-                            if (textNumber.StartsWith(','))
-                            {
-                                fc3D.TestNumber = textNumber.Remove(0, 1);
-                            }
-                            else
-                            {
-                                fc3D.TestNumber = textNumber;
-                            }
-                            i++;
-                        }
-                        else
-                        {
-                            fc3D.numberType = Subitem.SelectSingleNode("//font[@class='cfont1']").InnerHtml;
-                            i++;
-                        }
-                    }
-                }
-                #endregion
-                #region 第二个表格
-                var table_tr = htmlDoc.DocumentNode.SelectNodes("//table[@class='kj_tablelist02']")[1].SelectNodes("tr");
+                    fc3D fc3D = new fc3D();
+                    List<LotteryInfo> lotteries = new List<LotteryInfo>();
+                    var htmlDoc = CommonHelper.LoadGziphtml("http://kaijiang.500.com/shtml/sd/" + item.InnerHtml + ".shtml");
+                    #region 第一个表格
+                    var GameTime = htmlDoc.DocumentNode.SelectNodes("//table[@class='kj_tablelist02']")[0].SelectNodes("tr")[0].SelectSingleNode("//span[@class='span_right']").InnerHtml;
+                    fc3D.expect = item.InnerHtml;
+                    fc3D.LotteryDate = GameTime.Split("：")[1].Split('兑')[0];
+                    fc3D.AwardDeadline = GameTime.Split("：")[2];
+                    fc3D.SalesVolume = htmlDoc.DocumentNode.SelectNodes("//table[@class='kj_tablelist02']").FirstOrDefault().SelectNodes("tr")[2].SelectSingleNode("//span[@class='cfont1 ']").InnerHtml.Replace("元", "");
 
-                for (int m = 0; m < table_tr.Count; m++)//遍历tr
-                {
-                    if (m <= 1)
+                    var firstTableNode = htmlDoc.DocumentNode.SelectNodes("//table[@class='kj_tablelist02']")[0].SelectNodes("tr")[1].SelectSingleNode("td").SelectSingleNode("table").SelectSingleNode("tr").SelectNodes("td");
+                    int i = 0;
+                    foreach (var Subitem in firstTableNode)
                     {
-                        continue;
-                    }
-                    else//第二个tr开始爬取数据
-                    {
-                        if (m<19)
+                        if (i == 0)
                         {
-                            if (table_tr[m].SelectNodes("td")[0].OuterHtml.Contains("rowspan"))
+                            i++;
+                            continue;
+                        }
+                        else//第二个开始截取数据
+                        {
+                            if (i == 1)
                             {
-                                for (int n = 0; n < Convert.ToInt32(table_tr[m].SelectNodes("td")[0].Attributes[0].Value); n++)//获取跨越的行
+                                foreach (var Sub_subitem in Subitem.SelectNodes("//li[@class='ball_orange']"))
                                 {
-                                    if (n == 0)
-                                    {
-                                        LotteryInfo fc = new LotteryInfo();
-                                        fc.Prize = table_tr[m].SelectNodes("td")[0].InnerHtml.Trim();
-                                        fc.PrizeSubItem = table_tr[m].SelectNodes("td")[1].InnerHtml.Trim();
-                                        fc.BettingCount = table_tr[m].SelectNodes("td")[2].InnerHtml.Trim();
-                                        fc.Bonus = table_tr[m].SelectNodes("td")[3].InnerHtml.TrimStart().Trim();
-                                        lotteries.Add(fc);
-                                    }
-                                    if (n >= 1)
-                                    {
-                                        LotteryInfo fc = new LotteryInfo();
-                                        fc.Prize = table_tr[m].SelectNodes("td")[0].InnerHtml;
-                                        fc.PrizeSubItem = table_tr[m + n].SelectNodes("td")[0].InnerHtml.Trim();
-                                        fc.BettingCount = table_tr[m + n].SelectNodes("td")[1].InnerHtml.Trim();
-                                        fc.Bonus = table_tr[m + n].SelectNodes("td")[2].InnerHtml.Trim();
-                                        lotteries.Add(fc);
-                                    }
+                                    fc3D.opencode += Sub_subitem.InnerHtml + ",";
                                 }
-                                m = m + Convert.ToInt32(table_tr[m].SelectNodes("td")[0].Attributes[0].Value) - 1;
+                                fc3D.opencode = fc3D.opencode.Remove(fc3D.opencode.Length - 1, 1);
+                                i++;
+                            }
+                            else if (i == 2)
+                            {
+                                var textNumber = Subitem.SelectSingleNode("div").InnerHtml.Split("：")[1].Replace(' ', ',');
+                                if (textNumber.StartsWith(','))
+                                {
+                                    fc3D.TestNumber = textNumber.Remove(0, 1);
+                                }
+                                else
+                                {
+                                    fc3D.TestNumber = textNumber;
+                                }
+                                i++;
                             }
                             else
                             {
-                                LotteryInfo fc = new LotteryInfo();
-                                fc.Prize = table_tr[m].SelectNodes("td")[0].InnerHtml.Trim();
-                                fc.BettingCount = table_tr[m].SelectNodes("td")[1].InnerHtml.Trim();
-                                fc.Bonus = table_tr[m].SelectNodes("td")[2].InnerHtml.Trim();
-                                lotteries.Add(fc);
+                                fc3D.numberType = Subitem.SelectSingleNode("//font[@class='cfont1']").InnerHtml;
+                                i++;
                             }
                         }
                     }
+                    #endregion
+                    #region 第二个表格
+                    var table_tr = htmlDoc.DocumentNode.SelectNodes("//table[@class='kj_tablelist02']")[1].SelectNodes("tr");
+
+                    for (int m = 0; m < table_tr.Count; m++)//遍历tr
+                    {
+                        if (m <= 1)
+                        {
+                            continue;
+                        }
+                        else//第二个tr开始爬取数据
+                        {
+                            if (m < 19)
+                            {
+                                if (table_tr[m].SelectNodes("td")[0].OuterHtml.Contains("rowspan"))
+                                {
+                                    for (int n = 0; n < Convert.ToInt32(table_tr[m].SelectNodes("td")[0].Attributes[0].Value); n++)//获取跨越的行
+                                    {
+                                        if (n == 0)
+                                        {
+                                            LotteryInfo fc = new LotteryInfo();
+                                            fc.Prize = table_tr[m].SelectNodes("td")[0].InnerHtml.Trim();
+                                            fc.PrizeSubItem = table_tr[m].SelectNodes("td")[1].InnerHtml.Trim();
+                                            fc.BettingCount = table_tr[m].SelectNodes("td")[2].InnerHtml.Trim();
+                                            fc.Bonus = table_tr[m].SelectNodes("td")[3].InnerHtml.TrimStart().Trim();
+                                            lotteries.Add(fc);
+                                        }
+                                        if (n >= 1)
+                                        {
+                                            LotteryInfo fc = new LotteryInfo();
+                                            fc.Prize = table_tr[m].SelectNodes("td")[0].InnerHtml;
+                                            fc.PrizeSubItem = table_tr[m + n].SelectNodes("td")[0].InnerHtml.Trim();
+                                            fc.BettingCount = table_tr[m + n].SelectNodes("td")[1].InnerHtml.Trim();
+                                            fc.Bonus = table_tr[m + n].SelectNodes("td")[2].InnerHtml.Trim();
+                                            lotteries.Add(fc);
+                                        }
+                                    }
+                                    m = m + Convert.ToInt32(table_tr[m].SelectNodes("td")[0].Attributes[0].Value) - 1;
+                                }
+                                else
+                                {
+                                    LotteryInfo fc = new LotteryInfo();
+                                    fc.Prize = table_tr[m].SelectNodes("td")[0].InnerHtml.Trim();
+                                    fc.BettingCount = table_tr[m].SelectNodes("td")[1].InnerHtml.Trim();
+                                    fc.Bonus = table_tr[m].SelectNodes("td")[2].InnerHtml.Trim();
+                                    lotteries.Add(fc);
+                                }
+                            }
+                        }
+                    }
+                    #endregion
+                    fc3D.SubItemList = lotteries;
+                    fc3Ds.Add(fc3D);
+                    _digitalLotteryService.Addnormal_lotterydetail(fc3Ds);
                 }
-                #endregion
-                fc3D.SubItemList = lotteries;
-                fc3Ds.Add(fc3D);
             }
-           _digitalLotteryService.Addnormal_lotterydetail(fc3Ds);
+        }
+        /// <summary>
+        /// 足球单场-胜负过关开奖SP
+        /// </summary>
+        /// <returns></returns>
+        private void GetZqdc_SfggExpect()
+        {
+            var anode = CommonHelper.GetBJDCExpect("http://zx.500.com/zqdc/kaijiang.php?playid=6");
+            var Issue = _digitalLotteryService.GetZqdc_Sfgg();
+            foreach (HtmlNode item in anode)
+            {
+                int.TryParse(item.Attributes["value"].Value, out int result);
+                if (result >=Convert.ToInt32(Issue))
+                {
+                    _digitalLotteryService.AddZqdc_Sfgg(GetZqdc_Sfgg(item.Attributes["value"].Value));
+                }
+            }
+        }
+        /// <summary>
+        /// 足球单场-胜负过关开奖SP
+        /// </summary>
+        /// <returns></returns>
+        private List<zqdc_sfgg_result> GetZqdc_Sfgg(string expect)
+        {
+            var tableNode = CommonHelper.LoadGziphtml("http://zx.500.com/zqdc/kaijiang.php?playid=6&expect=" + expect).DocumentNode.SelectSingleNode("//table[@class='ld_table']");
+            var trNode = tableNode.SelectNodes("tr").Skip(1);
+            List<zqdc_sfgg_result> zqdc_Sfgg_Results = new List<zqdc_sfgg_result>();
+            //赛果开奖情况
+            foreach (var item in trNode)
+            {
+                zqdc_sfgg_result zqdc_Sfgg_Result = new zqdc_sfgg_result();
+                int tdIndex = 1;
+                var game = new GameType();
+                var GameTypes = new List<GameType>();
+                foreach (var item2 in item.SelectNodes("td"))
+                {
+                    string strText = Regex.Replace(item2.InnerHtml, "<[^>]+>", "");//不包含>的任意字符，字符个数不限，但至少一个字符
+                    if (strText == "&nbsp;" || strText == "")
+                    {
+                        continue;
+                    }
+                    switch (tdIndex)
+                    {
+                        case 1:
+                            zqdc_Sfgg_Result.MatchNumber = strText;
+                            break;
+                        case 2:
+                            zqdc_Sfgg_Result.BallType_Color = item2.SelectSingleNode("a|span").Attributes["style"].Value.Replace("background-color:", "").Split(";",StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
+                            zqdc_Sfgg_Result.BallType = strText;
+                            break;
+                        case 3:
+                            zqdc_Sfgg_Result.LeagueName = strText;
+                            break;
+                        case 4:
+                            zqdc_Sfgg_Result.MatchDate = strText;
+                            break;
+                        case 5:
+                            zqdc_Sfgg_Result.HomeTeam = strText;
+                            break;
+                        case 6:
+                            zqdc_Sfgg_Result.LetBall = strText;
+                            break;
+                        case 7:
+                            zqdc_Sfgg_Result.GuestTeam = strText;
+                            break;
+                        case 8:
+                            zqdc_Sfgg_Result.FullScore = strText;
+                            break;
+                        case 9:
+                            zqdc_Sfgg_Result.SF_Result = strText;
+                            break;
+                        case 10:
+                            zqdc_Sfgg_Result.SF_SP = strText;
+                            break;
+                        case 11:
+                            zqdc_Sfgg_Result.AvgEu_SP += strText + ",";
+                            tdIndex--;
+                            break;
+                    }
+                    tdIndex = tdIndex + 1;
+                }
+                zqdc_Sfgg_Result.IssueNo = expect;
+                zqdc_Sfgg_Result.AvgEu_SP = zqdc_Sfgg_Result.AvgEu_SP.Substring(0, zqdc_Sfgg_Result.AvgEu_SP.Length - 1);
+                zqdc_Sfgg_Results.Add(zqdc_Sfgg_Result);
+            }
+            return zqdc_Sfgg_Results;
         }
     }
 }

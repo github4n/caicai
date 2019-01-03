@@ -165,6 +165,7 @@ namespace Lottery.Services
                         League_Color = item.League_Color,
                         CreateTime = DateTime.Now,
                         JCDate = item.id,
+                        AvgEu_SP= item.AvgOuCompensation,
                     };
                     foreach (var Sub_item in item.gameTypes)
                     {

@@ -37,6 +37,7 @@ namespace Lottery.GatherApp.Analysis.LotteryDetail
 
                 if (_ILotteryDetailService.GetNowIssuNo(gameCode) != null)
                 {
+
                     if (item.IssueNo == _ILotteryDetailService.GetNowIssuNo(gameCode).IssueNo)
                     {
                         break;
@@ -79,7 +80,7 @@ namespace Lottery.GatherApp.Analysis.LotteryDetail
                     Console.WriteLine(gameCode+"彩种"+ex.Message);
                     continue;
                 }
-                Console.WriteLine(index);
+              
             }
             int count = await _ILotteryDetailService.AddLotteryDetal(lotterydetails, gameCode);
             return count;
