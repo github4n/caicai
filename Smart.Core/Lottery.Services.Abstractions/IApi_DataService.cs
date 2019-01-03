@@ -83,7 +83,7 @@ namespace Lottery.Services.Abstractions
         List<bjdc_result> GetZQDCDetail(string IssueNo);
 
 
-        List<bjdc_result> GetZQDCSFGGDetail(string IssueNo);
+        List<zqdc_sfgg_result> GetZQDCSFGGDetail(string IssueNo);
 
         void AddRedisHighLottery();
         void AddRedisLocalLottery();
