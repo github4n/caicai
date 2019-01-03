@@ -22,6 +22,7 @@ namespace Lottery.API.Controllers
     [ApiController]
     public class UCController : ControllerBase
     {
+        private static readonly string Source = ConfigFileHelper.Get("Source");
         /// <summary>
         /// 通用彩票列表
         /// http://lottery.jdddata.com/uc/common
@@ -112,6 +113,10 @@ namespace Lottery.API.Controllers
                         }
                         foreach (XmlElement Sub_element in element.LastChild)
                         {
+                            if (Sub_element.Name == "source")
+                            {
+                                Sub_element.InnerText = Source;
+                            }
                             if (Sub_element.Name == "title_url")
                             {
                                 Sub_element.InnerText = Common.title_url;
@@ -191,6 +196,10 @@ namespace Lottery.API.Controllers
                         var morelink = Common.morelink + Issue;
                         foreach (XmlElement Sub_element in element.LastChild)
                         {
+                            if (Sub_element.Name == "source")
+                            {
+                                Sub_element.InnerText = Source;
+                            }
                             if (Sub_element.Name == "title_url")
                             {
                                 Sub_element.InnerText = titelUrl;
@@ -267,6 +276,10 @@ namespace Lottery.API.Controllers
                         }
                         foreach (XmlElement Sub_element in element.LastChild)
                         {
+                            if (Sub_element.Name == "source")
+                            {
+                                Sub_element.InnerText = Source;
+                            }
                             if (Sub_element.Name == "url")
                             {
                                 Sub_element.InnerText = Common.url;
