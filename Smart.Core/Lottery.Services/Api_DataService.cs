@@ -314,7 +314,7 @@ on (ni.LotteryCode=n.LotteryCode and ni.issueNo=n.IssueNo)";
             }
         }
 
-        public List<bjdc_result> GetZQDCSFGGDetail(string IssueNo)
+        public List<zqdc_sfgg_result> GetZQDCSFGGDetail(string IssueNo)
         {
             //当传入时间为空时则拿最新期号
             using (var db = basFactory.GetDbContext())
@@ -322,10 +322,10 @@ on (ni.LotteryCode=n.LotteryCode and ni.issueNo=n.IssueNo)";
                 if (string.IsNullOrEmpty(IssueNo))
                 {
                     var IssueNoItem = db.Queryable<sys_issue>().Where(p => p.LotteryCode == "zqdcsfgg").OrderBy(p => p.IssueNo, OrderByType.Desc).First();
-                    if (IssueNo == null) return new List<bjdc_result>();
+                    if (IssueNo == null) return new List<zqdc_sfgg_result>();
                     IssueNo = IssueNoItem.IssueNo;
                 }
-                var list = db.Queryable<bjdc_result>().Where(p => p.IssueNo == IssueNo).ToList();
+                var list = db.Queryable<zqdc_sfgg_result>().Where(p => p.IssueNo == IssueNo).ToList();
                 return list;
             }
         }

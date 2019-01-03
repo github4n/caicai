@@ -81,6 +81,7 @@ namespace Lottery.API.Controllers
             try
             {
                 var lotteryList = _api_DataService.GetAllLottery();
+                lotteryList.ForEach(p => p.WebLogo += p.LotteryCode + ".jpg");
                 return Ok(
                     new LotteryServiceResponse()
                     {
@@ -393,22 +394,29 @@ namespace Lottery.API.Controllers
                 var p = JsonHelper.Decode(entity.Param);
                 string ZQDCType = p.ZQDCType;
                 string IssueNo = p.IssueNo;
-                var result = new List<bjdc_result>();
+                //var result = new List<bjdc_result>();
                 if (ZQDCType == "0")
                 {
-                    result = _api_DataService.GetZQDCDetail(IssueNo);
+                    var result = _api_DataService.GetZQDCDetail(IssueNo);
+                    return Ok(
+                          new LotteryServiceResponse()
+                          {
+                              Code = ResponseCode.成功,
+                              Value = result,
+                              Message = "获取成功"
+                          });
                 }
                 else
                 {
-                    result = _api_DataService.GetZQDCSFGGDetail(IssueNo);
+                    var result = _api_DataService.GetZQDCSFGGDetail(IssueNo);
+                    return Ok(
+                          new LotteryServiceResponse()
+                          {
+                              Code = ResponseCode.成功,
+                              Value = result,
+                              Message = "获取成功"
+                          });
                 }
-                return Ok(
-                           new LotteryServiceResponse()
-                           {
-                               Code = ResponseCode.成功,
-                               Value = result,
-                               Message = "获取成功"
-                           });
             }
             catch (Exception ex)
             {

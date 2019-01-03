@@ -19,8 +19,9 @@ namespace Lottery.API
                         .UseKestrel()
                         .UseContentRoot(Directory.GetCurrentDirectory())
                         .UseStartup<Startup>()
-                        .UseUrls("http://*:31778")
+                        .UseUrls("http://103.91.208.103:8087")
                         .Build();
+            //"http://www.caicai.com", "http://caicai.com", "http://m.caicai.com"
 
             host.Run();
             
