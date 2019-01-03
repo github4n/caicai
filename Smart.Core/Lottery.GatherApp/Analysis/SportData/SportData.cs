@@ -420,7 +420,7 @@ namespace Lottery.GatherApp
                                     jclq_result.MatchNumber = strText;
                                     break;
                                 case 2:
-                                    jclq_result.League_Color = item2.Attributes["style"].Value.Replace("background-color:", "");
+                                    jclq_result.League_Color = item2.Attributes["style"].Value.Replace("background-color:", "").Replace(";", "");
                                     jclq_result.LeagueName = strText;
                                     break;
                                 case 3:
