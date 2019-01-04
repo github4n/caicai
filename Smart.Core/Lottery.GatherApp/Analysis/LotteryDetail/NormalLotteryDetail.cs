@@ -30,17 +30,27 @@ namespace Lottery.GatherApp.Analysis.LotteryDetail
             var anode = _ILotteryDetailService.GetLotteryCodeList(gameCode).Take(30);
             List<lotterydetail> lotterydetails = new List<lotterydetail>();
             int index = 0;
+            int SfcIndex = 0;
             foreach (var item in anode)
             {
 
                 index++;
-
+                //查询彩种最新一期
                 if (_ILotteryDetailService.GetNowIssuNo(gameCode) != null)
                 {
 
-                    if (item.IssueNo == _ILotteryDetailService.GetNowIssuNo(gameCode).IssueNo)
+                    if (item.IssueNo == _ILotteryDetailService.GetNowIssuNo(gameCode).IssueNo && gameCode!="sfc")
                     {
                         break;
+                    }
+                  //数据库查到有胜负彩最新一期，获取采集下来的3期，用来更新数据
+                    if (gameCode == "sfc")
+                    {
+                        SfcIndex++;
+                        if (SfcIndex == 3)
+                        {
+                            break;
+                        }
                     }
                 }
                 lotterydetail lotterydetail = new lotterydetail();
