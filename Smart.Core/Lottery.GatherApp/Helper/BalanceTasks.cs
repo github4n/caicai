@@ -191,7 +191,7 @@ namespace Lottery.GatherApp
             int count = 0;
             var manager = new XML(_xml_DataService);
             var LotteryDetal = new NormalLotteryDetail(_ILotteryDetailService);
-            //StartTask();
+            StartTask();
 
             string info = "";
             while (true)

@@ -75,7 +75,7 @@ namespace Lottery.Services
                         lotterydetail.Sys_IssueId = item.Sys_IssueId;
                         lotterydetail.LotteryResultDetail = item.dltLists.Count == 0 ? gameCode != "ttcx4" ? JsonConvert.SerializeObject(item.openLotteryDetails) : JsonConvert.SerializeObject(item.ttcx4Details) : JsonConvert.SerializeObject(item.dltLists);
                         lotterydetail.CreateTime = DateTime.Now;
-
+                        lotterydetail.UpdateTime = DateTime.Now;
                         count = db.Insertable(lotterydetail).ExecuteCommand();
                         log.Info(LotteryCode.LotteryName + "彩种" + item.expect + "期采集详情完毕");
                         insertCount += count;

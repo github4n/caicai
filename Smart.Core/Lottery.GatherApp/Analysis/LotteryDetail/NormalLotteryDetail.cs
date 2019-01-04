@@ -207,7 +207,7 @@ namespace Lottery.GatherApp.Analysis.LotteryDetail
                                         lotterydetail.openCode=lotterydetail.openCode.Trim(',');
                                         break;
                                     case 2:
-                                        lotterydetail.openCode += "|"+ itemTr.SelectNodes("td")[1].InnerHtml;
+                                        lotterydetail.openCode += (gameCode == "dlt"?"+":"|") + itemTr.SelectNodes("td")[1].InnerHtml;
                                         break;
 
                                 }
