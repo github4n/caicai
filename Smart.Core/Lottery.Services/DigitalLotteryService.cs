@@ -40,8 +40,8 @@ namespace Lottery.Services
                             LotteryId = LotteryCode.Lottery_Id,
                             LotteryCode = LotteryCode.LotteryCode,
                             IssueNo = a.expect,
-                            LotteryDataDetail = JsonConvert.SerializeObject(a.SubItemList),
-                            LotteryResultDetail = a.opencode + "|" + a.TestNumber + "|" + a.numberType,
+                            LotteryDataDetail = a.opencode + "+" + a.TestNumber + "|" + a.numberType,
+                            LotteryResultDetail = JsonConvert.SerializeObject(a.SubItemList),
                             OpenTime = a.LotteryDate,
                             AwardDeadlineTime = a.AwardDeadline,
                             CurrentSales = a.SalesVolume
