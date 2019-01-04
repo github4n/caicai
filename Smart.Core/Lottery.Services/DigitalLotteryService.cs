@@ -44,7 +44,8 @@ namespace Lottery.Services
                             LotteryResultDetail = JsonConvert.SerializeObject(a.SubItemList),
                             OpenTime = a.LotteryDate,
                             AwardDeadlineTime = a.AwardDeadline,
-                            CurrentSales = a.SalesVolume
+                            CurrentSales = a.SalesVolume,
+                            UpdateTime=DateTime.Now
                         };
                         db.Insertable(_Lotterydetail).ExecuteCommand();
                         i++;
