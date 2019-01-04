@@ -28,7 +28,6 @@ namespace Lottery.Services
                     return;
                 }
                 List<normal_lotterydetail> result = new List<normal_lotterydetail>();
-                int i = 0;
                 string Issue = string.Empty;
                 ModelList.ForEach((a) =>
                 {
@@ -48,14 +47,13 @@ namespace Lottery.Services
                             UpdateTime=DateTime.Now
                         };
                         db.Insertable(_Lotterydetail).ExecuteCommand();
-                        i++;
                         if (string.IsNullOrEmpty(Issue))
                         {
                             Issue = a.expect;
                         }
                     }
                 });
-                Console.WriteLine($"FC3D奖期{Issue}成功新增数据{i}条");
+                Console.WriteLine($"FC3D奖期{Issue}成功新增数据");
             }
             catch (Exception ex)
             {
@@ -113,7 +111,7 @@ namespace Lottery.Services
         }
         public string Getnormal_lotteryIssue()
         {
-            return db.Queryable<normal_lotterydetail>().OrderBy(x => x.IssueNo, OrderByType.Desc).Select(x => x.IssueNo).First();
+            return db.Queryable<normal_lotterydetail>().Where(x=>x.LotteryCode=="sd").OrderBy(x => x.IssueNo, OrderByType.Desc).Select(x => x.IssueNo).First();
         }
         public string GetZqdc_Sfgg()
         {
