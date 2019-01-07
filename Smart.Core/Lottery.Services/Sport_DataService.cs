@@ -160,7 +160,7 @@ namespace Lottery.Services
                         GuestTeam = item.VisitingTeam,
                         LetBall = item.LetBall,
                         HalfScore = item.Score == "-" ? "-" : item.Score.Split(")")[0].Replace("(", "").Replace(")", ""),
-                        FullScore = item.Score == "-" ? "-" : item.Score.Split(")")[1].Replace(")", ""),
+                        FullScore = item.Score == "-" ? "-" : item.Score.Split(")")[1].Replace(")", "").Replace(" ",""),
                         LeagueName = item.TournamentType,
                         League_Color = item.League_Color,
                         CreateTime = DateTime.Now,

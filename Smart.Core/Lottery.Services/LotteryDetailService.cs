@@ -34,29 +34,52 @@ namespace Lottery.Services
                 normal_lotterydetail nld = GetNowIssuNo(gameCode);
                 foreach (var item in lotterydetails)
                 {
-                    if (nld != null)
+                    if (nld != null && gameCode != "sfc")
                     {
                         if (nld.IssueNo == item.expect)
                         {
                             break;
                         }
                     }
-                    normal_lotterydetail lotterydetail = new normal_lotterydetail();
-                    lotterydetail.IssueNo = item.expect;
-                    lotterydetail.LotteryId = LotteryCode.Lottery_Id;
-                    lotterydetail.LotteryCode = LotteryCode.LotteryCode;
-                    lotterydetail.OpenTime = item.openTime;
-                    lotterydetail.AwardDeadlineTime = item.endTime;
-                    lotterydetail.LotteryDataDetail = item.teams.Count == 0 ? (item.NumberType != null ? item.openCode + "|" + item.NumberType : item.openCode) : JsonConvert.SerializeObject(item.teams);
-                    lotterydetail.CurrentSales = item.SalesVolume;
-                    lotterydetail.PrizePool = item.PoolRolling;
-                    lotterydetail.Sys_IssueId = item.Sys_IssueId;
-                    lotterydetail.LotteryResultDetail = item.dltLists.Count == 0?gameCode != "ttcx4" ? JsonConvert.SerializeObject(item.openLotteryDetails) : JsonConvert.SerializeObject(item.ttcx4Details): JsonConvert.SerializeObject(item.dltLists);
-                    lotterydetail.CreateTime = DateTime.Now;
+                    var strlotterydetail = GetCodelotterydetail(gameCode, item.expect);
 
-                    count = db.Insertable(lotterydetail).ExecuteCommand();
-                    log.Info(LotteryCode.LotteryName + "彩种" + item.expect + "期采集详情完毕");
-                    insertCount += count;
+                    if (strlotterydetail != null)
+                    {
+                        if (gameCode == "sfc")
+                        {
+                            DateTime date = DateTime.Now.AddDays(-3);
+                            if (strlotterydetail.LotteryDataDetail.Contains("*") && Convert.ToDateTime(strlotterydetail.OpenTime) > date)
+                            {
+                                strlotterydetail.LotteryDataDetail = item.teams.Count == 0 ? (item.NumberType != null ? item.openCode + "|" + item.NumberType : item.openCode) : JsonConvert.SerializeObject(item.teams);
+                                strlotterydetail.LotteryResultDetail = item.dltLists.Count == 0 ? gameCode != "ttcx4" ? JsonConvert.SerializeObject(item.openLotteryDetails) : JsonConvert.SerializeObject(item.ttcx4Details) : JsonConvert.SerializeObject(item.dltLists);
+                                strlotterydetail.UpdateTime = DateTime.Now;
+                                strlotterydetail.PrizePool = item.PoolRolling;
+                                strlotterydetail.CurrentSales = item.SalesVolume;
+                                count = db.Updateable(strlotterydetail).ExecuteCommand();
+                                log.Info(LotteryCode.LotteryName + "彩种" + strlotterydetail.IssueNo + "期期号更新完毕");
+                            }
+                        }
+                    }
+                    else
+                    {
+
+                        normal_lotterydetail lotterydetail = new normal_lotterydetail();
+                        lotterydetail.IssueNo = item.expect;
+                        lotterydetail.LotteryId = LotteryCode.Lottery_Id;
+                        lotterydetail.LotteryCode = LotteryCode.LotteryCode;
+                        lotterydetail.OpenTime = item.openTime;
+                        lotterydetail.AwardDeadlineTime = item.endTime;
+                        lotterydetail.LotteryDataDetail = item.teams.Count == 0 ? (item.NumberType != null ? item.openCode + "|" + item.NumberType : item.openCode) : JsonConvert.SerializeObject(item.teams);
+                        lotterydetail.CurrentSales = item.SalesVolume;
+                        lotterydetail.PrizePool = item.PoolRolling;
+                        lotterydetail.Sys_IssueId = item.Sys_IssueId;
+                        lotterydetail.LotteryResultDetail = item.dltLists.Count == 0 ? gameCode != "ttcx4" ? JsonConvert.SerializeObject(item.openLotteryDetails) : JsonConvert.SerializeObject(item.ttcx4Details) : JsonConvert.SerializeObject(item.dltLists);
+                        lotterydetail.CreateTime = DateTime.Now;
+                        lotterydetail.UpdateTime = DateTime.Now;
+                        count = db.Insertable(lotterydetail).ExecuteCommand();
+                        log.Info(LotteryCode.LotteryName + "彩种" + item.expect + "期采集详情完毕");
+                        insertCount += count;
+                    }
                 }
                 return await Task.FromResult(insertCount);
             }
@@ -91,6 +114,16 @@ namespace Lottery.Services
                
             }
         }
+
+
+        public normal_lotterydetail GetCodelotterydetail(string LotteryCode, string IssueNo)
+        {
+            using (var db = BaseFactory.GetDbContext())
+            {
+                return db.Queryable<normal_lotterydetail>().Where(n => n.LotteryCode == LotteryCode && n.IssueNo == IssueNo).OrderBy(n => n.IssueNo, OrderByType.Desc).First();
+            }
+        }
+
         public sys_issue GetIssue(string IssueNo)
         {
             using (var db = BaseFactory.GetDbContext())

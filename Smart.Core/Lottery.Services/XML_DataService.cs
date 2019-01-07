@@ -97,39 +97,62 @@ namespace Lottery.Services
                 foreach (XmlNode item in xmlNodeList)
                 {
 
-                    if (sys_issue != null)
+
+
+                    if (sys_issue != null && gameCode != "sfc")
                     {
+
                         if (sys_issue.IssueNo == item.Attributes["expect"].Value)
                         {
                             break;
                         }
                     }
-                    sys_issue issue = new sys_issue();
-                    issue.IssueNo = item.Attributes["expect"].Value;
+                    var strCI = GetCodeIssue(gameCode, item.Attributes["expect"].Value);
 
-                    if (item.Attributes["specail"] != null)
+                    if (strCI != null)
                     {
-                        issue.OpenCode = item.Attributes["opencode"].Value + "|" + item.Attributes["specail"].Value;
-                    }
-                    else if (item.Attributes["opencode_specail"] != null)
-                    {
-
-                        issue.OpenCode = item.Attributes["opencode"].Value + "|" + item.Attributes["opencode_specail"].Value;
+                        if (gameCode == "sfc")
+                        {
+                            DateTime date = DateTime.Now.AddDays(-3);
+                            if (strCI.OpenCode.Contains("*") && Convert.ToDateTime(strCI.OpenTime)> date)
+                            {
+                                strCI.OpenCode = item.Attributes["opencode"].Value;
+                                strCI.UpdateTime = DateTime.Now;
+                                count = db.Updateable(strCI).ExecuteCommand();
+                                log.Info(lottery.LotteryName + "彩种" + strCI.IssueNo + "期期号更新完毕");
+                            }
+                        }
                     }
                     else
                     {
-                        issue.OpenCode = item.Attributes["opencode"].Value;
-                    }
+                        sys_issue issue = new sys_issue();
+                        issue.IssueNo = item.Attributes["expect"].Value;
 
-                    issue.OpenTime = item.Attributes["opentime"].Value;
-                    issue.LotteryId = lottery.Lottery_Id;
-                    issue.LotteryCode = lottery.LotteryCode;
-                    issue.CreateTime = DateTime.Now;
-                    issue.UpdateTime = DateTime.Now;
-                    count = db.Insertable(issue).ExecuteCommand();
-                    log.Info(lottery.LotteryName + "彩种" + issue.IssueNo + "期期号采集完毕");
-                    insertCount += count;
+                        if (item.Attributes["specail"] != null)
+                        {
+                            issue.OpenCode = item.Attributes["opencode"].Value + "|" + item.Attributes["specail"].Value;
+                        }
+                        else if (item.Attributes["opencode_specail"] != null)
+                        {
+
+                            issue.OpenCode = item.Attributes["opencode"].Value + "|" + item.Attributes["opencode_specail"].Value;
+                        }
+                        else
+                        {
+                            issue.OpenCode = item.Attributes["opencode"].Value;
+                        }
+
+                        issue.OpenTime = item.Attributes["opentime"].Value;
+                        issue.LotteryId = lottery.Lottery_Id;
+                        issue.LotteryCode = lottery.LotteryCode;
+                        issue.CreateTime = DateTime.Now;
+                        issue.UpdateTime = DateTime.Now;
+                        count = db.Insertable(issue).ExecuteCommand();
+                        log.Info(lottery.LotteryName + "彩种" + issue.IssueNo + "期期号采集完毕");
+                        insertCount += count;
+                    }
                 }
+                
                 return await Task.FromResult(insertCount);
             }
         }
@@ -260,6 +283,14 @@ namespace Lottery.Services
             {
                 sys_issue issue = db.Queryable<sys_issue>().Where(n => n.LotteryCode == LotteryCode).OrderBy(n => n.IssueNo, OrderByType.Desc).Take(1).First();
                 return issue;
+            }
+        }
+
+        public sys_issue GetCodeIssue(string LotteryCode,string IssueNo)
+        {
+            using (var db = BaseFactory.GetDbContext())
+            {
+                return db.Queryable<sys_issue>().Where(n=>n.LotteryCode==LotteryCode && n.IssueNo==IssueNo).OrderBy(n => n.IssueNo, OrderByType.Desc).First();
             }
         }
 

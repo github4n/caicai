@@ -10,15 +10,18 @@ using Lottery.Services.Abstractions;
 using Lottery.Modes.Entity;
 using System.Threading;
 using Lottery.GatherApp.Helper;
+using log4net;
 
 namespace Lottery.GatherApp
 {
     public class SportData
     {
         protected ISport_DataService _SportService;
+        private ILog log;
         public SportData(ISport_DataService Sport_DataService)
         {
             _SportService = Sport_DataService;
+            log = LogManager.GetLogger("LotteryRepository", typeof(XML_DataService));
         }
         /// <summary>
         /// 启动
@@ -197,7 +200,7 @@ namespace Lottery.GatherApp
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                log.Error(ex.Message);
             }
         }
         /// <summary>
@@ -356,7 +359,7 @@ namespace Lottery.GatherApp
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                log.Error(ex.Message);
             }
         }
         /// <summary>
@@ -420,7 +423,7 @@ namespace Lottery.GatherApp
                                     jclq_result.MatchNumber = strText;
                                     break;
                                 case 2:
-                                    jclq_result.League_Color = item2.Attributes["style"].Value.Replace("background-color:", "");
+                                    jclq_result.League_Color = item2.Attributes["style"].Value.Replace("background-color:", "").Replace(";", "");
                                     jclq_result.LeagueName = strText;
                                     break;
                                 case 3:
@@ -503,7 +506,7 @@ namespace Lottery.GatherApp
                                 {
                                     jclq_result.GG_SFC_Result = item4.SelectNodes("td")[i].InnerHtml;
                                 }
-                                if (i == 12)
+                                if (i == 15)
                                 {
                                     jclq_result.GG_DXF_Result = item4.SelectNodes("td")[i].InnerHtml;
                                 }
@@ -518,16 +521,19 @@ namespace Lottery.GatherApp
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                log.Error(ex.Message);
             }
         }
     }
     public class DigitalLottery
     {
         protected IDigitalLotteryService _digitalLotteryService;
+        private ILog log;
         public DigitalLottery(IDigitalLotteryService DigitalLotteryService)
         {
             _digitalLotteryService = DigitalLotteryService;
+            log = LogManager.GetLogger("LotteryRepository", typeof(XML_DataService));
+
         }
         public void Start()
         {
@@ -543,7 +549,7 @@ namespace Lottery.GatherApp
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                log.Error(ex.Message);
             }
         }
         private void GetFc3Ds()

@@ -239,7 +239,7 @@ namespace Lottery.GatherApp
                             log.Info(info);
                             Thread.Sleep(new Random().Next(1000, 5000));
                         }
-                        else if (item.HighFrequency != 1 && item.LotteryCode != "zqdc" && item.LotteryCode != "sd" && item.LotteryCode != "pls" && item.LotteryCode != "jczq" && item.LotteryCode != "jclq" && item.LotteryCode != "zqdcsfgg")
+                        if (item.HighFrequency != 1 && item.LotteryCode != "zqdc" && item.LotteryCode != "sd" && item.LotteryCode != "pls" && item.LotteryCode != "jczq" && item.LotteryCode != "jclq" && item.LotteryCode != "zqdcsfgg")
                         {
                             info = item.LotteryName + "期号开始采集";
                             log.Info(info);
@@ -249,8 +249,6 @@ namespace Lottery.GatherApp
                             log.Info(info);
                             Thread.Sleep(new Random().Next(1000, 5000));
                         }
-
-
                         if (item.HighFrequency != 1 && item.LotteryCode != "zqdc" && item.LotteryCode != "jczq" && item.LotteryCode != "jclq" && item.LotteryCode != "sd" && item.LotteryCode != "zqdcsfgg")
                         {
                             info = item.LotteryName + "详情开始采集";
