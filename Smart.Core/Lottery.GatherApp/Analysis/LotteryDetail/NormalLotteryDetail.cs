@@ -39,12 +39,12 @@ namespace Lottery.GatherApp.Analysis.LotteryDetail
                 if (_ILotteryDetailService.GetNowIssuNo(gameCode) != null)
                 {
 
-                    if (item.IssueNo == _ILotteryDetailService.GetNowIssuNo(gameCode).IssueNo && gameCode!="sfc")
+                    if (item.IssueNo == _ILotteryDetailService.GetNowIssuNo(gameCode).IssueNo && gameCode!="sfc" && gameCode == "jq4" && gameCode == "zc6")
                     {
                         break;
                     }
                   //数据库查到有胜负彩最新一期，获取采集下来的3期，用来更新数据
-                    if (gameCode == "sfc")
+                    if (gameCode == "sfc" || gameCode == "jq4" || gameCode == "zc6")
                     {
                         SfcIndex++;
                         if (SfcIndex == 3)
@@ -104,6 +104,7 @@ namespace Lottery.GatherApp.Analysis.LotteryDetail
             bool TF = true;
             foreach (HtmlNode item in firstTable_trnode)  //循环第一个table的tr
             {
+             
                 switch (k)
                 {
                     case 1:
@@ -115,6 +116,7 @@ namespace Lottery.GatherApp.Analysis.LotteryDetail
                         lotterydetail.endTime = Convert.ToDateTime(EndTime).ToString("yyyy-MM-dd"); ;
                         lotterydetails.Add(lotterydetail);
                         break;
+
                     case 2:
                         for (int i = 0; i < item.SelectNodes("td").Count; i++)
                         {
@@ -125,7 +127,11 @@ namespace Lottery.GatherApp.Analysis.LotteryDetail
 
                             if (gameCode == "zc6")
                             {
+                                teams = new Team();
+                                teams.TeamTitle = item.SelectNodes("td")[i].Attributes["title"].Value.Replace("&nbsp;", "");
+                                teams.openTeam = item.SelectNodes("td")[i].InnerHtml.Replace("&nbsp;", "");
                                 lotterydetail.teams.Add(teams);
+                             
                             }
 
                             }
@@ -139,8 +145,8 @@ namespace Lottery.GatherApp.Analysis.LotteryDetail
                             {
                                 for (int i = 0; i < item.SelectNodes("td").Count; i++)
                                 {
-                                    lotterydetail.teams[i].halfull = item.SelectNodes("td")[i].InnerHtml;
-                                   
+                                    var a = i;
+                                    lotterydetail.teams[a].halfull = item.SelectNodes("td")[a].InnerHtml;
                                 }
                                 TF = false;
                                 continue;
@@ -207,7 +213,7 @@ namespace Lottery.GatherApp.Analysis.LotteryDetail
                                         lotterydetail.openCode=lotterydetail.openCode.Trim(',');
                                         break;
                                     case 2:
-                                        lotterydetail.openCode += (gameCode == "dlt"?"+":"|") + itemTr.SelectNodes("td")[1].InnerHtml;
+                                        lotterydetail.openCode += (gameCode == "dlt"?"+":"|") + itemTr.SelectNodes("td")[1].InnerHtml.TrimStart();
                                         break;
 
                                 }

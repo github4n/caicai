@@ -34,7 +34,7 @@ namespace Lottery.Services
                 normal_lotterydetail nld = GetNowIssuNo(gameCode);
                 foreach (var item in lotterydetails)
                 {
-                    if (nld != null && gameCode != "sfc")
+                    if (nld != null && gameCode != "sfc" && gameCode != "jq4" && gameCode != "zc6")
                     {
                         if (nld.IssueNo == item.expect)
                         {
@@ -45,7 +45,7 @@ namespace Lottery.Services
 
                     if (strlotterydetail != null)
                     {
-                        if (gameCode == "sfc")
+                        if (gameCode == "sfc" || gameCode == "jq4" || gameCode == "zc6")
                         {
                             DateTime date = DateTime.Now.AddDays(-3);
                             if (strlotterydetail.LotteryDataDetail.Contains("*") && Convert.ToDateTime(strlotterydetail.OpenTime) > date)

@@ -65,22 +65,79 @@ namespace Lottery.GatherApp.Helper
                 UserAgentList = new List<UserAgent_Cookies>();
                 UserAgentList.Add(new UserAgent_Cookies()
                 {
+                    //谷歌
                     UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36",
                     CookiesContainer = new CookieContainer()
                 });
                 UserAgentList.Add(new UserAgent_Cookies()
                 {
+                    //IE 11
                     UserAgent = "User-Agent:Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; .NET4.0C; .NET4.0E; .NET CLR 2.0.50727; .NET CLR 3.0.30729; .NET CLR 3.5.30729; InfoPath.3; rv:11.0) like Gecko",
                     CookiesContainer = new CookieContainer()
                 });
                 UserAgentList.Add(new UserAgent_Cookies()
                 {
+                    //火狐
                     UserAgent = "User-Agent:Mozilla/5.0 (Windows NT 10.0; WOW64; rv:38.0) Gecko/20100101 Firefox/38.0",
+                    CookiesContainer = new CookieContainer()
+                });
+                UserAgentList.Add(new UserAgent_Cookies()
+                {
+                    //safari 5.1 – Windows
+                    UserAgent = "User-Agent:Mozilla/5.0 (Windows; U; Windows NT 6.1; en-us) AppleWebKit/534.50 (KHTML, like Gecko) Version/5.1 Safari/534.50",
+                    CookiesContainer = new CookieContainer()
+                });
+                UserAgentList.Add(new UserAgent_Cookies()
+                {
+                    //Opera
+                    UserAgent = "User-Agent:Opera/9.80 (Windows NT 6.1; U; en) Presto/2.8.131 Version/11.11",
+                    CookiesContainer = new CookieContainer()
+                });
+                UserAgentList.Add(new UserAgent_Cookies()
+                {
+                    //傲游（Maxthon）
+                    UserAgent = "User-Agent: Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; Maxthon 2.0)",
+                    CookiesContainer = new CookieContainer()
+                });
+                   UserAgentList.Add(new UserAgent_Cookies()
+                   {
+                       //傲游（Maxthon）
+                       UserAgent = "User-Agent: Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; TencentTraveler 4.0)",
+                       CookiesContainer = new CookieContainer()
+                   });
+                UserAgentList.Add(new UserAgent_Cookies()
+                {
+                    //世界之窗（The World） 3.x
+                    UserAgent = "User-Agent: Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; The World)",
+                    CookiesContainer = new CookieContainer()
+                });
+                UserAgentList.Add(new UserAgent_Cookies()
+                {
+                    //搜狗浏览器 1.x
+                    UserAgent = "User-Agent: Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; Trident/4.0; SE 2.X MetaSr 1.0; SE 2.X MetaSr 1.0; .NET CLR 2.0.50727; SE 2.X MetaSr 1.0)",
+                    CookiesContainer = new CookieContainer()
+                });
+                UserAgentList.Add(new UserAgent_Cookies()
+                {
+                    //360浏览器
+                    UserAgent = "User-Agent: Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; 360SE)",
+                    CookiesContainer = new CookieContainer()
+                });
+                UserAgentList.Add(new UserAgent_Cookies()
+                {
+                    //Avant
+                    UserAgent = "User-Agent: Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; Avant Browser)",
+                    CookiesContainer = new CookieContainer()
+                });
+                UserAgentList.Add(new UserAgent_Cookies()
+                {
+                    //Green Browser
+                    UserAgent = "User-Agent: Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)",
                     CookiesContainer = new CookieContainer()
                 });
             }
             var rd = new Random();
-            var rdNum = rd.Next(0, 2);
+            var rdNum = rd.Next(0, 11);
             return UserAgentList[rdNum];
         }
         //public static void Gzip(HtmlWeb web)
@@ -123,7 +180,7 @@ namespace Lottery.GatherApp.Helper
         public static HtmlDocument LoadGziphtml(string strhtml)
         {
             string htmlCode;
-            Thread.Sleep(new Random().Next(1000, 5000));
+            Thread.Sleep(new Random().Next(3000, 8000));
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance); //注册EncodingProvider的方法，获得网页编码GB2312的支持
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(strhtml);
             HttpWebResponse response=null;

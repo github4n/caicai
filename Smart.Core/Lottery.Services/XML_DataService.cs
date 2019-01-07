@@ -99,7 +99,7 @@ namespace Lottery.Services
 
 
 
-                    if (sys_issue != null && gameCode != "sfc")
+                    if (sys_issue != null && gameCode != "sfc" && gameCode == "jq4" && gameCode == "zc6")
                     {
 
                         if (sys_issue.IssueNo == item.Attributes["expect"].Value)
@@ -111,7 +111,7 @@ namespace Lottery.Services
 
                     if (strCI != null)
                     {
-                        if (gameCode == "sfc")
+                        if (gameCode == "sfc" || gameCode == "jq4" || gameCode == "zc6")
                         {
                             DateTime date = DateTime.Now.AddDays(-3);
                             if (strCI.OpenCode.Contains("*") && Convert.ToDateTime(strCI.OpenTime)> date)

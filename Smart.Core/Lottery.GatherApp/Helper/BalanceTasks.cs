@@ -191,7 +191,7 @@ namespace Lottery.GatherApp
             int count = 0;
             var manager = new XML(_xml_DataService);
             var LotteryDetal = new NormalLotteryDetail(_ILotteryDetailService);
-            StartTask();
+            //StartTask();
 
             string info = "";
             while (true)
@@ -257,11 +257,11 @@ namespace Lottery.GatherApp
                             info = item.LotteryName + "详情采集完毕.新采集了" + count + "条";
 
                             log.Info(info);
-
+                            Thread.Sleep(new Random().Next(1000, 5000));
                         }
                     }
-
-
+                    SportData();
+                    LotteryData();
                 }
                 catch (Exception ex)
                 {
