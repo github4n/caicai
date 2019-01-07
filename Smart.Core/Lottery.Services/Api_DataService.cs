@@ -205,7 +205,7 @@ namespace Lottery.Services
             {
                 if (string.IsNullOrEmpty(IssueNo))
                 {
-                    var sql = @"SELECT ni.issueNo AS IssueNo,ni.LotteryCode AS LotteryCode,ni.OpenCode AS OpenCode,l.LotteryName AS  LotteryName 
+                    var sql = @"SELECT ni.issueNo AS IssueNo,ni.LotteryCode AS LotteryCode,ni.OpenCode AS OpenCode,l.LotteryName AS  LotteryName ,ni.OpenTime
 FROM  (SELECT * FROM sys_issue i 
 WHERE i.LotteryCode=@LotteryCode
 ORDER BY i.OpenTime DESC,i.IssueNo LIMIT 1) ni LEFT JOIN sys_lottery l ON(l.LotteryCode=ni.lotteryCode)";
@@ -233,18 +233,22 @@ ORDER BY i.OpenTime DESC,i.IssueNo LIMIT 1) ni LEFT JOIN sys_lottery l ON(l.Lott
                 }
                 else
                 {
-                    var sql = @"select ni.issueNo as IssueNo,ni.LotteryCode as LotteryCode,ni.OpenCode,l.LotteryName as LotteryName,
-n.AwardDeadlineTime,n.LotteryDataDetail,n.OpenTime,n.PrizePool,n.`LotteryResultDetail`
-from  (select * from sys_issue i 
-where i.LotteryCode=@LotteryCode and i.issueNo=@IssueNo
-) ni left join sys_lottery l on(l.LotteryCode=ni.lotteryCode) left join normal_lotterydetail n
-on (ni.LotteryCode=n.LotteryCode and ni.issueNo=n.IssueNo)";
+                    var sql = @"select ni.OpenCode,l.LotteryName as LotteryName,
+n.AwardDeadlineTime,n.CurrentSales,n.IssueNo,l.LotteryCode,n.LotteryDataDetail,n.LotteryResultDetail,n.OpenTime,n.PrizePool,ni.openTime as IssueTime
+ from  (select * from sys_issue i 
+ where i.LotteryCode=@LotteryCode and i.issueNo=@IssueNo
+ ) ni left join sys_lottery l on(l.LotteryCode=ni.lotteryCode) left join normal_lotterydetail n
+ on (ni.LotteryCode=n.LotteryCode and ni.issueNo=n.IssueNo)";
                     var Item = db.SqlQueryable<NormalDetail_ShowModel>(sql).AddParameters(new { LotteryCode = LotteryCode, IssueNo = IssueNo }).First();
                     if (Item != null)
                     {
                         if (string.IsNullOrEmpty(Item.LotteryDataDetail))
                         {
                             Item.LotteryDataDetail = Item.OpenCode;
+                        }
+                        if (string.IsNullOrEmpty(Item.OpenTime))
+                        {
+                            Item.OpenTime = Item.IssueTime.FormatDate();
                         }
                         result = Item;
                     }

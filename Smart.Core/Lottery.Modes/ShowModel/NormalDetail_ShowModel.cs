@@ -59,5 +59,7 @@ namespace Lottery.Modes.ShowModel
         public string CurrentSales { get; set; }
 
         public string OpenCode { get; set; }
+
+        public string IssueTime { get; set; }
     }
 }
