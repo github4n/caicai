@@ -27,7 +27,8 @@ namespace Lottery.GatherApp
         protected readonly IXML_DataService _xml_DataService;
         protected readonly ILotteryDetailService _ILotteryDetailService;
         protected readonly IKaiJiangWangService _kaiJiangWangService;
-        public BalanceTasks(IUsersService usersSvc, ILogger logger, ISport_DataService sport_DataService, IXML_DataService xml_DataService, IDigitalLotteryService digitalLotteryService, ILotteryDetailService lotteryDetailService,IKaiJiangWangService kaiJiangWangService)
+        protected readonly IJddDataService _IJddDataService;
+        public BalanceTasks(IUsersService usersSvc, ILogger logger, ISport_DataService sport_DataService, IXML_DataService xml_DataService, IDigitalLotteryService digitalLotteryService, ILotteryDetailService lotteryDetailService,IKaiJiangWangService kaiJiangWangService,IJddDataService jddDataService)
         {
             this._userSvc = usersSvc;
             this.log = LogManager.GetLogger(Program.repository.Name, typeof(BalanceTasks));
@@ -36,7 +37,7 @@ namespace Lottery.GatherApp
             _xml_DataService = xml_DataService;
             _digitalLotteryService = digitalLotteryService;
             _ILotteryDetailService = lotteryDetailService;
-            _IJddDataService = IJddDataService;
+            _IJddDataService = jddDataService;
             _kaiJiangWangService = kaiJiangWangService;
         }
         public async Task CQSSC()

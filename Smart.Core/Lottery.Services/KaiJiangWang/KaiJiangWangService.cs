@@ -61,7 +61,7 @@ namespace Lottery.Services
                         });
                         _Issue.OpenCode = _Issue.OpenCode.Remove(_Issue.OpenCode.Length - 1, 1);
                     }
-                    _Issue.IssueNo = a.preDrawIssue.ToString();
+                    _Issue.IssueNo = a.preDrawIssue.ToString().Length==5? a.preDrawIssue.ToString(): a.preDrawIssue.ToString().Substring(0,2);
                     _Issue.LotteryId = LotteryId;
                     _Issue.LotteryCode = LotteryCode;
                     _Issue.CreateTime = DateTime.Now;
