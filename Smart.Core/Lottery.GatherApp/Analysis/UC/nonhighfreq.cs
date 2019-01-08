@@ -54,15 +54,22 @@ namespace Lottery.GatherApp.Analysis.UC
             XmlDocument doc = new XmlDocument();//新建对象
             doc.LoadXml(htmlCode);
            
-            var list = doc.SelectNodes("//item");
-
-            foreach (XmlNode item in list)
+            var list = doc.DocumentElement.ChildNodes;
+            int i = 0;
+            foreach (XmlElement element in list)
             {
+                i++;
                 sys_issue issue = new sys_issue();
-                issue.LotteryCode = item.SelectSingleNode("//key").InnerText;
-                issue.IssueNo= item.SelectSingleNode("//qihao").InnerText;
-                issue.OpenCode = item.SelectSingleNode("//number").InnerText;
-                issue.OpenTime = item.SelectSingleNode("//time").InnerText;
+                issue.LotteryCode = ((XmlElement)element.GetElementsByTagName("key")[0]).InnerText;
+                issue.IssueNo= ((XmlElement)element.GetElementsByTagName("qihao")[0]).InnerText;
+                issue.OpenCode = ((XmlElement)element.GetElementsByTagName("number")[0]).InnerText.Replace("-","|");
+                issue.OpenTime = ((XmlElement)element.GetElementsByTagName("time")[0]).InnerText;
+                if (i == 15)
+                {
+                    Console.WriteLine(issue.LotteryCode+"gggggggg"+ issue.IssueNo);
+                    i = 0;
+                }
+              
                 IssueList.Add(issue);
             }
 
