@@ -25,25 +25,17 @@ namespace Lottery.GatherApp
         protected readonly IDigitalLotteryService _digitalLotteryService;
         protected readonly IXML_DataService _xml_DataService;
         protected readonly ILotteryDetailService _ILotteryDetailService;
-        //public BalanceTasks(IUsersService usersSvc, ILogger logger,ISport_DataService sport_DataService , IXML_DataService xml_DataService,RedisManager redisManager)
-        //{
-        //    this._userSvc = usersSvc;
-        //    this._logger = logger;
-        //   this._redisManager = redisManager;
-        //    _sport_DataService = sport_DataService;
-        //    _xml_DataService = xml_DataService;
-
-        //}
-        public BalanceTasks(IUsersService usersSvc, ILogger logger, ISport_DataService sport_DataService, IXML_DataService xml_DataService, IDigitalLotteryService digitalLotteryService, ILotteryDetailService lotteryDetailService)
+        protected readonly IKaiJiangWangService _kaiJiangWangService;
+        public BalanceTasks(IUsersService usersSvc, ILogger logger, ISport_DataService sport_DataService, IXML_DataService xml_DataService, IDigitalLotteryService digitalLotteryService, ILotteryDetailService lotteryDetailService,IKaiJiangWangService kaiJiangWangService)
         {
             this._userSvc = usersSvc;
-            //log4Net
             this.log = LogManager.GetLogger(Program.repository.Name, typeof(BalanceTasks));
             this._logger = logger;
             _sport_DataService = sport_DataService;
             _xml_DataService = xml_DataService;
             _digitalLotteryService = digitalLotteryService;
             _ILotteryDetailService = lotteryDetailService;
+            _kaiJiangWangService = kaiJiangWangService;
         }
         public async Task CQSSC()
         {
@@ -94,7 +86,6 @@ namespace Lottery.GatherApp
                 await Task.Delay(10000);
             }
         }
-
 
         public async Task HK6()
         {
@@ -153,28 +144,24 @@ namespace Lottery.GatherApp
             _redisManager.RedisDb(0).Publish("chan1", "123123123");
             _redisManager.RedisDb(0).Subscribe(("chan1", msg => Console.WriteLine(msg.Body)));
         }
+
         public void SportData()
         {
             var manager = new SportData(_sport_DataService);
             manager.Start();
         }
+
         public void LotteryData()
         {
             var manager = new DigitalLottery(_digitalLotteryService);
             manager.Start();
         }
-        public void StartTask()
+        public async Task KaiJiangWang()
         {
-            Task.Factory.StartNew(() =>
-            {
-                while (true)
-                {
-                    SportData();
-                    LotteryData();
-                    Task.Delay(60 * 1000 * 60);
-                }
-            });
+            var manager = new KaiJiangWangRequest(_kaiJiangWangService);
+            manager.Start();
         }
+
         //辽宁快乐12  广东快乐十分  广西快乐10分 重庆时时彩 是网页版
         //gdklsf(广东快乐十分)  bjsyxw(北京11选5)  kl8(北京快乐8)   bjkzhc(北京快中彩)  bjpkshi(北京PK拾) bjk3(北京快3)  tjsyxw(天津11选5)
         //klsf(天津快乐十分)  tjssc(天津时时彩)  hebsyxw(河北11选5)  hebk3(河北快3)   nmgsyxw(内蒙古11选5)  nmgk3(内蒙古快3)  lnsyxw(辽宁11选5)

@@ -34,26 +34,6 @@ namespace Lottery.GatherApp.Helper
             return keyValue;
         }
 
-        //public static HtmlDocument Loadhtml(string strhtml)
-        //{
-
-        //    Encoding.RegisterProvider(CodePagesEncodingProvider.Instance); //注册EncodingProvider的方法，获得网页编码GB2312的支持
-        //    var html = strhtml;
-        //    HtmlWeb web = new HtmlWeb();
-        //    web.OverrideEncoding = Encoding.GetEncoding("gb2312");
-        //    HtmlDocument htmlDoc = web.Load(html);
-        //    return htmlDoc;
-        //}
-        //public static HtmlDocument LoadGziphtml(string strhtml)
-        //{
-
-          
-        //    var html = strhtml;
-        //    HtmlWeb web = new HtmlWeb();
-        //    Gzip(web);  //解压html
-        //    HtmlDocument htmlDoc = web.Load(html);
-        //    return htmlDoc;
-        //}
         public static CookieContainer CookiesContainer { get; set; }//定义Cookie容器
 
         public static List<UserAgent_Cookies> UserAgentList { get; set; }
@@ -140,20 +120,7 @@ namespace Lottery.GatherApp.Helper
             var rdNum = rd.Next(0, 11);
             return UserAgentList[rdNum];
         }
-        //public static void Gzip(HtmlWeb web)
-        //{
 
-        //    HtmlWeb.PreRequestHandler handler = delegate (HttpWebRequest request)
-        //    {
-        //        request.Headers[HttpRequestHeader.AcceptEncoding] = "gzip, deflate";
-        //        request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
-             
-        //        return true;
-        //    };
-        //    web.PreRequest += handler;
-        //    web.OverrideEncoding = Encoding.GetEncoding("gb2312");
-        //}
-       
         public static HttpWebResponse SettingProxyCookit(HttpWebRequest request, HttpWebResponse response) {
 
             var userAgentModel = GetUserAgent();
@@ -214,6 +181,27 @@ namespace Lottery.GatherApp.Helper
                
             }
            
+        }
+        public static string RequestJsonData(string URI)
+        {
+            if (string.IsNullOrEmpty(URI)) throw new Exception("URI");
+            string retString = string.Empty;
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URI);
+            request.Headers.Add("Referer", "https://941509.cn/");
+            request.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36";
+            request.Proxy = null;
+            request.KeepAlive = false;
+            request.Method = "GET";
+            request.ContentType = "application/json; charset=UTF-8";
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            using (Stream ResponseStream = response.GetResponseStream())
+            {
+                using (StreamReader StreamReader = new StreamReader(ResponseStream, Encoding.UTF8))
+                {
+                     retString = StreamReader.ReadToEnd();
+                }
+            }
+            return retString;
         }
 
         public static HtmlNodeCollection GetExpect(string Url)
