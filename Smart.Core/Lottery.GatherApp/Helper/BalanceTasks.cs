@@ -1,6 +1,7 @@
 ﻿using log4net;
 using Lottery.GatherApp.Analysis;
 using Lottery.GatherApp.Analysis.LotteryDetail;
+using Lottery.GatherApp.Analysis.UC;
 using Lottery.GatherApp.Helper;
 using Lottery.Services;
 using Lottery.Services.Abstractions;
@@ -25,6 +26,7 @@ namespace Lottery.GatherApp
         protected readonly IDigitalLotteryService _digitalLotteryService;
         protected readonly IXML_DataService _xml_DataService;
         protected readonly ILotteryDetailService _ILotteryDetailService;
+        protected readonly IJddDataService _IJddDataService;
         //public BalanceTasks(IUsersService usersSvc, ILogger logger,ISport_DataService sport_DataService , IXML_DataService xml_DataService,RedisManager redisManager)
         //{
         //    this._userSvc = usersSvc;
@@ -34,7 +36,7 @@ namespace Lottery.GatherApp
         //    _xml_DataService = xml_DataService;
 
         //}
-        public BalanceTasks(IUsersService usersSvc, ILogger logger, ISport_DataService sport_DataService, IXML_DataService xml_DataService, IDigitalLotteryService digitalLotteryService, ILotteryDetailService lotteryDetailService)
+        public BalanceTasks(IUsersService usersSvc, ILogger logger, ISport_DataService sport_DataService, IXML_DataService xml_DataService, IDigitalLotteryService digitalLotteryService, ILotteryDetailService lotteryDetailService, IJddDataService IJddDataService)
         {
             this._userSvc = usersSvc;
             //log4Net
@@ -44,6 +46,7 @@ namespace Lottery.GatherApp
             _xml_DataService = xml_DataService;
             _digitalLotteryService = digitalLotteryService;
             _ILotteryDetailService = lotteryDetailService;
+            _IJddDataService = IJddDataService;
         }
         public async Task CQSSC()
         {
@@ -193,12 +196,17 @@ namespace Lottery.GatherApp
             var manager = new XML(_xml_DataService);
             var LotteryDetal = new NormalLotteryDetail(_ILotteryDetailService);
             //StartTask();
-
+            var JddManager = new nonhighfreq(_IJddDataService);
             string info = "";
             while (true)
             {
                 try
                 {
+                    #region 奖多多非高频
+                    //await JddManager.LoadNonhighfreq();
+                    //log.Info("JDD" + count);
+                    #endregion
+
                     var now = DateTime.Now;
                     if (old_Time == null || (now - old_Time).TotalHours > 1.5)
                     {
