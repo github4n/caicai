@@ -147,7 +147,7 @@ namespace Lottery.GatherApp.Helper
         public static HtmlDocument LoadGziphtml(string strhtml)
         {
             string htmlCode;
-            Thread.Sleep(new Random().Next(3000, 8000));
+            Thread.Sleep(new Random().Next(5000, 10000));
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance); //注册EncodingProvider的方法，获得网页编码GB2312的支持
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(strhtml);
             HttpWebResponse response=null;

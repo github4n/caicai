@@ -65,7 +65,7 @@ namespace Lottery.Services
                     issue.LotteryId = lottery.Lottery_Id;
                     issue.LotteryCode = lottery.LotteryCode;
                     issue.CreateTime = DateTime.Now;
-                    issue.UpdateTime = DateTime.Now;
+                   
                     issue.LotteryTime = LotteryTime;
                     insertObjs.Add(issue);
                     log.Info(lottery.LotteryName+"彩种"+issue.IssueNo+ "期期号采集完毕");
@@ -146,7 +146,7 @@ namespace Lottery.Services
                         issue.LotteryId = lottery.Lottery_Id;
                         issue.LotteryCode = lottery.LotteryCode;
                         issue.CreateTime = DateTime.Now;
-                        issue.UpdateTime = DateTime.Now;
+                       
                         count = db.Insertable(issue).ExecuteCommand();
                         log.Info(lottery.LotteryName + "彩种" + issue.IssueNo + "期期号采集完毕");
                         insertCount += count;
@@ -181,7 +181,7 @@ namespace Lottery.Services
                     issue.LotteryId = lottery.Lottery_Id;
                     issue.LotteryCode = lottery.LotteryCode;
                     issue.CreateTime = DateTime.Now;
-                    issue.UpdateTime = DateTime.Now;
+                 
                     insertObjs.Add(issue);
                     log.Info(lottery.LotteryName + "彩种" + issue.IssueNo + "期期号采集完毕");
                 }
@@ -222,7 +222,7 @@ namespace Lottery.Services
                     issue.LotteryId = lottery.Lottery_Id;
                     issue.LotteryCode = lottery.LotteryCode;
                     issue.CreateTime = DateTime.Now;
-                    issue.UpdateTime = DateTime.Now;
+                  
                     count = db.Insertable(issue).ExecuteCommand();
                     log.Info(lottery.LotteryName + "彩种" + issue.IssueNo + "期期号采集完毕");
                     insertCount += count;

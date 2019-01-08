@@ -155,7 +155,7 @@ namespace Lottery.GatherApp
             list = doc.SelectNodes("//row");
           
             count = await _IXML_DataService.AddQGDFCXMLAsync(list, gameCode);
-            Thread.Sleep(new Random().Next(1000, 5000));
+            Thread.Sleep(new Random().Next(5000, 10000));
             return await Task.FromResult(count);
         }
 
