@@ -99,7 +99,7 @@ namespace Lottery.Services
 
 
 
-                    if (sys_issue != null && gameCode != "sfc" && gameCode == "jq4" && gameCode == "zc6")
+                    if (sys_issue != null && gameCode != "sfc" && gameCode != "jq4" && gameCode != "zc6")
                     {
 
                         if (sys_issue.IssueNo == item.Attributes["expect"].Value)
