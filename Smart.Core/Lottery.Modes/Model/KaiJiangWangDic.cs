@@ -73,9 +73,9 @@ namespace Lottery.Modes.Model
             AddChar.Add("lnsyxw", 2);
             AddChar.Add("jssyxw", 2);
             AddChar.Add("zjsyxw", 2);
-            //期号删除0 //500网江苏快3期号长度只有8位，末尾第三位多个0
-            DeleteZero.Add("jsk3", 5);//190101016 
-            DeleteZero.Add("fjk3", 7);//20+19102516
+            //期号指定位置删除0 
+            DeleteZero.Add("jsk3", 5);
+            DeleteZero.Add("fjk3", 7);
         }
     }
 }
