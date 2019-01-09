@@ -159,7 +159,7 @@ namespace Lottery.GatherApp
             var manager = new DigitalLottery(_digitalLotteryService);
             manager.Start();
         }
-        public async Task KaiJiangWang()
+        public void KaiJiangWang()
         {
             var manager = new KaiJiangWangRequest(_kaiJiangWangService);
             manager.Start();
@@ -249,21 +249,22 @@ namespace Lottery.GatherApp
                             }
                         }
                     }
-                    foreach (var item in _xml_DataService.GetHighFrequency())
-                    {
+                    //foreach (var item in _xml_DataService.GetHighFrequency())
+                    //{
 
-                        if (item.HighFrequency == 1)
-                        {
-                            info = item.LotteryName + "期号开始采集";
-                            log.Info(info);
-                            count = await manager.LoadXml(item.LotteryCode);
-                            info = item.LotteryName + "期号采集完毕.新采集了" + count + "条";
+                    //    if (item.HighFrequency == 1)
+                    //    {
+                    //        info = item.LotteryName + "期号开始采集";
+                    //        log.Info(info);
+                    //        count = await manager.LoadXml(item.LotteryCode);
+                    //        info = item.LotteryName + "期号采集完毕.新采集了" + count + "条";
 
-                            log.Info(info);
-                            //Thread.Sleep(new Random().Next(1000, 5000));
-                        }
-                        
-                    }
+                    //        log.Info(info);
+                    //        //Thread.Sleep(new Random().Next(1000, 5000));
+                    //    }
+
+                    //}
+                    KaiJiangWang();
                 }
                 catch (Exception ex)
                 {

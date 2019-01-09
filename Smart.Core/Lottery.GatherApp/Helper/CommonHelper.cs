@@ -186,6 +186,7 @@ namespace Lottery.GatherApp.Helper
         }
         public static string RequestJsonData(string URI)
         {
+            Thread.Sleep(new Random().Next(3000, 15000));
             if (string.IsNullOrEmpty(URI)) throw new Exception("URI");
             string retString = string.Empty;
             ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(OnRemoteCertificateValidationCallback);

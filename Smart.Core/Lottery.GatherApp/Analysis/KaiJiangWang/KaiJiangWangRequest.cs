@@ -57,11 +57,10 @@ namespace Lottery.GatherApp.Analysis
                         if (string.IsNullOrEmpty(str))
                         { continue; }
                         var resultList = JsonConvert.DeserializeObject<JsonReuslt>(str);
-                        if (resultList.message == "成功" && resultList.code == 0)
+                        if (resultList.message == "成功" && resultList.code == 0&& resultList.content.Count>0)
                         {
                             _kaiJiangWangService.AddSys_issue(dic_Item.Key, resultList);
                         }
-                        Thread.Sleep(new Random().Next(3000, 15000));
                     }
                 }
                 catch (Exception ex)
