@@ -61,7 +61,23 @@ namespace Lottery.Services
                         });
                         _Issue.OpenCode = _Issue.OpenCode.Remove(_Issue.OpenCode.Length - 1, 1);
                     }
-                    _Issue.IssueNo = a.preDrawIssue.ToString().Length==5? a.preDrawIssue.ToString(): a.preDrawIssue.ToString().Substring(0,2);
+                    var IssueNo = a.preDrawIssue.ToString();
+                    if (KaiJiangWangDic.CutStartIndex.ContainsKey(LotteryCode))
+                    {
+                        var CutDic = KaiJiangWangDic.CutStartIndex.Where(x => x.Key == LotteryCode).FirstOrDefault();
+                        IssueNo = IssueNo.Substring(2);
+                    }
+                    if (KaiJiangWangDic.AddStartindex.ContainsKey(LotteryCode))
+                    {
+                        var AddDic = KaiJiangWangDic.AddStartindex.Where(x => x.Key == LotteryCode).FirstOrDefault();
+                        IssueNo = AddDic.Value + IssueNo;
+                    }
+                    if (KaiJiangWangDic.AddChar.ContainsKey(LotteryCode))
+                    {
+                        var CharDic = KaiJiangWangDic.AddChar.Where(x => x.Key == LotteryCode).FirstOrDefault();
+                        IssueNo = IssueNo.Insert(IssueNo.Length-CharDic.Value,"-");
+                    }
+                    _Issue.IssueNo = IssueNo;
                     _Issue.LotteryId = LotteryId;
                     _Issue.LotteryCode = LotteryCode;
                     _Issue.CreateTime = DateTime.Now;

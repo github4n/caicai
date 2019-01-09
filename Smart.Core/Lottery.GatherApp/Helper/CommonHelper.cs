@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 
@@ -186,6 +188,7 @@ namespace Lottery.GatherApp.Helper
         {
             if (string.IsNullOrEmpty(URI)) throw new Exception("URI");
             string retString = string.Empty;
+            ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(OnRemoteCertificateValidationCallback);
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URI);
             request.Headers.Add("Referer", "https://941509.cn/");
             request.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36";
@@ -202,6 +205,10 @@ namespace Lottery.GatherApp.Helper
                 }
             }
             return retString;
+        }
+        private static bool OnRemoteCertificateValidationCallback(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+        {
+            return true;
         }
 
         public static HtmlNodeCollection GetExpect(string Url)
