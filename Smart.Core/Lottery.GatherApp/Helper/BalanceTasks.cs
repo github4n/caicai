@@ -182,15 +182,15 @@ namespace Lottery.GatherApp
             var manager = new XML(_xml_DataService);
             var LotteryDetal = new NormalLotteryDetail(_ILotteryDetailService);
             //StartTask();
-            var JddManager = new nonhighfreq(_IJddDataService);
+            var JddManager = new JDDLottery(_IJddDataService);
             string info = "";
             while (true)
             {
                 try
                 {
                     #region 奖多多非高频
-                    //await JddManager.LoadNonhighfreq();
-                    //log.Info("JDD" + count);
+                    count = await JddManager.LoadJdd("nonhighfreq");
+                    log.Info("JDDnonhighfreq" + count);
                     #endregion
 
                     var now = DateTime.Now;
