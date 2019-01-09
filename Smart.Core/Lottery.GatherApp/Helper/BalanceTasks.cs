@@ -26,27 +26,19 @@ namespace Lottery.GatherApp
         protected readonly IDigitalLotteryService _digitalLotteryService;
         protected readonly IXML_DataService _xml_DataService;
         protected readonly ILotteryDetailService _ILotteryDetailService;
+        protected readonly IKaiJiangWangService _kaiJiangWangService;
         protected readonly IJddDataService _IJddDataService;
-        //public BalanceTasks(IUsersService usersSvc, ILogger logger,ISport_DataService sport_DataService , IXML_DataService xml_DataService,RedisManager redisManager)
-        //{
-        //    this._userSvc = usersSvc;
-        //    this._logger = logger;
-        //   this._redisManager = redisManager;
-        //    _sport_DataService = sport_DataService;
-        //    _xml_DataService = xml_DataService;
-
-        //}
-        public BalanceTasks(IUsersService usersSvc, ILogger logger, ISport_DataService sport_DataService, IXML_DataService xml_DataService, IDigitalLotteryService digitalLotteryService, ILotteryDetailService lotteryDetailService, IJddDataService IJddDataService)
+        public BalanceTasks(IUsersService usersSvc, ILogger logger, ISport_DataService sport_DataService, IXML_DataService xml_DataService, IDigitalLotteryService digitalLotteryService, ILotteryDetailService lotteryDetailService,IKaiJiangWangService kaiJiangWangService,IJddDataService jddDataService)
         {
             this._userSvc = usersSvc;
-            //log4Net
             this.log = LogManager.GetLogger(Program.repository.Name, typeof(BalanceTasks));
             this._logger = logger;
             _sport_DataService = sport_DataService;
             _xml_DataService = xml_DataService;
             _digitalLotteryService = digitalLotteryService;
             _ILotteryDetailService = lotteryDetailService;
-            _IJddDataService = IJddDataService;
+            _IJddDataService = jddDataService;
+            _kaiJiangWangService = kaiJiangWangService;
         }
         public async Task CQSSC()
         {
@@ -97,7 +89,6 @@ namespace Lottery.GatherApp
                 await Task.Delay(10000);
             }
         }
-
 
         public async Task HK6()
         {
@@ -156,27 +147,22 @@ namespace Lottery.GatherApp
             _redisManager.RedisDb(0).Publish("chan1", "123123123");
             _redisManager.RedisDb(0).Subscribe(("chan1", msg => Console.WriteLine(msg.Body)));
         }
+
         public void SportData()
         {
             var manager = new SportData(_sport_DataService);
             manager.Start();
         }
+
         public void LotteryData()
         {
             var manager = new DigitalLottery(_digitalLotteryService);
             manager.Start();
         }
-        public void StartTask()
+        public void KaiJiangWang()
         {
-            Task.Factory.StartNew(() =>
-            {
-                while (true)
-                {
-                    SportData();
-                    LotteryData();
-                    Task.Delay(60 * 1000 * 60);
-                }
-            });
+            var manager = new KaiJiangWangRequest(_kaiJiangWangService);
+            manager.Start();
         }
         private DateTime old_Time { get; set; }
         //辽宁快乐12  广东快乐十分  广西快乐10分 重庆时时彩 是网页版
@@ -196,17 +182,16 @@ namespace Lottery.GatherApp
             var manager = new XML(_xml_DataService);
             var LotteryDetal = new NormalLotteryDetail(_ILotteryDetailService);
             //StartTask();
-            var JddManager = new JDDLottery(_IJddDataService);
+            var JddManager = new nonhighfreq(_IJddDataService);
             string info = "";
             while (true)
             {
                 try
                 {
                     #region 奖多多非高频
-                    count = await JddManager.LoadJdd("nonhighfreq");
-                    log.Info("JDDnonhighfreq" + count);
+                    //await JddManager.LoadNonhighfreq();
+                    //log.Info("JDD" + count);
                     #endregion
-
 
                     var now = DateTime.Now;
                     if (old_Time == null || (now - old_Time).TotalHours > 1.5)
@@ -264,7 +249,6 @@ namespace Lottery.GatherApp
                             }
                         }
                     }
-
                     //foreach (var item in _xml_DataService.GetHighFrequency())
                     //{
 
@@ -280,6 +264,7 @@ namespace Lottery.GatherApp
                     //    }
 
                     //}
+                    KaiJiangWang();
                 }
                 catch (Exception ex)
                 {
@@ -288,7 +273,6 @@ namespace Lottery.GatherApp
                 Thread.Sleep(60 * 1000);
             }
         }
-
 
     }
 }
