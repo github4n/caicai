@@ -22,11 +22,14 @@ namespace Lottery.GatherApp
       
        
         protected IXML_DataService _IXML_DataService;
-
+        private string url_500KJ;
         public XML(IXML_DataService XML_DataService)
         {
             _IXML_DataService = XML_DataService;
-         
+            if (string.IsNullOrEmpty(url_500KJ))
+            {
+                url_500KJ = Smart.Core.Utils.ConfigFileHelper.Get("Url_500KJ");
+            }
         }
         public async Task<int> LoadXml(string gameCode)
         {
@@ -103,7 +106,7 @@ namespace Lottery.GatherApp
 
                 count = await _IXML_DataService.AddXMLAsync(list, gameCode, OldDate.AddDays(i).ToString("yyyy-MM-dd"));
                 InsertCount += count;
-                Thread.Sleep(new Random().Next(1000,5000));
+                Thread.Sleep(new Random().Next(10000,15000));
             }
 
 
@@ -155,7 +158,7 @@ namespace Lottery.GatherApp
             list = doc.SelectNodes("//row");
           
             count = await _IXML_DataService.AddQGDFCXMLAsync(list, gameCode);
-            Thread.Sleep(new Random().Next(5000, 10000));
+            Thread.Sleep(new Random().Next(10000, 15000));
             return await Task.FromResult(count);
         }
 
@@ -234,8 +237,9 @@ namespace Lottery.GatherApp
                 }
                 Console.WriteLine(index);
             }
-
+          
             int count = await _IXML_DataService.AddSDhtml(sys_issue, gameCode);
+
             return count;
         }
 

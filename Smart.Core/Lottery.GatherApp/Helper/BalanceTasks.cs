@@ -196,16 +196,17 @@ namespace Lottery.GatherApp
             var manager = new XML(_xml_DataService);
             var LotteryDetal = new NormalLotteryDetail(_ILotteryDetailService);
             //StartTask();
-            var JddManager = new nonhighfreq(_IJddDataService);
+            var JddManager = new JDDLottery(_IJddDataService);
             string info = "";
             while (true)
             {
                 try
                 {
                     #region 奖多多非高频
-                    //await JddManager.LoadNonhighfreq();
-                    //log.Info("JDD" + count);
+                    count = await JddManager.LoadJdd("nonhighfreq");
+                    log.Info("JDDnonhighfreq" + count);
                     #endregion
+
 
                     var now = DateTime.Now;
                     if (old_Time == null || (now - old_Time).TotalHours > 1.5)
@@ -263,21 +264,22 @@ namespace Lottery.GatherApp
                             }
                         }
                     }
-                    foreach (var item in _xml_DataService.GetHighFrequency())
-                    {
 
-                        if (item.HighFrequency == 1)
-                        {
-                            info = item.LotteryName + "期号开始采集";
-                            log.Info(info);
-                            count = await manager.LoadXml(item.LotteryCode);
-                            info = item.LotteryName + "期号采集完毕.新采集了" + count + "条";
+                    //foreach (var item in _xml_DataService.GetHighFrequency())
+                    //{
 
-                            log.Info(info);
-                            //Thread.Sleep(new Random().Next(1000, 5000));
-                        }
-                        
-                    }
+                    //    if (item.HighFrequency == 1)
+                    //    {
+                    //        info = item.LotteryName + "期号开始采集";
+                    //        log.Info(info);
+                    //        count = await manager.LoadXml(item.LotteryCode);
+                    //        info = item.LotteryName + "期号采集完毕.新采集了" + count + "条";
+
+                    //        log.Info(info);
+                    //        //Thread.Sleep(new Random().Next(1000, 5000));
+                    //    }
+
+                    //}
                 }
                 catch (Exception ex)
                 {
@@ -286,6 +288,7 @@ namespace Lottery.GatherApp
                 Thread.Sleep(60 * 1000);
             }
         }
+
 
     }
 }

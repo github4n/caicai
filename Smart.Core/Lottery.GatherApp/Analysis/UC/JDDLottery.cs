@@ -11,17 +11,21 @@ using System.Xml;
 
 namespace Lottery.GatherApp.Analysis.UC
 {
-    public class nonhighfreq
+    public class JDDLottery
     {
 
         protected IJddDataService _IJddDataService;
-
-        public nonhighfreq(IJddDataService IJddDataService)
+        private string Url_JDDKJ;
+        public JDDLottery(IJddDataService IJddDataService)
         {
             _IJddDataService = IJddDataService;
+            if (string.IsNullOrEmpty(Url_JDDKJ))
+            {
+                Url_JDDKJ = Smart.Core.Utils.ConfigFileHelper.Get("Url_JDDKJ");
+            }
 
         }
-        public async Task<int>  LoadNonhighfreq()
+        public async Task<int> LoadJdd(string gameCode)
         {
             int count = 0;
             string htmlCode;
@@ -29,8 +33,8 @@ namespace Lottery.GatherApp.Analysis.UC
 
             HttpWebRequest request;
             HttpWebResponse response = null;
-            string Url = "http://lottery.jdddata.com/uc/nonhighfreq";
-            request = (HttpWebRequest)WebRequest.Create(Url);
+            string Url = "uc/"+ gameCode;
+            request = (HttpWebRequest)WebRequest.Create(Url_JDDKJ+Url);
             response = CommonHelper.SettingProxyCookit(request, response);
 
             if (response.ContentEncoding != null && response.ContentEncoding.ToLower() == "gzip")
@@ -53,7 +57,21 @@ namespace Lottery.GatherApp.Analysis.UC
 
             XmlDocument doc = new XmlDocument();//新建对象
             doc.LoadXml(htmlCode);
-           
+            //奖多多非高频
+            if (gameCode == "nonhighfreq")
+            {
+                JDDnonhighfreq(doc, IssueList);
+            }
+
+
+            count =await _IJddDataService.AddIssue(IssueList);
+            return await Task.FromResult(count);
+
+        }
+
+
+        public void JDDnonhighfreq(XmlDocument doc, List<sys_issue> IssueList)
+        {
             var list = doc.DocumentElement.ChildNodes;
             int i = 0;
             foreach (XmlElement element in list)
@@ -61,21 +79,19 @@ namespace Lottery.GatherApp.Analysis.UC
                 i++;
                 sys_issue issue = new sys_issue();
                 issue.LotteryCode = ((XmlElement)element.GetElementsByTagName("key")[0]).InnerText;
-                issue.IssueNo= ((XmlElement)element.GetElementsByTagName("qihao")[0]).InnerText;
-                issue.OpenCode = ((XmlElement)element.GetElementsByTagName("number")[0]).InnerText.Replace("-","|");
+                issue.IssueNo = ((XmlElement)element.GetElementsByTagName("qihao")[0]).InnerText;
+                issue.OpenCode = ((XmlElement)element.GetElementsByTagName("number")[0]).InnerText.Replace("-", "|");
                 issue.OpenTime = ((XmlElement)element.GetElementsByTagName("time")[0]).InnerText;
                 if (i == 15)
                 {
-                    Console.WriteLine(issue.LotteryCode+"gggggggg"+ issue.IssueNo);
+                    Console.WriteLine(issue.LotteryCode + "gggggggg" + issue.IssueNo);
                     i = 0;
                 }
-              
+
                 IssueList.Add(issue);
             }
-
-            count =await _IJddDataService.AddIssue(IssueList);
-            return await Task.FromResult(count);
-
         }
+
+
     }
 }

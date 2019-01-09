@@ -111,33 +111,33 @@ namespace Lottery.GatherApp.Helper
                     UserAgent = "User-Agent: Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; The World)",
                     CookiesContainer = new CookieContainer()
                 });
-                UserAgentList.Add(new UserAgent_Cookies()
-                {
-                    //搜狗浏览器 1.x
-                    UserAgent = "User-Agent: Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; Trident/4.0; SE 2.X MetaSr 1.0; SE 2.X MetaSr 1.0; .NET CLR 2.0.50727; SE 2.X MetaSr 1.0)",
-                    CookiesContainer = new CookieContainer()
-                });
-                UserAgentList.Add(new UserAgent_Cookies()
-                {
-                    //360浏览器
-                    UserAgent = "User-Agent: Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; 360SE)",
-                    CookiesContainer = new CookieContainer()
-                });
-                UserAgentList.Add(new UserAgent_Cookies()
-                {
-                    //Avant
-                    UserAgent = "User-Agent: Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; Avant Browser)",
-                    CookiesContainer = new CookieContainer()
-                });
-                UserAgentList.Add(new UserAgent_Cookies()
-                {
-                    //Green Browser
-                    UserAgent = "User-Agent: Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)",
-                    CookiesContainer = new CookieContainer()
-                });
+                //UserAgentList.Add(new UserAgent_Cookies()
+                //{
+                //    //搜狗浏览器 1.x
+                //    UserAgent = "User-Agent: Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; Trident/4.0; SE 2.X MetaSr 1.0; SE 2.X MetaSr 1.0; .NET CLR 2.0.50727; SE 2.X MetaSr 1.0)",
+                //    CookiesContainer = new CookieContainer()
+                //});
+                //UserAgentList.Add(new UserAgent_Cookies()
+                //{
+                //    //360浏览器
+                //    UserAgent = "User-Agent: Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; 360SE)",
+                //    CookiesContainer = new CookieContainer()
+                //});
+                //UserAgentList.Add(new UserAgent_Cookies()
+                //{
+                //    //Avant
+                //    UserAgent = "User-Agent: Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; Avant Browser)",
+                //    CookiesContainer = new CookieContainer()
+                //});
+                //UserAgentList.Add(new UserAgent_Cookies()
+                //{
+                //    //Green Browser
+                //    UserAgent = "User-Agent: Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)",
+                //    CookiesContainer = new CookieContainer()
+                //});
             }
             var rd = new Random();
-            var rdNum = rd.Next(0, 11);
+            var rdNum = rd.Next(0, 7);
             return UserAgentList[rdNum];
         }
         //public static void Gzip(HtmlWeb web)
@@ -180,7 +180,7 @@ namespace Lottery.GatherApp.Helper
         public static HtmlDocument LoadGziphtml(string strhtml)
         {
             string htmlCode;
-            Thread.Sleep(new Random().Next(5000, 10000));
+            Thread.Sleep(new Random().Next(10000, 15000));
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance); //注册EncodingProvider的方法，获得网页编码GB2312的支持
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(strhtml);
             HttpWebResponse response=null;
