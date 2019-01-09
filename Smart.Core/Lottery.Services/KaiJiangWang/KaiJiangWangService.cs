@@ -29,15 +29,15 @@ namespace Lottery.Services
         }
         public void AddSys_issue(string LotteryCode, JsonReuslt jsonList)
         {
-            try
+            var LotteryId = GetLottery(LotteryCode);
+            jsonList.content.ForEach((a) =>
             {
-                var LotteryId = GetLottery(LotteryCode);
-                jsonList.content.ForEach((a) =>
+                try
                 {
                     sys_issue _Issue = new sys_issue();
                     if (KaiJiangWangDic.RedBallGameCode.ContainsKey(LotteryCode))
                     {
-                        var dic = KaiJiangWangDic.RedBallGameCode.Where(x=>x.Key== LotteryCode).FirstOrDefault();
+                        var dic = KaiJiangWangDic.RedBallGameCode.Where(x => x.Key == LotteryCode).FirstOrDefault();
                         int i = 0;
                         a.preDrawCode.ForEach((x) =>
                         {
@@ -75,7 +75,7 @@ namespace Lottery.Services
                     if (KaiJiangWangDic.AddChar.ContainsKey(LotteryCode))
                     {
                         var CharDic = KaiJiangWangDic.AddChar.Where(x => x.Key == LotteryCode).FirstOrDefault();
-                        IssueNo = IssueNo.Insert(IssueNo.Length-CharDic.Value,"-");
+                        IssueNo = IssueNo.Insert(IssueNo.Length - CharDic.Value, "-");
                     }
                     _Issue.IssueNo = IssueNo;
                     _Issue.LotteryId = LotteryId;
@@ -89,12 +89,12 @@ namespace Lottery.Services
                         db.Insertable<sys_issue>(_Issue).ExecuteCommand();
                         Console.WriteLine($"{LotteryCode}奖期{_Issue.IssueNo}成功新增数据");
                     }
-                });
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message + ":" + ex.StackTrace);
-            }
+                }
+                catch (Exception ex)
+                {
+                    //throw new Exception(ex.Message+":"+ex.StackTrace);
+                }
+            });
         }
     }
 }
