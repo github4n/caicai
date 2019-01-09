@@ -65,17 +65,30 @@ namespace Lottery.Services
                     if (KaiJiangWangDic.CutStartIndex.ContainsKey(LotteryCode))
                     {
                         var CutDic = KaiJiangWangDic.CutStartIndex.Where(x => x.Key == LotteryCode).FirstOrDefault();
-                        IssueNo = IssueNo.Substring(2);
+                        IssueNo = IssueNo.Substring(CutDic.Value);
                     }
-                    if (KaiJiangWangDic.AddStartindex.ContainsKey(LotteryCode))
+                    if (KaiJiangWangDic.AddStartChar.ContainsKey(LotteryCode))
                     {
-                        var AddDic = KaiJiangWangDic.AddStartindex.Where(x => x.Key == LotteryCode).FirstOrDefault();
+                        var AddDic = KaiJiangWangDic.AddStartChar.Where(x => x.Key == LotteryCode).FirstOrDefault();
                         IssueNo = AddDic.Value + IssueNo;
                     }
                     if (KaiJiangWangDic.AddChar.ContainsKey(LotteryCode))
                     {
                         var CharDic = KaiJiangWangDic.AddChar.Where(x => x.Key == LotteryCode).FirstOrDefault();
                         IssueNo = IssueNo.Insert(IssueNo.Length - CharDic.Value, "-");
+                    }
+                    if (KaiJiangWangDic.DeleteZero.ContainsKey(LotteryCode))
+                    {
+                        var CharDic = KaiJiangWangDic.DeleteZero.Where(x => x.Key == LotteryCode).FirstOrDefault();
+
+                        //if (IssueNo.StartsWith("20") && IssueNo.Length == 11)//20181224080
+                        //{
+                        //    IssueNo = IssueNo.Remove(CharDic.Value, 1);
+                        //}
+                        //else if (IssueNo.Length == 9 && !IssueNo.StartsWith("20"))//181224080
+                        //{
+                            IssueNo = IssueNo.Remove(CharDic.Value, 1);
+                       // }
                     }
                     _Issue.IssueNo = IssueNo;
                     _Issue.LotteryId = LotteryId;

@@ -25,8 +25,10 @@ namespace Lottery.GatherApp.Analysis
         }
         public void Start()
         {
+            Console.WriteLine("开始高频彩采集");
             RequestJson(KaiJiangWangDic.GaoPindic, GaoPinUrI);
             Console.WriteLine("高频彩采集完毕");
+            Console.WriteLine("开始全国彩采集");
             RequestJson(KaiJiangWangDic.QuanguoDic, quanguoURL);
             Console.WriteLine("全国彩采集完毕");
         }
@@ -43,13 +45,13 @@ namespace Lottery.GatherApp.Analysis
                     var Model = _kaiJiangWangService.GetIssue(dic_Item.Key);
                     if (Model == null)
                     {
-                        time = DateTime.Now.AddDays(-10);
-                        span = 10;
+                        time = DateTime.Now.AddDays(-30);
+                        span = 30;
                     }
                     else
                     {
                         time = Convert.ToDateTime(Model.OpenTime);
-                        span = (DateTime.Now - time).TotalDays > 0 ? 1 : (DateTime.Now - time).Days;//不满24小时，返回1天
+                        span = (DateTime.Now - time).TotalDays < 0 ? 1 : (DateTime.Now - time).Days;//不满24小时，返回1天
                     }
                     for (var i = 0; i <= span; i++)
                     {

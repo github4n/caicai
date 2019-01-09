@@ -227,6 +227,16 @@ namespace Lottery.GatherApp
                         LotteryData();
                         foreach (var item in _xml_DataService.GetHighFrequency())
                         {
+                            if (item.HighFrequency == 1)
+                            {
+                                info = item.LotteryName + "期号开始采集";
+                                log.Info(info);
+                                count = await manager.LoadXml(item.LotteryCode);
+                                info = item.LotteryName + "期号采集完毕.新采集了" + count + "条";
+
+                                log.Info(info);
+                                //Thread.Sleep(new Random().Next(1000, 5000));
+                            }
                             if (item.HighFrequency != 1 && item.LotteryCode != "zqdc" && item.LotteryCode != "sd" && item.LotteryCode != "pls" && item.LotteryCode != "jczq" && item.LotteryCode != "jclq" && item.LotteryCode != "zqdcsfgg")
                             {
                                 info = item.LotteryName + "期号开始采集";
@@ -249,21 +259,6 @@ namespace Lottery.GatherApp
                             }
                         }
                     }
-                    //foreach (var item in _xml_DataService.GetHighFrequency())
-                    //{
-
-                    //    if (item.HighFrequency == 1)
-                    //    {
-                    //        info = item.LotteryName + "期号开始采集";
-                    //        log.Info(info);
-                    //        count = await manager.LoadXml(item.LotteryCode);
-                    //        info = item.LotteryName + "期号采集完毕.新采集了" + count + "条";
-
-                    //        log.Info(info);
-                    //        //Thread.Sleep(new Random().Next(1000, 5000));
-                    //    }
-
-                    //}
                     KaiJiangWang();
                 }
                 catch (Exception ex)
