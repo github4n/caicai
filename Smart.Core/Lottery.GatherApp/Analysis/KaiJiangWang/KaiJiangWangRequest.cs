@@ -52,7 +52,7 @@ namespace Lottery.GatherApp.Analysis
                     else
                     {
                         time = Convert.ToDateTime(Model.OpenTime);
-                        span = (DateTime.Now - time).TotalDays < 1 ? 1 : (DateTime.Now - time).Days;//不满24小时，返回1天
+                        span =Convert.ToInt32(Math.Ceiling((DateTime.Now - time).TotalDays));
                     }
                     for (var i = 0; i <= span; i++)
                     {
