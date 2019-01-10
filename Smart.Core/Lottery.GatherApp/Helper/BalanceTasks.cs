@@ -274,7 +274,7 @@ namespace Lottery.GatherApp
                     int count = 0;
                     #region 奖多多非高频
                     count = await JddManager.LoadJdd("nonhighfreq");
-                    log.Info("JDDnonhighfreq" + count);
+                    log.Info("奖多多非高频共采集" + count+"条");
                     #endregion
                     KaiJiangWang();
                 }
