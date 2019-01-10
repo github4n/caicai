@@ -181,17 +181,12 @@ namespace Lottery.GatherApp
             int count = 0;
             var manager = new XML(_xml_DataService);
             var LotteryDetal = new NormalLotteryDetail(_ILotteryDetailService);
-            //StartTask();
-            var JddManager = new JDDLottery(_IJddDataService);
             string info = "";
             while (true)
             {
                 try
                 {
-                    #region 奖多多非高频
-                    count = await JddManager.LoadJdd("nonhighfreq");
-                    log.Info("JDDnonhighfreq" + count);
-                    #endregion
+                   
 
                     var now = DateTime.Now;
                     if (old_Time == null || (now - old_Time).TotalHours > 1.5)
@@ -259,11 +254,33 @@ namespace Lottery.GatherApp
                             }
                         }
                     }
-                    KaiJiangWang();
+                    //KaiJiangWang();
                 }
                 catch (Exception ex)
                 {
                     log.Error(info + ex.Message);
+                }
+                Thread.Sleep(60 * 1000);
+            }
+        }
+
+        public async Task Run1122()
+        {
+            var JddManager = new JDDLottery(_IJddDataService);
+            while (true)
+            {
+                try
+                {
+                    int count = 0;
+                    #region 奖多多非高频
+                    count = await JddManager.LoadJdd("nonhighfreq");
+                    log.Info("JDDnonhighfreq" + count);
+                    #endregion
+                    KaiJiangWang();
+                }
+                catch (Exception ex)
+                {
+                    log.Error(ex.Message);
                 }
                 Thread.Sleep(60 * 1000);
             }

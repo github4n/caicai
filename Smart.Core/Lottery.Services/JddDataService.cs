@@ -14,11 +14,10 @@ namespace Lottery.Services
     {
         private ILog log;
         protected DbFactory BaseFactory;
-        private IXML_DataService xML_DataService;
         public JddDataService(DbFactory factory) : base(factory)
         {
             BaseFactory = factory;
-            log = LogManager.GetLogger("LotteryRepository", typeof(LotteryDetailService));
+            log = LogManager.GetLogger("LotteryRepository", typeof(JddDataService));
             //db = factory.GetDbContext();
         }
 
