@@ -149,7 +149,7 @@ namespace Lottery.Services
 
         private Issue_ShowModel GetZQDCNewModel()
         {
-            var sql = "select IssueNo,Count(*) as TotalCount,IsFinish from bjdc_Result  where IssueNo=(select IssueNo from sys_issue where LotteryCode='zqdc' order by issueNo desc limit 0,1) group by IsFinish";
+            var sql = "select IssueNo,Count(*) as TotalCount,IsFinish from bjdc_Result  where IssueNo=(select IssueNo from sys_issue where LotteryCode='zqdc' order by issueNo desc limit 0,1) group by IsFinish,IssueNo";
             using (var db = basFactory.GetDbContext())
             {
                 var objList = db.SqlQueryable<dynamic>(sql).ToList();
@@ -188,6 +188,14 @@ namespace Lottery.Services
             //var dt = LotteryTime.ToString("yyyy-MM-dd");
             using (var db = basFactory.GetDbContext())
             {
+                if (string.IsNullOrEmpty(LotteryTime))
+                {
+                    var model= db.Queryable<sys_issue>().Where(p => p.LotteryCode == LotteryCode).OrderBy(p => p.LotteryTime, OrderByType.Desc).First();
+                    if (model != null)
+                    {
+                        LotteryTime = model.LotteryTime;
+                    }
+                }
                 return db.Queryable<sys_issue>().Where(p => p.LotteryCode == LotteryCode && p.LotteryTime == LotteryTime).OrderBy(p => p.OpenTime, OrderByType.Desc).ToList();
             }
         }
@@ -214,7 +222,7 @@ ORDER BY i.OpenTime DESC,i.IssueNo LIMIT 1) ni LEFT JOIN sys_lottery l ON(l.Lott
                     if (IssueItem != null)
                     {
                         result.LotteryName = IssueItem.LotteryName;
-                        result.LotteryDataDetail = IssueItem.OpenCode;
+                        //result.LotteryDataDetail = IssueItem.OpenCode;
                         result.IssueNo = IssueItem.IssueNo;
                         result.OpenCode = IssueItem.OpenCode;
                         result.OpenTime = IssueItem.OpenTime.FormatDate();
@@ -242,16 +250,20 @@ n.AwardDeadlineTime,n.CurrentSales,n.IssueNo,l.LotteryCode,n.LotteryDataDetail,n
                     var Item = db.SqlQueryable<NormalDetail_ShowModel>(sql).AddParameters(new { LotteryCode = LotteryCode, IssueNo = IssueNo }).First();
                     if (Item != null)
                     {
-                        if (string.IsNullOrEmpty(Item.LotteryDataDetail))
-                        {
-                            Item.LotteryDataDetail = Item.OpenCode;
-                        }
+                        //if (string.IsNullOrEmpty(Item.LotteryDataDetail))
+                        //{
+                        //    Item.LotteryDataDetail = Item.OpenCode;
+                        //}
                         if (string.IsNullOrEmpty(Item.OpenTime))
                         {
                             Item.OpenTime = Item.IssueTime.FormatDate();
                         }
                         result = Item;
                     }
+                }
+                if (string.IsNullOrEmpty(result.IssueNo))
+                {
+                    result.IssueNo = IssueNo;
                 }
                 return result;
             }
@@ -273,7 +285,7 @@ n.AwardDeadlineTime,n.CurrentSales,n.IssueNo,l.LotteryCode,n.LotteryDataDetail,n
                     if (LotteryDateItem == null) return new List<jczq_result>();
                     LotteryDate = LotteryDateItem.JCDate;
                 }
-                return db.Queryable<jczq_result>().Where(p => p.JCDate == LotteryDate).ToList();
+                return db.Queryable<jczq_result>().Where(p => p.JCDate == LotteryDate).ToList().OrderBy(p => p.MatchNumber).ToList();
             }
         }
 
@@ -293,7 +305,7 @@ n.AwardDeadlineTime,n.CurrentSales,n.IssueNo,l.LotteryCode,n.LotteryDataDetail,n
                     if (LotteryDateItem == null) return new List<jclq_result>();
                     LotteryDate = LotteryDateItem.JCDate;
                 }
-                return db.Queryable<jclq_result>().Where(p => p.JCDate == LotteryDate).ToList();
+                return db.Queryable<jclq_result>().Where(p => p.JCDate == LotteryDate).ToList().OrderBy(p => p.MatchNumber).ToList();
             }
         }
 
@@ -313,7 +325,7 @@ n.AwardDeadlineTime,n.CurrentSales,n.IssueNo,l.LotteryCode,n.LotteryDataDetail,n
                     if (IssueNo == null) return new List<bjdc_result>();
                     IssueNo = IssueNoItem.IssueNo;
                 }
-                var list = db.Queryable<bjdc_result>().Where(p => p.IssueNo == IssueNo).ToList();
+                var list = db.Queryable<bjdc_result>().Where(p => p.IssueNo == IssueNo).ToList().OrderBy(p=>p.MatchNumber).ToList();
                 return list;
             }
         }
@@ -329,7 +341,7 @@ n.AwardDeadlineTime,n.CurrentSales,n.IssueNo,l.LotteryCode,n.LotteryDataDetail,n
                     if (IssueNo == null) return new List<zqdc_sfgg_result>();
                     IssueNo = IssueNoItem.IssueNo;
                 }
-                var list = db.Queryable<zqdc_sfgg_result>().Where(p => p.IssueNo == IssueNo).ToList();
+                var list = db.Queryable<zqdc_sfgg_result>().Where(p => p.IssueNo == IssueNo).ToList().OrderBy(p => p.MatchNumber).ToList();
                 return list;
             }
         }
