@@ -187,13 +187,14 @@ namespace Lottery.API.Controllers
                         {
                             continue;
                         }
-                        var Issue = ((XmlElement)element.GetElementsByTagName("qihao")[0]).InnerText;
-                        if (string.IsNullOrEmpty(Issue))
-                        {
-                            continue;
-                        }
-                        var titelUrl = Common.title_url + Issue;
-                        var morelink = Common.morelink + Issue;
+                        //var Issue = ((XmlElement)element.GetElementsByTagName("qihao")[0]).InnerText;
+                        //if (string.IsNullOrEmpty(Issue))
+                        //{
+                        //    continue;
+                        //}
+                        // + Issue
+                        var titelUrl = Common.title_url;
+                        var morelink = Common.morelink;
                         foreach (XmlElement Sub_element in element.LastChild)
                         {
                             if (Sub_element.Name == "source")
