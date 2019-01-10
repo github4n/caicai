@@ -65,11 +65,10 @@ namespace Lottery.GatherApp
             services.AddSingleton<BalanceTasks>();
             var provider = services.BuildServiceProvider();
             var tasks = provider.GetRequiredService<BalanceTasks>();
-            await Task.WhenAll(new Task[] {
-               tasks.XML(),
-               tasks.Run1122()
-            });
-          
+            Task t1 = new Task(() => tasks.XML());
+            t1.Start();
+            Task t2 = new Task(() => tasks.Run1122());
+            t2.Start();
             Console.WriteLine("Done.");
             Console.ReadLine();
 

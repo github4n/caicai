@@ -8,16 +8,18 @@ using Lottery.Modes.Entity;
 using Lottery.Modes;
 using Lottery.Modes.Model;
 using System.Linq;
+using log4net;
 
 namespace Lottery.Services
 {
    public class KaiJiangWangService: Repository<DbFactory>, IKaiJiangWangService
     {
         protected SqlSugarClient db = null;
-
+        private ILog log;
         public KaiJiangWangService(DbFactory factory) : base(factory)
         {
             db = factory.GetDbContext();
+            log = LogManager.GetLogger("LotteryRepository", typeof(KaiJiangWangService));
         }
         public sys_issue GetIssue(string lotteryCode)
         {
@@ -100,7 +102,7 @@ namespace Lottery.Services
                     if (model == null)
                     {
                         db.Insertable<sys_issue>(_Issue).ExecuteCommand();
-                        Console.WriteLine($"{LotteryCode}奖期{_Issue.IssueNo}成功新增数据");
+                        log.Info($"{LotteryCode}奖期{_Issue.IssueNo}成功新增数据");
                     }
                 }
                 catch (Exception ex)

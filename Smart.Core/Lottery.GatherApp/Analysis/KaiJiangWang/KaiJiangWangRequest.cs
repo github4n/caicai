@@ -40,6 +40,7 @@ namespace Lottery.GatherApp.Analysis
             {
                 try
                 {
+                    log.Info("1122站点开始采集" + dic_Item.Key + "彩种");
                     DateTime time = default;
                     int span = 0;
                     var Model = _kaiJiangWangService.GetIssue(dic_Item.Key);
@@ -59,6 +60,7 @@ namespace Lottery.GatherApp.Analysis
                         if (string.IsNullOrEmpty(str))
                         { continue; }
                         var resultList = JsonConvert.DeserializeObject<JsonReuslt>(str);
+                        log.Info("1122站点" + dic_Item.Key + "彩种，日期："+ time.AddDays(i).ToString("yyyy-MM-dd")+"采集到："+ resultList.content.Count+"条数据");
                         if (resultList.message == "成功" && resultList.code == 0&& resultList.content.Count>0)
                         {
                             _kaiJiangWangService.AddSys_issue(dic_Item.Key, resultList);
