@@ -6,6 +6,6 @@ namespace Lottery.Services.Abstractions
 {
     public class ICaike_DataService
     {
-
+        
     }
 }
