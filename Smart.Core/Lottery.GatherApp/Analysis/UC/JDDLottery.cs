@@ -72,22 +72,15 @@ namespace Lottery.GatherApp.Analysis.UC
 
         public void JDDnonhighfreq(XmlDocument doc, List<sys_issue> IssueList)
         {
-            var list = doc.DocumentElement.ChildNodes;
-            int i = 0;
+            var list = doc.DocumentElement.ChildNodes;  
             foreach (XmlElement element in list)
             {
-                i++;
+           
                 sys_issue issue = new sys_issue();
                 issue.LotteryCode = ((XmlElement)element.GetElementsByTagName("key")[0]).InnerText;
                 issue.IssueNo = ((XmlElement)element.GetElementsByTagName("qihao")[0]).InnerText;
                 issue.OpenCode = ((XmlElement)element.GetElementsByTagName("number")[0]).InnerText.Replace("-", "|");
                 issue.OpenTime = ((XmlElement)element.GetElementsByTagName("time")[0]).InnerText;
-                if (i == 15)
-                {
-                    Console.WriteLine(issue.LotteryCode + "gggggggg" + issue.IssueNo);
-                    i = 0;
-                }
-
                 IssueList.Add(issue);
             }
         }
