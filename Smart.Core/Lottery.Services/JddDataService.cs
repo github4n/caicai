@@ -42,6 +42,10 @@ namespace Lottery.Services
                         {
                             Console.WriteLine(item.LotteryCode);
                         }
+                    if (item.LotteryCode == "七乐彩")
+                    {
+                        item.IssueNo = item.IssueNo.Remove(0,2);
+                    }
                         item.LotteryCode = Lottery.LotteryCode;
                         item.LotteryId = Lottery.Lottery_Id;
                         item.CreateTime = DateTime.Now;
