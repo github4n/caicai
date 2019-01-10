@@ -14,7 +14,8 @@ namespace Microsoft.Extensions.DependencyInjection
                 services.AddSingleton<IApi_DataService, Api_DataService>();
                 services.AddSingleton<IDigitalLotteryService, DigitalLotteryService>();
                 services.AddSingleton<ILotteryDetailService, LotteryDetailService>();
-
+                services.AddSingleton<IJddDataService, JddDataService>();
+                services.AddSingleton<IKaiJiangWangService,KaiJiangWangService>();
             }
 
             return services;

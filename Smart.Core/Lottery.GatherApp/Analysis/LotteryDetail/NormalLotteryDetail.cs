@@ -39,7 +39,7 @@ namespace Lottery.GatherApp.Analysis.LotteryDetail
                 if (_ILotteryDetailService.GetNowIssuNo(gameCode) != null)
                 {
 
-                    if (item.IssueNo == _ILotteryDetailService.GetNowIssuNo(gameCode).IssueNo && gameCode!="sfc" && gameCode == "jq4" && gameCode == "zc6")
+                    if (item.IssueNo == _ILotteryDetailService.GetNowIssuNo(gameCode).IssueNo && gameCode!="sfc" && gameCode != "jq4" && gameCode != "zc6")
                     {
                         break;
                     }

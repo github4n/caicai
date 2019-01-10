@@ -1,6 +1,7 @@
 ﻿using log4net;
 using Lottery.GatherApp.Analysis;
 using Lottery.GatherApp.Analysis.LotteryDetail;
+using Lottery.GatherApp.Analysis.UC;
 using Lottery.GatherApp.Helper;
 using Lottery.Services;
 using Lottery.Services.Abstractions;
@@ -25,25 +26,19 @@ namespace Lottery.GatherApp
         protected readonly IDigitalLotteryService _digitalLotteryService;
         protected readonly IXML_DataService _xml_DataService;
         protected readonly ILotteryDetailService _ILotteryDetailService;
-        //public BalanceTasks(IUsersService usersSvc, ILogger logger,ISport_DataService sport_DataService , IXML_DataService xml_DataService,RedisManager redisManager)
-        //{
-        //    this._userSvc = usersSvc;
-        //    this._logger = logger;
-        //   this._redisManager = redisManager;
-        //    _sport_DataService = sport_DataService;
-        //    _xml_DataService = xml_DataService;
-
-        //}
-        public BalanceTasks(IUsersService usersSvc, ILogger logger, ISport_DataService sport_DataService, IXML_DataService xml_DataService, IDigitalLotteryService digitalLotteryService, ILotteryDetailService lotteryDetailService)
+        protected readonly IKaiJiangWangService _kaiJiangWangService;
+        protected readonly IJddDataService _IJddDataService;
+        public BalanceTasks(IUsersService usersSvc, ILogger logger, ISport_DataService sport_DataService, IXML_DataService xml_DataService, IDigitalLotteryService digitalLotteryService, ILotteryDetailService lotteryDetailService,IKaiJiangWangService kaiJiangWangService,IJddDataService jddDataService)
         {
             this._userSvc = usersSvc;
-            //log4Net
             this.log = LogManager.GetLogger(Program.repository.Name, typeof(BalanceTasks));
             this._logger = logger;
             _sport_DataService = sport_DataService;
             _xml_DataService = xml_DataService;
             _digitalLotteryService = digitalLotteryService;
             _ILotteryDetailService = lotteryDetailService;
+            _IJddDataService = jddDataService;
+            _kaiJiangWangService = kaiJiangWangService;
         }
         public async Task CQSSC()
         {
@@ -94,7 +89,6 @@ namespace Lottery.GatherApp
                 await Task.Delay(10000);
             }
         }
-
 
         public async Task HK6()
         {
@@ -153,27 +147,22 @@ namespace Lottery.GatherApp
             _redisManager.RedisDb(0).Publish("chan1", "123123123");
             _redisManager.RedisDb(0).Subscribe(("chan1", msg => Console.WriteLine(msg.Body)));
         }
+
         public void SportData()
         {
             var manager = new SportData(_sport_DataService);
             manager.Start();
         }
+
         public void LotteryData()
         {
             var manager = new DigitalLottery(_digitalLotteryService);
             manager.Start();
         }
-        public void StartTask()
+        public void KaiJiangWang()
         {
-            Task.Factory.StartNew(() =>
-            {
-                while (true)
-                {
-                    SportData();
-                    LotteryData();
-                    Task.Delay(60 * 1000 * 60);
-                }
-            });
+            var manager = new KaiJiangWangRequest(_kaiJiangWangService);
+            manager.Start();
         }
         private DateTime old_Time { get; set; }
         //辽宁快乐12  广东快乐十分  广西快乐10分 重庆时时彩 是网页版
@@ -192,13 +181,13 @@ namespace Lottery.GatherApp
             int count = 0;
             var manager = new XML(_xml_DataService);
             var LotteryDetal = new NormalLotteryDetail(_ILotteryDetailService);
-            //StartTask();
-
             string info = "";
             while (true)
             {
                 try
                 {
+                   
+
                     var now = DateTime.Now;
                     if (old_Time == null || (now - old_Time).TotalHours > 1.5)
                     {
@@ -233,6 +222,16 @@ namespace Lottery.GatherApp
                         LotteryData();
                         foreach (var item in _xml_DataService.GetHighFrequency())
                         {
+                            if (item.HighFrequency == 1)
+                            {
+                                info = item.LotteryName + "期号开始采集";
+                                log.Info(info);
+                                count = await manager.LoadXml(item.LotteryCode);
+                                info = item.LotteryName + "期号采集完毕.新采集了" + count + "条";
+
+                                log.Info(info);
+                                //Thread.Sleep(new Random().Next(1000, 5000));
+                            }
                             if (item.HighFrequency != 1 && item.LotteryCode != "zqdc" && item.LotteryCode != "sd" && item.LotteryCode != "pls" && item.LotteryCode != "jczq" && item.LotteryCode != "jclq" && item.LotteryCode != "zqdcsfgg")
                             {
                                 info = item.LotteryName + "期号开始采集";
@@ -255,25 +254,33 @@ namespace Lottery.GatherApp
                             }
                         }
                     }
-                    foreach (var item in _xml_DataService.GetHighFrequency())
-                    {
-
-                        if (item.HighFrequency == 1)
-                        {
-                            info = item.LotteryName + "期号开始采集";
-                            log.Info(info);
-                            count = await manager.LoadXml(item.LotteryCode);
-                            info = item.LotteryName + "期号采集完毕.新采集了" + count + "条";
-
-                            log.Info(info);
-                            //Thread.Sleep(new Random().Next(1000, 5000));
-                        }
-                        
-                    }
+                    //KaiJiangWang();
                 }
                 catch (Exception ex)
                 {
                     log.Error(info + ex.Message);
+                }
+                Thread.Sleep(60 * 1000);
+            }
+        }
+
+        public async Task Run1122()
+        {
+            var JddManager = new JDDLottery(_IJddDataService);
+            while (true)
+            {
+                try
+                {
+                    int count = 0;
+                    #region 奖多多非高频
+                    count = await JddManager.LoadJdd("nonhighfreq");
+                    log.Info("JDDnonhighfreq" + count);
+                    #endregion
+                    KaiJiangWang();
+                }
+                catch (Exception ex)
+                {
+                    log.Error(ex.Message);
                 }
                 Thread.Sleep(60 * 1000);
             }
