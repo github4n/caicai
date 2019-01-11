@@ -60,7 +60,7 @@ namespace Lottery.GatherApp.Analysis.LotteryDetail
                 {
 
 
-                    var htmlDoc = CommonHelper.LoadGziphtml("http://kaijiang.500.com/shtml/" + gameCode + "/" + item.IssueNo + ".shtml");
+                    var htmlDoc = CommonHelper.LoadGziphtml("http://kaijiang.500.com/shtml/" + gameCode + "/" + item.IssueNo + ".shtml", CollectionUrlEnum.url_500kaijiang);
 
                     if (gameCode == "sfc" || gameCode == "jq4" || gameCode == "zc6")
                     {
