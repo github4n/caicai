@@ -71,7 +71,7 @@ namespace Lottery.GatherApp
                     }
                     request = (HttpWebRequest)WebRequest.Create(Url);
                    
-                    response = CommonHelper.SettingProxyCookit(request, response);
+                    response = CommonHelper.SettingProxyCookit(request, response, CollectionUrlEnum.url_500kaijiang);
                    
                 }
                 catch (Exception  ex)
@@ -126,7 +126,7 @@ namespace Lottery.GatherApp
             {
                 request = (HttpWebRequest)WebRequest.Create(Url);
 
-                response = CommonHelper.SettingProxyCookit(request, response);
+                response = CommonHelper.SettingProxyCookit(request, response, CollectionUrlEnum.url_500kaijiang);
             }
             catch (Exception ex)
             {
@@ -182,7 +182,7 @@ namespace Lottery.GatherApp
                     }
                     sys_issue issue = new sys_issue();
                     issue.IssueNo = item.InnerHtml;
-                    var htmlDoc = CommonHelper.LoadGziphtml("http://kaijiang.500.com/shtml/sd/" + item.InnerHtml + ".shtml");
+                    var htmlDoc = CommonHelper.LoadGziphtml("http://kaijiang.500.com/shtml/sd/" + item.InnerHtml + ".shtml", CollectionUrlEnum.url_500kaijiang);
 
                     var FirstTableTrNode = htmlDoc.DocumentNode.SelectNodes("//table[@class='kj_tablelist02']")[0].SelectNodes("tr");
                     int k = 1;
@@ -262,7 +262,7 @@ namespace Lottery.GatherApp
                     }
                     sys_issue issue = new sys_issue();
                     issue.IssueNo = item.InnerHtml;
-                    var htmlDoc = CommonHelper.LoadGziphtml("http://kaijiang.500.com/shtml/pls/" + item.InnerHtml + ".shtml");
+                    var htmlDoc = CommonHelper.LoadGziphtml("http://kaijiang.500.com/shtml/pls/" + item.InnerHtml + ".shtml", CollectionUrlEnum.url_500kaijiang);
 
                     var FirstTableTrNode = htmlDoc.DocumentNode.SelectNodes("//table[@class='kj_tablelist02']")[0].SelectNodes("tr");
                     int k = 1;

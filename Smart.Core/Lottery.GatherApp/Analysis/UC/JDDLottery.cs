@@ -35,7 +35,7 @@ namespace Lottery.GatherApp.Analysis.UC
             HttpWebResponse response = null;
             string Url = "uc/"+ gameCode;
             request = (HttpWebRequest)WebRequest.Create(Url_JDDKJ+Url);
-            response = CommonHelper.SettingProxyCookit(request, response);
+            response = CommonHelper.SettingProxyCookit(request, response, CollectionUrlEnum.url_jdd);
 
             if (response.ContentEncoding != null && response.ContentEncoding.ToLower() == "gzip")
             {

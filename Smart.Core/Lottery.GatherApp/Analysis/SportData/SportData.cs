@@ -63,14 +63,14 @@ namespace Lottery.GatherApp
                 foreach (var code in NowIssueNo)
                 {
                     List<jczq> jczqs = new List<jczq>();
-                    var tableNode = CommonHelper.LoadGziphtml("http://zx.500.com/zqdc/kaijiang.php?&expect=" + code).DocumentNode.SelectSingleNode("//table[@class='ld_table']");
+                    var tableNode = CommonHelper.LoadGziphtml("http://zx.500.com/zqdc/kaijiang.php?&expect=" + code, CollectionUrlEnum.url_500zx).DocumentNode.SelectSingleNode("//table[@class='ld_table']");
                     if (tableNode == null)
                     {  
                         Console.WriteLine($"奖期{code}北京单场获取根节点失败");
                         continue;
                     }
                     //获取平均欧赔
-                    var trNodes = CommonHelper.LoadGziphtml("http://zx.500.com/zqdc/kaijiang.php?playid=1&expect=" + code).DocumentNode.SelectSingleNode("//table[@class='ld_table']").SelectNodes("tr").Skip(1);
+                    var trNodes = CommonHelper.LoadGziphtml("http://zx.500.com/zqdc/kaijiang.php?playid=1&expect=" + code, CollectionUrlEnum.url_500zx).DocumentNode.SelectSingleNode("//table[@class='ld_table']").SelectNodes("tr").Skip(1);
                     if (trNodes == null)
                     {
                         Console.WriteLine($"奖期{code}北京单场获取平均欧赔节点失败");
@@ -215,14 +215,14 @@ namespace Lottery.GatherApp
                 var span = (Convert.ToDateTime(date) - olddate).Days;
                 for (int h = 0; h < span; h++)
                 {
-                    var tableNode = CommonHelper.LoadGziphtml("http://zx.500.com/jczq/kaijiang.php?d=" + olddate.AddDays(h).ToString("yyyy-MM-dd")).DocumentNode.SelectSingleNode("//table[@class='ld_table']");
+                    var tableNode = CommonHelper.LoadGziphtml("http://zx.500.com/jczq/kaijiang.php?d=" + olddate.AddDays(h).ToString("yyyy-MM-dd"), CollectionUrlEnum.url_500zx).DocumentNode.SelectSingleNode("//table[@class='ld_table']");
                     if (tableNode == null)
                     {
                         Console.WriteLine($"奖期{olddate.AddDays(h).ToString("yyyy-MM-dd")}竞猜足球获取根节点失败");
                         continue;
                     }
                     //获取平均欧赔
-                    var trNodess = CommonHelper.LoadGziphtml("http://zx.500.com/jczq/kaijiang.php?playid=4&d=" + olddate.AddDays(h).ToString("yyyy-MM-dd")).DocumentNode.SelectSingleNode("//table[@class='ld_table']");
+                    var trNodess = CommonHelper.LoadGziphtml("http://zx.500.com/jczq/kaijiang.php?playid=4&d=" + olddate.AddDays(h).ToString("yyyy-MM-dd"), CollectionUrlEnum.url_500zx).DocumentNode.SelectSingleNode("//table[@class='ld_table']");
                     if (trNodess == null)
                     {
                         Console.WriteLine($"奖期{olddate.AddDays(h).ToString("yyyy-MM-dd")}竞猜足球获取平均欧赔失败");
@@ -375,14 +375,14 @@ namespace Lottery.GatherApp
                 for (int h = 0; h <= ts; h++)
                 {
                     //竞彩篮球单关数据
-                    var tableNode = CommonHelper.LoadGziphtml("http://zx.500.com/jclq/kaijiang.php??playid=0&ggid=0&d=" + olddate.AddDays(h)).DocumentNode.SelectSingleNode("//table[@class='ld_table']");
+                    var tableNode = CommonHelper.LoadGziphtml("http://zx.500.com/jclq/kaijiang.php??playid=0&ggid=0&d=" + olddate.AddDays(h), CollectionUrlEnum.url_500zx).DocumentNode.SelectSingleNode("//table[@class='ld_table']");
                     if (tableNode == null)
                     {
                         Console.WriteLine($"奖期{olddate.AddDays(h)}竞彩篮球获取根节点失败");
                         continue;
                     }
                     //竞彩篮球过关数据
-                    var GgtableNodes = CommonHelper.LoadGziphtml("http://zx.500.com/jclq/kaijiang.php??playid=0&ggid=1&d=" + olddate.AddDays(h)).DocumentNode.SelectSingleNode("//table[@class='ld_table']");
+                    var GgtableNodes = CommonHelper.LoadGziphtml("http://zx.500.com/jclq/kaijiang.php??playid=0&ggid=1&d=" + olddate.AddDays(h), CollectionUrlEnum.url_500zx).DocumentNode.SelectSingleNode("//table[@class='ld_table']");
                     if(GgtableNodes == null)
                     {
                         Console.WriteLine($"奖期{olddate.AddDays(h)}竞彩篮球获取过关数据失败");
@@ -390,7 +390,7 @@ namespace Lottery.GatherApp
                     }
                     var GgtableNode = GgtableNodes.SelectNodes("tr").Skip(1);
                     //获取平均欧赔
-                    var trNodess = CommonHelper.LoadGziphtml("http://zx.500.com/jclq/kaijiang.php?playid=1&d=" + olddate.AddDays(h)).DocumentNode.SelectSingleNode("//table[@class='ld_table']");
+                    var trNodess = CommonHelper.LoadGziphtml("http://zx.500.com/jclq/kaijiang.php?playid=1&d=" + olddate.AddDays(h), CollectionUrlEnum.url_500zx).DocumentNode.SelectSingleNode("//table[@class='ld_table']");
                     if (trNodess == null)
                     {
                         Console.WriteLine($"奖期{olddate.AddDays(h)}竞彩篮球获取平均欧赔失败");
@@ -564,7 +564,7 @@ namespace Lottery.GatherApp
                 {
                     fc3D fc3D = new fc3D();
                     List<LotteryInfo> lotteries = new List<LotteryInfo>();
-                    var htmlDoc = CommonHelper.LoadGziphtml("http://kaijiang.500.com/shtml/sd/" + item.InnerHtml + ".shtml");
+                    var htmlDoc = CommonHelper.LoadGziphtml("http://kaijiang.500.com/shtml/sd/" + item.InnerHtml + ".shtml", CollectionUrlEnum.url_500kaijiang);
                     #region 第一个表格
                     var GameTime = htmlDoc.DocumentNode.SelectNodes("//table[@class='kj_tablelist02']")[0].SelectNodes("tr")[0].SelectSingleNode("//span[@class='span_right']").InnerHtml;
                     fc3D.expect = item.InnerHtml;
@@ -692,7 +692,7 @@ namespace Lottery.GatherApp
         /// <returns></returns>
         private List<zqdc_sfgg_result> GetZqdc_Sfgg(string expect)
         {
-            var tableNode = CommonHelper.LoadGziphtml("http://zx.500.com/zqdc/kaijiang.php?playid=6&expect=" + expect).DocumentNode.SelectSingleNode("//table[@class='ld_table']");
+            var tableNode = CommonHelper.LoadGziphtml("http://zx.500.com/zqdc/kaijiang.php?playid=6&expect=" + expect, CollectionUrlEnum.url_500zx).DocumentNode.SelectSingleNode("//table[@class='ld_table']");
             var trNode = tableNode.SelectNodes("tr").Skip(1);
             List<zqdc_sfgg_result> zqdc_Sfgg_Results = new List<zqdc_sfgg_result>();
             //赛果开奖情况
