@@ -240,20 +240,25 @@ namespace Lottery.GatherApp.Helper
             return anode;
         }
 
-        public static string Post(string url, string requestString, Encoding encoding, int timeoutSeconds = 0, WebProxy proxy = null, string contentType = "application/x-www-form-urlencoded")
+        public static string Post(string url, string requestString, Encoding encoding,  CollectionUrlEnum urlenum= CollectionUrlEnum.url_caike)
         {
             try
             {
+                string contentType = "application/x-www-form-urlencoded";
+                var userAgentModel = GetUserAgent(urlenum);
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-                if (proxy != null) request.Proxy = proxy;
+                //if (proxy != null) request.Proxy = proxy;
+                var timeoutSeconds = 10;
                 if (timeoutSeconds > 0)
                 {
                     request.Timeout = 0x3e8 * timeoutSeconds;
                 }
                 request.Method = "POST";
-                request.AllowAutoRedirect = true;
+                //request.AllowAutoRedirect = true;
                 request.ContentType = contentType;
                 request.ServicePoint.Expect100Continue = false;
+                request.UserAgent = userAgentModel.UserAgent;
+                request.CookieContainer = userAgentModel.CookiesContainer;//附加Cookie容器
                 requestString = System.Net.WebUtility.HtmlDecode(requestString);
                 byte[] bytes = encoding.GetBytes(requestString);
                 using (Stream requestStream = request.GetRequestStream())
@@ -262,6 +267,7 @@ namespace Lottery.GatherApp.Helper
                     requestStream.Close();
                 }
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                foreach (Cookie cookie in response.Cookies) userAgentModel.CookiesContainer.Add(cookie);//将Cookie加入容器，保存登录状态
                 StreamReader reader = new StreamReader(response.GetResponseStream(), encoding);
                 return reader.ReadToEnd();
             }
@@ -298,24 +304,28 @@ namespace Lottery.GatherApp.Helper
     public enum CollectionUrlEnum
     {
         /// <summary>
+        /// 未知
+        /// </summary>
+        url_unknow=0,
+        /// <summary>
         /// 500网开奖主站
         /// </summary>
-        url_500kaijiang=0,
+        url_500kaijiang=1,
         /// <summary>
         /// 500网足彩相关
         /// </summary>
-        url_500zx=1,
+        url_500zx=2,
         /// <summary>
         /// jdd采集
         /// </summary>
-        url_jdd=2,
+        url_jdd=3,
         /// <summary>
         /// 1122开奖网
         /// </summary>
-        url_1122=3,
+        url_1122=4,
         /// <summary>
         /// 彩客
         /// </summary>
-        url_caike=4
+        url_caike=5
     }
 }

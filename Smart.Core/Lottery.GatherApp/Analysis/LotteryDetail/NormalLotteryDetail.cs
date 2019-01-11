@@ -11,13 +11,17 @@ using EntityModel.Model;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Lottery.GatherApp.Helper;
+using System.Xml;
+using System.Net;
+using System.IO;
+using System.Threading;
 
 namespace Lottery.GatherApp.Analysis.LotteryDetail
 {
    public class NormalLotteryDetail
     {
         protected ILotteryDetailService _ILotteryDetailService;
-      
+        protected readonly IXML_DataService _xml_DataService;
 
         public NormalLotteryDetail(ILotteryDetailService ILotteryDetailService)
         {
@@ -27,13 +31,20 @@ namespace Lottery.GatherApp.Analysis.LotteryDetail
 
         public async Task<int> LoadLotteryDetal(string gameCode)
         {
+           
             var anode = _ILotteryDetailService.GetLotteryCodeList(gameCode).Take(30);
+
+
             List<lotterydetail> lotterydetails = new List<lotterydetail>();
             int index = 0;
             int SfcIndex = 0;
             foreach (var item in anode)
             {
-
+                string IssueNo = LoadQGDFCXml(item.LotteryCode);
+                if (Convert.ToInt32(item.IssueNo) > Convert.ToInt32(IssueNo))
+                {
+                    continue;
+                }
                 index++;
                 //查询彩种最新一期
                 if (_ILotteryDetailService.GetNowIssuNo(gameCode) != null)
@@ -505,6 +516,60 @@ namespace Lottery.GatherApp.Analysis.LotteryDetail
                 }
                 trIndex = trIndex + 1;
             }
+        }
+
+
+        public string LoadQGDFCXml(string gameCode)
+        {
+            string htmlCode;
+            XmlNodeList list = null;
+            HttpWebRequest request;
+            HttpWebResponse response = null;
+       
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            string Url = "http://kaijiang.500.com/static/info/kaijiang/xml/" + gameCode + "/list.xml";
+            try
+            {
+                request = (HttpWebRequest)WebRequest.Create(Url);
+
+                response = CommonHelper.SettingProxyCookit(request, response);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(gameCode + "没有" + ex.Message);
+             
+            }
+
+            if (response.ContentEncoding != null && response.ContentEncoding.ToLower() == "gzip")
+            {
+
+                System.IO.Stream streamReceive = response.GetResponseStream();
+                var zipStream = new System.IO.Compression.GZipStream(streamReceive, System.IO.Compression.CompressionMode.Decompress);
+                StreamReader sr = new System.IO.StreamReader(zipStream, Encoding.UTF8);
+                htmlCode = sr.ReadToEnd();
+
+            }
+            else
+            {
+                System.IO.Stream streamReceive = response.GetResponseStream();
+
+                StreamReader sr = new System.IO.StreamReader(streamReceive, Encoding.UTF8);
+
+                htmlCode = sr.ReadToEnd();
+            }
+            XmlDocument doc = new System.Xml.XmlDocument();//新建对象
+            doc.LoadXml(htmlCode);
+            //List<DataModel> lists = new List<DataModel>();
+
+            list = doc.SelectNodes("//row");
+            string IssueNo="";
+            foreach (XmlNode item in list)
+            {
+                IssueNo = item.Attributes["expect"].Value;
+                break;
+            }
+                Thread.Sleep(new Random().Next(10000, 15000));
+            return IssueNo;
         }
     }
 }

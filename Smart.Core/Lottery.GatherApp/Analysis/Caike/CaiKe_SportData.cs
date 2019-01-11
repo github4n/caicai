@@ -1,6 +1,8 @@
 ﻿using log4net;
 using Lottery.GatherApp.Helper;
+using Lottery.Modes.OtherModel;
 using Lottery.Services.Abstractions;
+using Smart.Core.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -34,11 +36,56 @@ namespace Lottery.GatherApp.Analysis.Caike
             //}
         }
 
-        private void GetJCLQ()
+        public void GetJCLQ()
         {
-            var jclq_url = "/Trade/DrawInfo/jingjiDraw.aspx?lotteryType=10012";
+            try
+            {
+                //0.从数据库拿到最后采集的日期，从该日开始采集
+                var result = GetJclqList();
+                //1.
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 获取分页的竞猜篮球数据
+        /// </summary>
+        /// <returns></returns>
+        private Caike_Body GetJclqList(string matchDateCode="")
+        {
+            var jclq_url = "Trade/DrawInfo/jingjiDraw.aspx?lotteryType=10012";
+            if (string.IsNullOrEmpty(matchDateCode))
+            {
+                jclq_url += "&matchDateCode" + matchDateCode;
+            }
             var url = Url_Caike + jclq_url;
-            //CommonHelper.LoadGziphtml()
+            var page = "1";
+            var result = new Caike_Body() { matchDates = new List<Caike_matchDates>() };
+            while (true)
+            {
+                var str = CommonHelper.Post(url, "action=loaddata;"+ "page="+ page, Encoding.UTF8, CollectionUrlEnum.url_caike);
+                if (!string.IsNullOrEmpty(str))
+                {
+                    var model = JsonHelper.Deserialize<CaikeCommonCollection>(str);
+                    if (model != null)
+                    {
+                        result.matchDates = model.body.matchDates;
+                        result.records.AddRange(model.body.records);
+                        if (!model.body.hasNext)
+                        {
+                            return result;
+                        }
+                        else
+                        {
+                            page = model.body.afterPage;
+                        }
+                    }
+                }
+            }
         }
     }
 }
