@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using static Smart.Core.Utils.CommonHelper;
 
 namespace Lottery.Services
 {
@@ -49,7 +50,7 @@ namespace Lottery.Services
                         item.LotteryCode = Lottery.LotteryCode;
                         item.LotteryId = Lottery.Lottery_Id;
                         item.CreateTime = DateTime.Now;
-                  
+                        item.Url_Type = (int)CollectionUrlEnum.url_jdd;
                         if (IsExistIssue(item.IssueNo, item.LotteryCode) == null)
                         {
                             count = db.Insertable(item).ExecuteCommand();

@@ -8,6 +8,7 @@ using Smart.Core.Repository.SqlSugar;
 using SqlSugar;
 using Newtonsoft.Json;
 using System.Linq;
+using static Smart.Core.Utils.CommonHelper;
 
 namespace Lottery.Services
 {
@@ -44,8 +45,9 @@ namespace Lottery.Services
                             OpenTime = a.LotteryDate,
                             AwardDeadlineTime = a.AwardDeadline,
                             CurrentSales = a.SalesVolume,
-                            UpdateTime=DateTime.Now
-                        };
+                            UpdateTime=DateTime.Now,
+                             Url_Type= (int)CollectionUrlEnum.url_500kaijiang
+                    };
                         db.Insertable(_Lotterydetail).ExecuteCommand();
                         if (string.IsNullOrEmpty(Issue))
                         {
