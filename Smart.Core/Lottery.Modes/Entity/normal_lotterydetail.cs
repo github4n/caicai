@@ -81,5 +81,10 @@ namespace Lottery.Modes.Entity
         /// 更新时间
         /// </summary>
         public DateTime UpdateTime { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public int Url_Type { get; set; }
     }
 }

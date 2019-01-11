@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using static Smart.Core.Utils.CommonHelper;
 
 namespace Lottery.Services
 {
@@ -65,7 +66,7 @@ namespace Lottery.Services
                     issue.LotteryId = lottery.Lottery_Id;
                     issue.LotteryCode = lottery.LotteryCode;
                     issue.CreateTime = DateTime.Now;
-                   
+                    issue.Url_Type = (int)CollectionUrlEnum.url_500kaijiang;
                     issue.LotteryTime = LotteryTime;
                     insertObjs.Add(issue);
                     log.Info(lottery.LotteryName+"彩种"+issue.IssueNo+ "期期号采集完毕");
@@ -146,7 +147,7 @@ namespace Lottery.Services
                         issue.LotteryId = lottery.Lottery_Id;
                         issue.LotteryCode = lottery.LotteryCode;
                         issue.CreateTime = DateTime.Now;
-                       
+                        issue.Url_Type = (int)CollectionUrlEnum.url_500kaijiang;
                         count = db.Insertable(issue).ExecuteCommand();
                         log.Info(lottery.LotteryName + "彩种" + issue.IssueNo + "期期号采集完毕");
                         insertCount += count;
@@ -181,7 +182,7 @@ namespace Lottery.Services
                     issue.LotteryId = lottery.Lottery_Id;
                     issue.LotteryCode = lottery.LotteryCode;
                     issue.CreateTime = DateTime.Now;
-                 
+                    issue.Url_Type = (int)CollectionUrlEnum.url_500zx;
                     insertObjs.Add(issue);
                     log.Info(lottery.LotteryName + "彩种" + issue.IssueNo + "期期号采集完毕");
                 }
@@ -222,7 +223,7 @@ namespace Lottery.Services
                     issue.LotteryId = lottery.Lottery_Id;
                     issue.LotteryCode = lottery.LotteryCode;
                     issue.CreateTime = DateTime.Now;
-                  
+                    issue.Url_Type = (int)CollectionUrlEnum.url_500kaijiang;
                     count = db.Insertable(issue).ExecuteCommand();
                     log.Info(lottery.LotteryName + "彩种" + issue.IssueNo + "期期号采集完毕");
                     insertCount += count;

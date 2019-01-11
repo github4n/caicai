@@ -11,6 +11,7 @@ using Lottery.Modes.Entity;
 using System.Threading;
 using Lottery.GatherApp.Helper;
 using log4net;
+using static Smart.Core.Utils.CommonHelper;
 
 namespace Lottery.GatherApp
 {

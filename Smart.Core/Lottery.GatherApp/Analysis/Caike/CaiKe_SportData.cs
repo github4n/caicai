@@ -6,6 +6,7 @@ using Smart.Core.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using static Smart.Core.Utils.CommonHelper;
 
 namespace Lottery.GatherApp.Analysis.Caike
 {

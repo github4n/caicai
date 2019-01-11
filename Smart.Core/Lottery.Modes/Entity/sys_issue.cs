@@ -61,5 +61,10 @@ namespace Lottery.Modes.Entity
         /// 采集日期
         /// </summary>
         public string LotteryTime { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public int Url_Type { get; set; }
     }
 }
