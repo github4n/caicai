@@ -12,32 +12,6 @@ namespace Lottery.GatherApp.Helper
 {
     public class CommonHelper
     {
-        public static Dictionary<string, string> StNode(HtmlNode htmlNode, string key, string value, int spanIndex)
-        {
-            var keyValue = new Dictionary<string, string>();
-            spanIndex = 1;
-
-            foreach (var item3 in htmlNode.SelectNodes("span"))
-            {
-                switch (spanIndex)
-                {
-                    case 1:
-                        key = item3.InnerHtml;
-
-                        break;
-                    case 2:
-                        value = item3.InnerHtml;
-                        break;
-
-                }
-                spanIndex++;
-            }
-            keyValue.Add(key, value);
-            return keyValue;
-        }
-
-        public static CookieContainer CookiesContainer { get; set; }//定义Cookie容器
-
         public static UserAgent_CookiesCollection UserAgentList { get; set; }
 
         public static UserAgent_Cookies GetUserAgent(CollectionUrlEnum urlenum)
