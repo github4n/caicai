@@ -1,5 +1,6 @@
 ﻿using log4net;
 using Lottery.GatherApp.Analysis;
+using Lottery.GatherApp.Analysis.Caike;
 using Lottery.GatherApp.Analysis.LotteryDetail;
 using Lottery.GatherApp.Analysis.UC;
 using Lottery.GatherApp.Helper;
@@ -18,8 +19,8 @@ namespace Lottery.GatherApp
     public class BalanceTasks
     {
         protected readonly IUsersService _userSvc;
-            //log4Net
-       private ILog log;
+        //log4Net
+        private ILog log;
         protected readonly ILogger _logger;
         protected readonly RedisManager _redisManager;
         protected readonly ISport_DataService _sport_DataService;
@@ -28,7 +29,7 @@ namespace Lottery.GatherApp
         protected readonly ILotteryDetailService _ILotteryDetailService;
         protected readonly IKaiJiangWangService _kaiJiangWangService;
         protected readonly IJddDataService _IJddDataService;
-        public BalanceTasks(IUsersService usersSvc, ILogger logger, ISport_DataService sport_DataService, IXML_DataService xml_DataService, IDigitalLotteryService digitalLotteryService, ILotteryDetailService lotteryDetailService,IKaiJiangWangService kaiJiangWangService,IJddDataService jddDataService)
+        public BalanceTasks(IUsersService usersSvc, ILogger logger, ISport_DataService sport_DataService, IXML_DataService xml_DataService, IDigitalLotteryService digitalLotteryService, ILotteryDetailService lotteryDetailService, IKaiJiangWangService kaiJiangWangService, IJddDataService jddDataService)
         {
             this._userSvc = usersSvc;
             this.log = LogManager.GetLogger(Program.repository.Name, typeof(BalanceTasks));
@@ -84,7 +85,7 @@ namespace Lottery.GatherApp
                 catch (Exception ex)
                 {
                     //Console.ForegroundColor = ConsoleColor.Red;
-                    this._logger.Error($"{nameof(CQSSC)}: {ex.Message}",ex);
+                    this._logger.Error($"{nameof(CQSSC)}: {ex.Message}", ex);
                 }
                 await Task.Delay(10000);
             }
@@ -186,7 +187,7 @@ namespace Lottery.GatherApp
             {
                 try
                 {
-                   
+
 
                     var now = DateTime.Now;
                     if (old_Time == null || (now - old_Time).TotalHours > 1.5)
@@ -274,9 +275,9 @@ namespace Lottery.GatherApp
                     int count = 0;
                     #region 奖多多非高频
                     count = await JddManager.LoadJdd("nonhighfreq");
-                    log.Info("奖多多非高频共采集" + count+"条");
+                    log.Info("奖多多非高频共采集" + count + "条");
                     #endregion
-                    
+
                 }
                 catch (Exception ex)
                 {
@@ -294,5 +295,11 @@ namespace Lottery.GatherApp
             }
         }
 
+
+        public async Task RunCaikeBall()
+        {
+            var service = new CaiKe_SportData(_sport_DataService);
+            service.GetJCLQ();
+        }
     }
 }
