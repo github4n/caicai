@@ -29,7 +29,8 @@ namespace Lottery.GatherApp
         protected readonly ILotteryDetailService _ILotteryDetailService;
         protected readonly IKaiJiangWangService _kaiJiangWangService;
         protected readonly IJddDataService _IJddDataService;
-        public BalanceTasks(IUsersService usersSvc, ILogger logger, ISport_DataService sport_DataService, IXML_DataService xml_DataService, IDigitalLotteryService digitalLotteryService, ILotteryDetailService lotteryDetailService, IKaiJiangWangService kaiJiangWangService, IJddDataService jddDataService)
+        protected readonly IAgentIPService _agentIPService; 
+        public BalanceTasks(IUsersService usersSvc, ILogger logger, ISport_DataService sport_DataService, IXML_DataService xml_DataService, IDigitalLotteryService digitalLotteryService, ILotteryDetailService lotteryDetailService,IKaiJiangWangService kaiJiangWangService,IJddDataService jddDataService,IAgentIPService agentIPService)
         {
             this._userSvc = usersSvc;
             this.log = LogManager.GetLogger(Program.repository.Name, typeof(BalanceTasks));
@@ -40,6 +41,7 @@ namespace Lottery.GatherApp
             _ILotteryDetailService = lotteryDetailService;
             _IJddDataService = jddDataService;
             _kaiJiangWangService = kaiJiangWangService;
+            _agentIPService = agentIPService;
         }
         public async Task CQSSC()
         {
@@ -164,6 +166,11 @@ namespace Lottery.GatherApp
         {
             var manager = new KaiJiangWangRequest(_kaiJiangWangService);
             manager.Start();
+        }
+        public void AgentIP()
+        {
+            var manager = new AgentIPControl(_agentIPService);
+            manager.StartLoadAgentIP();
         }
         private DateTime old_Time { get; set; }
         //辽宁快乐12  广东快乐十分  广西快乐10分 重庆时时彩 是网页版
