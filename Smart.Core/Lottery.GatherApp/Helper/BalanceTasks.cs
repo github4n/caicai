@@ -276,6 +276,14 @@ namespace Lottery.GatherApp
                     count = await JddManager.LoadJdd("nonhighfreq");
                     log.Info("JDDnonhighfreq" + count);
                     #endregion
+                    
+                }
+                catch (Exception ex)
+                {
+                    log.Error(ex.Message);
+                }
+                try
+                {
                     KaiJiangWang();
                 }
                 catch (Exception ex)
