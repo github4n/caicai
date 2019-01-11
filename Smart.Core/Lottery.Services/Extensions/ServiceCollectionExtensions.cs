@@ -16,6 +16,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 services.AddSingleton<ILotteryDetailService, LotteryDetailService>();
                 services.AddSingleton<IJddDataService, JddDataService>();
                 services.AddSingleton<IKaiJiangWangService,KaiJiangWangService>();
+                services.AddSingleton<IAgentIPService, AgentIPService>();
             }
 
             return services;
