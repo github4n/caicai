@@ -16,6 +16,9 @@ namespace Lottery.GatherApp
         private int PageIndex = 4;
         protected IAgentIPService _agentIPService;
         private ILog log;
+        private List<IP> TotaliPs = new List<IP>();
+        private WebProxy CurrentWebProxy;
+        private IP CurrentIP;
         public AgentIPControl(IAgentIPService agentIPService)
         {
             _agentIPService = agentIPService;
@@ -30,7 +33,7 @@ namespace Lottery.GatherApp
             int TotalCount = 0;
             for (int p = 1; p <= PageIndex; p++)
             {
-                var Doc = RequestHtmlDoc(p);
+                var Doc = RequestHtmlDoc(string.Format(DataURI,p));
                 var tableNode = Doc.DocumentNode.SelectSingleNode("//table[@id='ip_list']");
                 var trNode = tableNode.SelectNodes("tr");
                 List<IP> IPList = new List<IP>();
@@ -40,11 +43,12 @@ namespace Lottery.GatherApp
                     IP _ip = new IP
                     {
                         IPAddress = trNode[i].ChildNodes[3].InnerText,
-                        Port = trNode[i].ChildNodes[5].InnerText,
+                        Port =trNode[i].ChildNodes[5].InnerText,
                         Type = trNode[i].ChildNodes[11].InnerText,
                         Speed = trNode[i].ChildNodes[13].ChildNodes[1].Attributes["title"].Value.Replace("秒", ""),
                         ConnectionTime = trNode[i].ChildNodes[15].ChildNodes[1].Attributes["title"].Value.Replace("秒", ""),
-                        CreateTime = DateTime.Now
+                        CreateTime = DateTime.Now,
+                        FailNum=0
                     };
                     IPList.Add(_ip);
                 }
@@ -53,22 +57,60 @@ namespace Lottery.GatherApp
             }
             Console.WriteLine($"成功新增代理IP共{TotalCount}个");
         }
-        private HtmlDocument RequestHtmlDoc(int p)
+        private HtmlDocument RequestHtmlDoc(string URl)
         {
-            HtmlDocument htmlDoc = new HtmlDocument();
-            if (string.IsNullOrEmpty(DataURI)) throw new Exception("AgentIP URI IS Null");
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(string.Format(DataURI,p));
-            WebProxy proxy = new WebProxy("119.101.115.59",9999);
-            request.Proxy = proxy;
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            using (Stream ResponseStream = response.GetResponseStream())
+            TotaliPs = _agentIPService.GetIPs();
+            SetProxy();
+            var num = 0;
+            while (true)
             {
-                using (StreamReader StreamReader = new StreamReader(ResponseStream, Encoding.UTF8))
+                HtmlDocument htmlDoc = new HtmlDocument();
+                if (string.IsNullOrEmpty(DataURI)) throw new Exception("URL为空");
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URl);
+                if (CurrentWebProxy != null && CurrentIP != null)
                 {
-                    htmlDoc.LoadHtml(StreamReader.ReadToEnd());
+                    request.Proxy = CurrentWebProxy;
+                }
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                if (response.StatusCode != HttpStatusCode.OK && CurrentIP != null)
+                {
+                    if (num <= 3)
+                    {
+                        TotaliPs.Remove(CurrentIP);
+                        _agentIPService.DeleteNotUseAgentIP(CurrentIP.ID);
+                        SetProxy();
+                    }
+                    else if (num == 4)
+                    {
+                        CurrentWebProxy = null;
+                        CurrentIP = null;
+                    }
+                    else
+                    {
+                        throw new Exception("连接失败");
+                    }
+                    num++;
+                }
+                else
+                {
+                    using (Stream ResponseStream = response.GetResponseStream())
+                    {
+                        using (StreamReader StreamReader = new StreamReader(ResponseStream, Encoding.UTF8))
+                        {
+                            htmlDoc.LoadHtml(StreamReader.ReadToEnd());
+                        }
+                    }
+                    return htmlDoc;
                 }
             }
-            return htmlDoc;
+        }
+
+        private void SetProxy()
+        {
+            if (TotaliPs == null || TotaliPs.Count == 0) return;
+            int rand = new Random().Next(0, TotaliPs.Count);
+            CurrentWebProxy = new WebProxy(TotaliPs[rand].IPAddress, Convert.ToInt32(TotaliPs[rand].Port));
+            CurrentIP = TotaliPs[rand];
         }
     }
 }

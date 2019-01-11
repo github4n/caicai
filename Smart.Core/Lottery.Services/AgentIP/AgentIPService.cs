@@ -18,11 +18,12 @@ namespace Lottery.Services
             db = factory.GetDbContext();
             log = LogManager.GetLogger("LotteryRepository", typeof(AgentIPService));
         }
-        public void AddAgentIPList(List<IP> iPs,out int Count)
+        public void AddAgentIPList(List<IP> iPs, out int Count)
         {
-            int i=0;
-            iPs.ForEach((a) => {
-                bool b = db.Queryable<IP>().Where(x => x.IPAddress == a.IPAddress && x.Port == a.Port).First()==null?true:false;
+            int i = 0;
+            iPs.ForEach((a) =>
+            {
+                bool b = db.Queryable<IP>().Where(x => x.IPAddress == a.IPAddress && x.Port == a.Port).First() == null ? true : false;
                 if (b)
                 {
                     db.Insertable<IP>(a).ExecuteCommand();
@@ -30,6 +31,19 @@ namespace Lottery.Services
                 }
             });
             Count = i;
+        }
+        public void DeleteNotUseAgentIP(int id)
+        {
+            var model = db.Queryable<IP>().Where(x => x.ID == id).First();
+            if (model == null) return;
+            if (model.FailNum + 1 >= 3)
+            {
+                db.Deleteable<IP>().Where(x => x.ID == id).ExecuteCommand();
+            }
+        }
+        public List<IP> GetIPs()
+        {
+            return db.Queryable<IP>().OrderBy(x => x.ID).ToList();
         }
     }
 }
