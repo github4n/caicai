@@ -39,6 +39,10 @@ namespace Lottery.API.Controllers
                 if (b == null || b.Length == 0)
                 {
                      xmlDoc = LoadXmlDocument("http://lottery.jdddata.com/uc/common");
+                    if (xmlDoc == null || xmlDoc.DocumentElement.ChildNodes.Count == 0)
+                    {
+                        return new XmlResult(xmlDoc);
+                    }
                     var commonConfig = ConfigFileHelper.Get<List<CommonModel>>("CommonModel");
                     var nodes = xmlDoc.DocumentElement.ChildNodes[0].ChildNodes;
                     foreach (XmlElement CurrenNode in nodes)
@@ -84,7 +88,8 @@ namespace Lottery.API.Controllers
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                XmlDocument xmlDoc = new XmlDocument();
+                return new XmlResult(xmlDoc);
             }
         }
         /// <summary>
@@ -102,6 +107,10 @@ namespace Lottery.API.Controllers
                 if (b == null || b.Length == 0)
                 {
                     xmlDoc = LoadXmlDocument("http://lottery.jdddata.com/uc/highfreq");
+                    if (xmlDoc == null || xmlDoc.DocumentElement.ChildNodes.Count == 0)
+                    {
+                        return new XmlResult(xmlDoc);
+                    }
                     var commonConfig = ConfigFileHelper.Get<List<HeightLottery>>("HeightLottery");
                     var nodes = xmlDoc.DocumentElement.ChildNodes;
                     foreach (XmlElement element in nodes)
@@ -159,7 +168,8 @@ namespace Lottery.API.Controllers
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                XmlDocument xmlDoc = new XmlDocument();
+                return new XmlResult(xmlDoc);
             }
         }
 
@@ -178,6 +188,10 @@ namespace Lottery.API.Controllers
                 if (b == null || b.Length == 0)
                 {
                      xmlDoc = LoadXmlDocument("http://lottery.jdddata.com/uc/nonhighfreq");
+                    if (xmlDoc == null || xmlDoc.DocumentElement.ChildNodes.Count == 0)
+                    {
+                        return new XmlResult(xmlDoc);
+                    }
                     var commonConfig = ConfigFileHelper.Get<List<NoHeightLottery>>("NoHeightLottery");
                     var nodes = xmlDoc.DocumentElement.ChildNodes;
                     foreach (XmlElement element in nodes)
@@ -247,7 +261,8 @@ namespace Lottery.API.Controllers
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                XmlDocument xmlDoc = new XmlDocument();
+                return new XmlResult(xmlDoc);
             }
         }
 
@@ -266,6 +281,10 @@ namespace Lottery.API.Controllers
                 if (b == null || b.Length == 0)
                 {
                     xmlDoc = LoadXmlDocument("http://lottery.jdddata.com/uc/jingcai");
+                    if (xmlDoc == null || xmlDoc.DocumentElement.ChildNodes.Count == 0)
+                    {
+                        return new XmlResult(xmlDoc);
+                    }
                     var commonConfig = ConfigFileHelper.Get<List<JingCai>>("JingCai");
                     var nodes = xmlDoc.DocumentElement.ChildNodes;
                     foreach (XmlElement element in nodes)
@@ -314,7 +333,8 @@ namespace Lottery.API.Controllers
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                XmlDocument xmlDoc = new XmlDocument();
+                return new XmlResult(xmlDoc);
             }
         }
         protected XmlDocument LoadXmlDocument(string URI)
