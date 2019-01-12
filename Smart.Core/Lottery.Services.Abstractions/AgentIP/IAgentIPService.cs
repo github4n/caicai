@@ -8,5 +8,7 @@ namespace Lottery.Services.Abstractions
    public interface IAgentIPService
     {
         void AddAgentIPList(List<IP> iPs, out int Count);
+        void DeleteNotUseAgentIP(int id);
+        List<IP> GetIPs();
     }
 }

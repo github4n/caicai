@@ -8,6 +8,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using static Smart.Core.Utils.CommonHelper;
 
 namespace Lottery.GatherApp.Analysis.UC
 {

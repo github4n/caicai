@@ -7,37 +7,12 @@ using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
+using static Smart.Core.Utils.CommonHelper;
 
 namespace Lottery.GatherApp.Helper
 {
     public class CommonHelper
     {
-        public static Dictionary<string, string> StNode(HtmlNode htmlNode, string key, string value, int spanIndex)
-        {
-            var keyValue = new Dictionary<string, string>();
-            spanIndex = 1;
-
-            foreach (var item3 in htmlNode.SelectNodes("span"))
-            {
-                switch (spanIndex)
-                {
-                    case 1:
-                        key = item3.InnerHtml;
-
-                        break;
-                    case 2:
-                        value = item3.InnerHtml;
-                        break;
-
-                }
-                spanIndex++;
-            }
-            keyValue.Add(key, value);
-            return keyValue;
-        }
-
-        public static CookieContainer CookiesContainer { get; set; }//定义Cookie容器
-
         public static UserAgent_CookiesCollection UserAgentList { get; set; }
 
         public static UserAgent_Cookies GetUserAgent(CollectionUrlEnum urlenum)
@@ -301,31 +276,4 @@ namespace Lottery.GatherApp.Helper
         public DateTime CreateTime { get; set; }
     }
 
-    public enum CollectionUrlEnum
-    {
-        /// <summary>
-        /// 未知
-        /// </summary>
-        url_unknow=0,
-        /// <summary>
-        /// 500网开奖主站
-        /// </summary>
-        url_500kaijiang=1,
-        /// <summary>
-        /// 500网足彩相关
-        /// </summary>
-        url_500zx=2,
-        /// <summary>
-        /// jdd采集
-        /// </summary>
-        url_jdd=3,
-        /// <summary>
-        /// 1122开奖网
-        /// </summary>
-        url_1122=4,
-        /// <summary>
-        /// 彩客
-        /// </summary>
-        url_caike=5
-    }
 }

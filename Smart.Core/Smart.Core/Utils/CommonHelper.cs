@@ -22,5 +22,35 @@ namespace Smart.Core.Utils
             BigInteger ipAsInt = new BigInteger(ipFormat.ToArray());
             return ipAsInt.ToString();
         }
+
+
+        public enum CollectionUrlEnum
+        {
+            /// <summary>
+            /// 未知
+            /// </summary>
+            url_unknow = 0,
+            /// <summary>
+            /// 500网开奖主站
+            /// </summary>
+            url_500kaijiang = 1,
+            /// <summary>
+            /// 500网足彩相关
+            /// </summary>
+            url_500zx = 2,
+            /// <summary>
+            /// jdd采集
+            /// </summary>
+            url_jdd = 3,
+            /// <summary>
+            /// 1122开奖网
+            /// </summary>
+            url_1122 = 4,
+            /// <summary>
+            /// 彩客
+            /// </summary>
+            url_caike = 5
+        }
+
     }
 }

@@ -125,5 +125,10 @@ namespace Lottery.Modes.Entity
             ///</summary>
          
             public DateTime? CreateTime{ get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public int Url_Type { get; set; }
     }
 }

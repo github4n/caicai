@@ -37,5 +37,9 @@ namespace Lottery.Modes.Model
         /// 创建时间
         /// </summary>
         public DateTime CreateTime { get; set; }
+        /// <summary>
+        /// 失败次数
+        /// </summary>
+        public int FailNum { get; set; }
     }
 }

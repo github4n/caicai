@@ -14,6 +14,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
+using static Smart.Core.Utils.CommonHelper;
 
 namespace Lottery.GatherApp
 {

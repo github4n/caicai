@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using static Smart.Core.Utils.CommonHelper;
 
 namespace Lottery.Services
 {
@@ -76,6 +77,7 @@ namespace Lottery.Services
                         lotterydetail.LotteryResultDetail = item.dltLists.Count == 0 ? gameCode != "ttcx4" ? JsonConvert.SerializeObject(item.openLotteryDetails) : JsonConvert.SerializeObject(item.ttcx4Details) : JsonConvert.SerializeObject(item.dltLists);
                         lotterydetail.CreateTime = DateTime.Now;
                         lotterydetail.UpdateTime = DateTime.Now;
+                        lotterydetail.Url_Type =(int)CollectionUrlEnum.url_500kaijiang;
                         count = db.Insertable(lotterydetail).ExecuteCommand();
                         log.Info(LotteryCode.LotteryName + "彩种" + item.expect + "期采集详情完毕");
                         insertCount += count;

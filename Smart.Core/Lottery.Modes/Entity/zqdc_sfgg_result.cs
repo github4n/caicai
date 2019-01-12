@@ -96,7 +96,12 @@ namespace Lottery.Modes.Entity
         ///</summary>
         public string FullScore { get; set; }
 
-        
+        /// <summary>
+        /// 
+        /// </summary>
+        public int Url_Type { get; set; }
+
+
 
     }
 }

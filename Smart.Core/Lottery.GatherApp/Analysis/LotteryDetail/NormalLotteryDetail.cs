@@ -15,6 +15,7 @@ using System.Xml;
 using System.Net;
 using System.IO;
 using System.Threading;
+using static Smart.Core.Utils.CommonHelper;
 
 namespace Lottery.GatherApp.Analysis.LotteryDetail
 {
@@ -532,7 +533,7 @@ namespace Lottery.GatherApp.Analysis.LotteryDetail
             {
                 request = (HttpWebRequest)WebRequest.Create(Url);
 
-                response = CommonHelper.SettingProxyCookit(request, response);
+                response = CommonHelper.SettingProxyCookit(request, response, CollectionUrlEnum.url_500kaijiang);
             }
             catch (Exception ex)
             {
