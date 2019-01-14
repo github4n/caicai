@@ -38,7 +38,9 @@ namespace Lottery.Services
             if (model == null) return;
             if (model.FailNum + 1 >= 3)
             {
-                db.Deleteable<IP>().Where(x => x.ID == id).ExecuteCommand();
+                model.FailNum = model.FailNum + 1;
+                model.IsDelete = true;
+                db.Updateable(model).UpdateColumns(x => new { x.IsDelete,x.FailNum }).ExecuteCommand();
             }
             else
             {
@@ -48,7 +50,7 @@ namespace Lottery.Services
         }
         public List<IP> GetIPs()
         {
-            return db.Queryable<IP>().OrderBy(x => x.ID).OrderBy(x=>x.Speed,OrderByType.Asc).OrderBy(x=>x.ConnectionTime,OrderByType.Asc).ToList();
+            return db.Queryable<IP>().Where(x=>x.IsDelete==false).OrderBy(x=>x.Speed,OrderByType.Asc).ToList();
         }
     }
 }

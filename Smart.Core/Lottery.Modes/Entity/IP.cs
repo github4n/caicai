@@ -41,5 +41,9 @@ namespace Lottery.Modes.Model
         /// 失败次数
         /// </summary>
         public int FailNum { get; set; }
+        /// <summary>
+        /// 是否删除
+        /// </summary>
+        public bool IsDelete { get; set; }
     }
 }

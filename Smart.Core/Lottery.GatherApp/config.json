@@ -15,6 +15,7 @@
       "Default": "Trace"
     }
   },
+  "UseIPAgent": 1,
   "PlanChoose": "Plan1",
   "Url_Caike": "http://m.310win.com/",
   "Url_500KJ": "http://zx.500.com/",
@@ -126,9 +127,5 @@
     "bx15fc_config": { //巴西1.5分彩
       "interval": 5000
     }
-
-
-
-
   }
 }
