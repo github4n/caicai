@@ -514,6 +514,7 @@ namespace Lottery.GatherApp
                             }
                             break;
                         }
+                        jclq_result.Url_Type= (int)CollectionUrlEnum.url_500zx;
                         jclq_result.AvgEu_SP = jclq_result.AvgEu_SP.Substring(0, jclq_result.AvgEu_SP.Length - 1);
                         jclq_results.Add(jclq_result);
                     }
@@ -751,6 +752,7 @@ namespace Lottery.GatherApp
                     tdIndex = tdIndex + 1;
                 }
                 zqdc_Sfgg_Result.IssueNo = expect;
+                zqdc_Sfgg_Result.Url_Type= (int)CollectionUrlEnum.url_500zx;
                 zqdc_Sfgg_Result.AvgEu_SP = zqdc_Sfgg_Result.AvgEu_SP.Substring(0, zqdc_Sfgg_Result.AvgEu_SP.Length - 1);
                 zqdc_Sfgg_Results.Add(zqdc_Sfgg_Result);
             }

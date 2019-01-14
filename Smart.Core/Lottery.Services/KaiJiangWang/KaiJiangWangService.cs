@@ -9,6 +9,7 @@ using Lottery.Modes;
 using Lottery.Modes.Model;
 using System.Linq;
 using log4net;
+using static Smart.Core.Utils.CommonHelper;
 
 namespace Lottery.Services
 {
@@ -95,6 +96,7 @@ namespace Lottery.Services
                     _Issue.LotteryCode = LotteryCode;
                     _Issue.CreateTime = DateTime.Now;
                     _Issue.OpenTime = a.preDrawTime;
+                    _Issue.Url_Type= (int)CollectionUrlEnum.url_1122;
                     _Issue.LotteryTime = Convert.ToDateTime(a.preDrawTime).ToString("yyyy-MM-dd");
                     var model = db.Queryable<sys_issue>().First(x => x.LotteryCode == LotteryCode && x.IssueNo == _Issue.IssueNo);
                     if (model == null)

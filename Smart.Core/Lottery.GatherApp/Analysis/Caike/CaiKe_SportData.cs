@@ -42,8 +42,9 @@ namespace Lottery.GatherApp.Analysis.Caike
             try
             {
                 //0.从数据库拿到最后采集的日期，从该日开始采集
+                
+                //1.彩客数据的日期是往前一天算的(正常11号，彩客10号)
                 var result = GetJclqList();
-                //1.
             }
             catch (Exception ex)
             {

@@ -8,6 +8,7 @@ using SqlSugar;
 using System.Threading.Tasks;
 using EntityModel.Model;
 using System.Linq;
+using static Smart.Core.Utils.CommonHelper;
 
 namespace Lottery.Services
 {
@@ -45,7 +46,8 @@ namespace Lottery.Services
                         LeagueName = item.TournamentType,
                         CreateTime = DateTime.Now,
                         IssueNo = item.id,
-                    };
+                         Url_Type= (int)CollectionUrlEnum.url_500zx,
+                };
                     resultModel.League_Color = item.League_Color;
                     foreach (var Sub_item in item.gameTypes)
                     {
@@ -166,7 +168,8 @@ namespace Lottery.Services
                         CreateTime = DateTime.Now,
                         JCDate = item.id,
                         AvgEu_SP= item.AvgOuCompensation,
-                    };
+                        Url_Type= (int)CollectionUrlEnum.url_500zx
+                };
                     foreach (var Sub_item in item.gameTypes)
                     {
                         if (Sub_item.game == Game.让球胜平负)

@@ -187,6 +187,8 @@ namespace Lottery.API
             });
             var t1 = new Task(() => new AutoTask().AutoAddToRedis_LotteryList());
             t1.Start();
+            var t2 = new Task(() => new AutoTask().UcAutoRedis());
+            t2.Start();
         }
 
         /// <summary>
