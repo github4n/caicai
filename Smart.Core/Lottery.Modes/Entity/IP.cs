@@ -28,11 +28,11 @@ namespace Lottery.Modes.Model
         /// <summary>
         /// 速度
         /// </summary>
-        public string Speed { get; set; }
+        public float Speed { get; set; }
         /// <summary>
         /// 连接时间
         /// </summary>
-        public string ConnectionTime { get; set; }
+        public float ConnectionTime { get; set; }
         /// <summary>
         /// 创建时间
         /// </summary>

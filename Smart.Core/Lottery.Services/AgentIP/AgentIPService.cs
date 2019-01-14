@@ -40,10 +40,15 @@ namespace Lottery.Services
             {
                 db.Deleteable<IP>().Where(x => x.ID == id).ExecuteCommand();
             }
+            else
+            {
+                model.FailNum = model.FailNum + 1;
+                db.Updateable(model).UpdateColumns(x => new { x.FailNum }).ExecuteCommand();
+            }
         }
         public List<IP> GetIPs()
         {
-            return db.Queryable<IP>().OrderBy(x => x.ID).ToList();
+            return db.Queryable<IP>().OrderBy(x => x.ID).OrderBy(x=>x.Speed,OrderByType.Asc).OrderBy(x=>x.ConnectionTime,OrderByType.Asc).ToList();
         }
     }
 }

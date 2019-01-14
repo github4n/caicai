@@ -7,6 +7,8 @@ using HtmlAgilityPack;
 using Lottery.Services.Abstractions;
 using log4net;
 using Lottery.Modes.Model;
+using System.Security.Cryptography.X509Certificates;
+using System.Net.Security;
 
 namespace Lottery.GatherApp
 {
@@ -45,8 +47,8 @@ namespace Lottery.GatherApp
                         IPAddress = trNode[i].ChildNodes[3].InnerText,
                         Port =trNode[i].ChildNodes[5].InnerText,
                         Type = trNode[i].ChildNodes[11].InnerText,
-                        Speed = trNode[i].ChildNodes[13].ChildNodes[1].Attributes["title"].Value.Replace("秒", ""),
-                        ConnectionTime = trNode[i].ChildNodes[15].ChildNodes[1].Attributes["title"].Value.Replace("秒", ""),
+                        Speed =Convert.ToSingle(trNode[i].ChildNodes[13].ChildNodes[1].Attributes["title"].Value.Replace("秒", "")),
+                        ConnectionTime = Convert.ToSingle(trNode[i].ChildNodes[15].ChildNodes[1].Attributes["title"].Value.Replace("秒", "")),
                         CreateTime = DateTime.Now,
                         FailNum=0
                     };
@@ -64,35 +66,41 @@ namespace Lottery.GatherApp
             var num = 0;
             while (true)
             {
-                HtmlDocument htmlDoc = new HtmlDocument();
-                if (string.IsNullOrEmpty(DataURI)) throw new Exception("URL为空");
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URl);
-                if (CurrentWebProxy != null && CurrentIP != null)
+                try
                 {
-                    request.Proxy = CurrentWebProxy;
-                }
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                if (response.StatusCode != HttpStatusCode.OK && CurrentIP != null)
-                {
-                    if (num <= 3)
+                    HtmlDocument htmlDoc = new HtmlDocument();
+                    if (string.IsNullOrEmpty(DataURI)) throw new Exception("URL为空");
+                    HttpWebRequest request;
+                    if (CurrentIP != null && CurrentIP.Type == "HTTPS")
                     {
-                        TotaliPs.Remove(CurrentIP);
-                        _agentIPService.DeleteNotUseAgentIP(CurrentIP.ID);
-                        SetProxy();
-                    }
-                    else if (num == 4)
-                    {
-                        CurrentWebProxy = null;
-                        CurrentIP = null;
+                        request = (HttpWebRequest)WebRequest.Create(URl);
+                        ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(OnRemoteCertificateValidationCallback);
+                        request.ProtocolVersion = HttpVersion.Version10;
                     }
                     else
                     {
-                        throw new Exception("连接失败");
+                        request = (HttpWebRequest)WebRequest.Create(URl);
                     }
-                    num++;
-                }
-                else
-                {
+                    request.Timeout = 10000;
+                    if (CurrentWebProxy != null && CurrentIP != null)
+                    {
+                        request.Proxy = CurrentWebProxy;
+                    }
+                    HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                    //string res = string.Empty;
+                    //if (response.ContentEncoding != null && response.ContentEncoding.ToLower() == "gzip")
+                    //{
+                    //    System.IO.Stream streamReceive = response.GetResponseStream();
+                    //    var zipStream = new System.IO.Compression.GZipStream(streamReceive, System.IO.Compression.CompressionMode.Decompress);
+                    //    StreamReader sr = new System.IO.StreamReader(zipStream, Encoding.GetEncoding("GB2312"));
+                    //    res = sr.ReadToEnd();
+                    //}
+                    //else
+                    //{
+                    //    System.IO.Stream streamReceive = response.GetResponseStream();
+                    //    StreamReader sr = new System.IO.StreamReader(streamReceive, Encoding.GetEncoding("GB2312"));
+                    //    res = sr.ReadToEnd();
+                    //}
                     using (Stream ResponseStream = response.GetResponseStream())
                     {
                         using (StreamReader StreamReader = new StreamReader(ResponseStream, Encoding.UTF8))
@@ -102,14 +110,40 @@ namespace Lottery.GatherApp
                     }
                     return htmlDoc;
                 }
+                catch (Exception ex)
+                {
+                    if (CurrentIP != null)
+                    {
+                        if (num <= 50)
+                        {
+                            TotaliPs.Remove(CurrentIP);
+                            _agentIPService.DeleteNotUseAgentIP(CurrentIP.ID);
+                            SetProxy();
+                        }
+                        else if (num == 51)
+                        {
+                            CurrentWebProxy = null;
+                            CurrentIP = null;
+                        }
+                        else
+                        {
+                            throw new Exception("连接失败");
+                        }
+                        num++;
+                    }
+                }
             }
         }
-
+        private static bool OnRemoteCertificateValidationCallback(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+        {
+            return true;
+        }
         private void SetProxy()
         {
             if (TotaliPs == null || TotaliPs.Count == 0) return;
             int rand = new Random().Next(0, TotaliPs.Count);
             CurrentWebProxy = new WebProxy(TotaliPs[rand].IPAddress, Convert.ToInt32(TotaliPs[rand].Port));
+            //CurrentWebProxy = new WebProxy("119.101.118.172", 9999);
             CurrentIP = TotaliPs[rand];
         }
     }

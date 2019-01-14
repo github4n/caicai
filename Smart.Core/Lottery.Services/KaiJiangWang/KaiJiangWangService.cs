@@ -41,19 +41,25 @@ namespace Lottery.Services
                     {
                         var dic = KaiJiangWangDic.RedBallGameCode.Where(x => x.Key == LotteryCode).FirstOrDefault();
                         int i = 0;
+                        List<int> blueCode = new List<int>();
+                        for (int h = 1; h <= dic.Value; h++)
+                        {
+                            blueCode.Add(a.preDrawCode[a.preDrawCode.Count-1]);
+                            a.preDrawCode.RemoveAt(a.preDrawCode.Count - 1);
+                        }
                         a.preDrawCode.ForEach((x) =>
                         {
-                            if (a.preDrawCode.Count - i == dic.Value)
-                            {
-                                _Issue.OpenCode = _Issue.OpenCode.Remove(_Issue.OpenCode.Length - 1, 1);
-                                _Issue.OpenCode = _Issue.OpenCode + "|" + x;
-                            }
-                            else
-                            {
-                                _Issue.OpenCode = _Issue.OpenCode + x + ",";
-                            }
-                            i++;
+                            _Issue.OpenCode = _Issue.OpenCode + x + ",";
                         });
+                        _Issue.OpenCode = _Issue.OpenCode.Remove(_Issue.OpenCode.Length - 1, 1);
+                        if (blueCode != null && blueCode.Count > 0)
+                        {
+                            string blue = string.Empty;
+                            blueCode.ForEach((n) => {
+                                blue = blue + "|" + n;
+                            });
+                            _Issue.OpenCode = _Issue.OpenCode + blue;
+                        }
                     }
                     else
                     {
@@ -82,15 +88,7 @@ namespace Lottery.Services
                     if (KaiJiangWangDic.DeleteZero.ContainsKey(LotteryCode))
                     {
                         var CharDic = KaiJiangWangDic.DeleteZero.Where(x => x.Key == LotteryCode).FirstOrDefault();
-
-                        //if (IssueNo.StartsWith("20") && IssueNo.Length == 11)//20181224080
-                        //{
-                        //    IssueNo = IssueNo.Remove(CharDic.Value, 1);
-                        //}
-                        //else if (IssueNo.Length == 9 && !IssueNo.StartsWith("20"))//181224080
-                        //{
-                            IssueNo = IssueNo.Remove(CharDic.Value, 1);
-                       // }
+                        IssueNo = IssueNo.Remove(CharDic.Value, 1);
                     }
                     _Issue.IssueNo = IssueNo;
                     _Issue.LotteryId = LotteryId;
@@ -107,7 +105,6 @@ namespace Lottery.Services
                 }
                 catch (Exception ex)
                 {
-                    //throw new Exception(ex.Message+":"+ex.StackTrace);
                 }
             });
         }

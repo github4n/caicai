@@ -25,9 +25,9 @@ namespace Lottery.GatherApp.Analysis
         }
         public void Start()
         {
-            Console.WriteLine("开始高频彩采集");
-            RequestJson(KaiJiangWangDic.GaoPindic, GaoPinUrI);
-            Console.WriteLine("高频彩采集完毕");
+            //Console.WriteLine("开始高频彩采集");
+            //RequestJson(KaiJiangWangDic.GaoPindic, GaoPinUrI);
+            //Console.WriteLine("高频彩采集完毕");
             Console.WriteLine("开始全国彩采集");
             RequestJson(KaiJiangWangDic.QuanguoDic, quanguoURL);
             Console.WriteLine("全国彩采集完毕");
@@ -61,7 +61,7 @@ namespace Lottery.GatherApp.Analysis
                         { continue; }
                         var resultList = JsonConvert.DeserializeObject<JsonReuslt>(str);
                         log.Info("1122站点" + dic_Item.Key + "彩种，日期："+ time.AddDays(i).ToString("yyyy-MM-dd")+"采集到："+ resultList.content.Count+"条数据");
-                        if (resultList.message == "成功" && resultList.code == 0&& resultList.content.Count>0)
+                        if (resultList.message == "成功" && resultList.code == 0 && resultList.content.Count > 0)
                         {
                             _kaiJiangWangService.AddSys_issue(dic_Item.Key, resultList);
                         }
