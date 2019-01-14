@@ -570,8 +570,8 @@ namespace Lottery.GatherApp
                     #region 第一个表格
                     var GameTime = htmlDoc.DocumentNode.SelectNodes("//table[@class='kj_tablelist02']")[0].SelectNodes("tr")[0].SelectSingleNode("//span[@class='span_right']").InnerHtml;
                     fc3D.expect = item.InnerHtml;
-                    fc3D.LotteryDate = GameTime.Split("：")[1].Split('兑')[0];
-                    fc3D.AwardDeadline = GameTime.Split("：")[2];
+                    fc3D.LotteryDate = Convert.ToDateTime(GameTime.Split("：")[1].Split('兑')[0]).ToString("yyyy-MM-dd");
+                    fc3D.AwardDeadline = Convert.ToDateTime(GameTime.Split("：")[2]).ToString("yyyy-MM-dd");
                     fc3D.SalesVolume = htmlDoc.DocumentNode.SelectNodes("//table[@class='kj_tablelist02']").FirstOrDefault().SelectNodes("tr")[2].SelectSingleNode("//span[@class='cfont1 ']").InnerHtml.Replace("元", "");
 
                     var firstTableNode = htmlDoc.DocumentNode.SelectNodes("//table[@class='kj_tablelist02']")[0].SelectNodes("tr")[1].SelectSingleNode("td").SelectSingleNode("table").SelectSingleNode("tr").SelectNodes("td");
