@@ -41,7 +41,6 @@ namespace Lottery.Services
                     if (KaiJiangWangDic.RedBallGameCode.ContainsKey(LotteryCode))
                     {
                         var dic = KaiJiangWangDic.RedBallGameCode.Where(x => x.Key == LotteryCode).FirstOrDefault();
-                        int i = 0;
                         List<int> blueCode = new List<int>();
                         for (int h = 1; h <= dic.Value; h++)
                         {
