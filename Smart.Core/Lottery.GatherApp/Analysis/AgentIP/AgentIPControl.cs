@@ -87,20 +87,6 @@ namespace Lottery.GatherApp
                         request.Proxy = CurrentWebProxy;
                     }
                     HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                    //string res = string.Empty;
-                    //if (response.ContentEncoding != null && response.ContentEncoding.ToLower() == "gzip")
-                    //{
-                    //    System.IO.Stream streamReceive = response.GetResponseStream();
-                    //    var zipStream = new System.IO.Compression.GZipStream(streamReceive, System.IO.Compression.CompressionMode.Decompress);
-                    //    StreamReader sr = new System.IO.StreamReader(zipStream, Encoding.GetEncoding("GB2312"));
-                    //    res = sr.ReadToEnd();
-                    //}
-                    //else
-                    //{
-                    //    System.IO.Stream streamReceive = response.GetResponseStream();
-                    //    StreamReader sr = new System.IO.StreamReader(streamReceive, Encoding.GetEncoding("GB2312"));
-                    //    res = sr.ReadToEnd();
-                    //}
                     using (Stream ResponseStream = response.GetResponseStream())
                     {
                         using (StreamReader StreamReader = new StreamReader(ResponseStream, Encoding.UTF8))
