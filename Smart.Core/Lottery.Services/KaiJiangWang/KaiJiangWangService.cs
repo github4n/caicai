@@ -58,6 +58,7 @@ namespace Lottery.Services
                             blueCode.ForEach((n) => {
                                 blue = blue + "," + n;
                             });
+                            blue=blue.Trim(',');
                             _Issue.OpenCode = _Issue.OpenCode +"|"+ blue;
                         }
                     }

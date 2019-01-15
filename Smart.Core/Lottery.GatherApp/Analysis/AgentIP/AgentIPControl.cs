@@ -77,7 +77,7 @@ namespace Lottery.GatherApp
                     }
                     else {Type= RequestType.HTTP; }
                     string UserAgent = "Mozilla / 5.0(Windows NT 10.0; Win64; x64) AppleWebKit / 537.36(KHTML, like Gecko) Chrome / 71.0.3578.98 Safari / 537.36";
-                    if (CurrentIP == null)
+                    if (UseAgent==1&&CurrentIP == null)
                     {
                         return RequestHelper<HtmlDocument>.DoRequest(URl, Type, null, false,"","", UserAgent, string.Empty, Method.Get,null);
                     }
@@ -85,36 +85,6 @@ namespace Lottery.GatherApp
                     {
                         return RequestHelper<HtmlDocument>.DoRequest(URl, Type, null, true, CurrentIP.IPAddress, CurrentIP.Port, UserAgent, string.Empty, Method.Get, null);
                     }
-                   
-                    #region
-                    //HtmlDocument htmlDoc = new HtmlDocument();
-                    //if (string.IsNullOrEmpty(DataURI)) throw new Exception("URL为空");
-                    //HttpWebRequest request;
-                    //if (CurrentIP != null && CurrentIP.Type == RequestType.HTTPS)
-                    //{
-                    //    request = (HttpWebRequest)WebRequest.Create(URl);
-                    //    ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(OnRemoteCertificateValidationCallback);
-                    //    request.ProtocolVersion = HttpVersion.Version10;
-                    //}
-                    //else
-                    //{
-                    //    request = (HttpWebRequest)WebRequest.Create(URl);
-                    //}
-                    //request.Timeout = 10000;
-                    //if (CurrentWebProxy != null && CurrentIP != null)
-                    //{
-                    //    request.Proxy = CurrentWebProxy;
-                    //}
-                    //HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                    //using (Stream ResponseStream = response.GetResponseStream())
-                    //{
-                    //    using (StreamReader StreamReader = new StreamReader(ResponseStream, Encoding.UTF8))
-                    //    {
-                    //        htmlDoc.LoadHtml(StreamReader.ReadToEnd());
-                    //    }
-                    //}
-                    //return htmlDoc;
-                    #endregion
                 }
                 catch (Exception ex)
                 {
