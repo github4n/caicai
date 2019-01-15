@@ -4,6 +4,7 @@ using Lottery.Modes.Model;
 using Lottery.Services.Abstractions;
 using Newtonsoft.Json;
 using Smart.Core.Repository.SqlSugar;
+using Smart.Core.Utils;
 using SqlSugar;
 using System;
 using System.Collections.Generic;
@@ -46,10 +47,8 @@ namespace Lottery.Services
 
                     if (strlotterydetail != null)
                     {
-                        if (gameCode == "sfc" || gameCode == "jq4" || gameCode == "zc6")
-                        {
-                            DateTime date = DateTime.Now.AddDays(-3);
-                            if (strlotterydetail.LotteryDataDetail.Contains("*") && Convert.ToDateTime(strlotterydetail.OpenTime) > date)
+                            DateTime date = DateTime.Now.AddDays(-10);
+                            if (NeedReGet(strlotterydetail.CurrentSales) && Convert.ToDateTime(strlotterydetail.OpenTime) > date)
                             {
                                 strlotterydetail.LotteryDataDetail = item.teams.Count == 0 ? (item.NumberType != null ? item.openCode + "|" + item.NumberType : item.openCode) : JsonConvert.SerializeObject(item.teams);
                                 strlotterydetail.LotteryResultDetail = item.dltLists.Count == 0 ? gameCode != "ttcx4" ? JsonConvert.SerializeObject(item.openLotteryDetails) : JsonConvert.SerializeObject(item.ttcx4Details) : JsonConvert.SerializeObject(item.dltLists);
@@ -59,7 +58,7 @@ namespace Lottery.Services
                                 count = db.Updateable(strlotterydetail).ExecuteCommand();
                                 log.Info(LotteryCode.LotteryName + "彩种" + strlotterydetail.IssueNo + "期期号更新完毕");
                             }
-                        }
+                        
                     }
                     else
                     {
@@ -76,7 +75,6 @@ namespace Lottery.Services
                         lotterydetail.Sys_IssueId = item.Sys_IssueId;
                         lotterydetail.LotteryResultDetail = item.dltLists.Count == 0 ? gameCode != "ttcx4" ? JsonConvert.SerializeObject(item.openLotteryDetails) : JsonConvert.SerializeObject(item.ttcx4Details) : JsonConvert.SerializeObject(item.dltLists);
                         lotterydetail.CreateTime = DateTime.Now;
-                        lotterydetail.UpdateTime = DateTime.Now;
                         lotterydetail.Url_Type =(int)CollectionUrlEnum.url_500kaijiang;
                         count = db.Insertable(lotterydetail).ExecuteCommand();
                         log.Info(LotteryCode.LotteryName + "彩种" + item.expect + "期采集详情完毕");
@@ -125,7 +123,6 @@ namespace Lottery.Services
                 return db.Queryable<normal_lotterydetail>().Where(n => n.LotteryCode == LotteryCode && n.IssueNo == IssueNo).OrderBy(n => n.IssueNo, OrderByType.Desc).First();
             }
         }
-
         public sys_issue GetIssue(string IssueNo)
         {
             using (var db = BaseFactory.GetDbContext())

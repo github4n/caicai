@@ -52,5 +52,18 @@ namespace Smart.Core.Utils
             url_caike = 5
         }
 
+
+
+        public static bool NeedReGet(string money)
+        {
+            if (string.IsNullOrEmpty(money)) return true;
+            foreach (var item in money)
+            {
+                var i = 0;
+                int.TryParse(item.ToString(), out i);
+                if (i > 0) return false;
+            }
+            return true;
+        }
     }
 }

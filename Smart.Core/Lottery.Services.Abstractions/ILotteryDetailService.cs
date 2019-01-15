@@ -15,5 +15,6 @@ namespace Lottery.Services.Abstractions
         normal_lotterydetail GetNowIssuNo(string LotteryCode);
 
         sys_issue GetIssue(string IssueNo);
+        normal_lotterydetail GetCodelotterydetail(string LotteryCode, string IssueNo);
     }
 }

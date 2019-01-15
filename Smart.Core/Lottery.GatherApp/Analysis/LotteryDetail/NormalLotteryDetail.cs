@@ -33,12 +33,12 @@ namespace Lottery.GatherApp.Analysis.LotteryDetail
         public async Task<int> LoadLotteryDetal(string gameCode)
         {
            
-            var anode = _ILotteryDetailService.GetLotteryCodeList(gameCode).Take(30);
+            var anode = _ILotteryDetailService.GetLotteryCodeList(gameCode).Take(3);
 
 
             List<lotterydetail> lotterydetails = new List<lotterydetail>();
-            int index = 0;
-            int SfcIndex = 0;
+         
+          
             foreach (var item in anode)
             {
                 string IssueNo = LoadQGDFCXml(item.LotteryCode);
@@ -46,24 +46,19 @@ namespace Lottery.GatherApp.Analysis.LotteryDetail
                 {
                     continue;
                 }
-                index++;
                 //查询彩种最新一期
                 if (_ILotteryDetailService.GetNowIssuNo(gameCode) != null)
                 {
-
-                    if (item.IssueNo == _ILotteryDetailService.GetNowIssuNo(gameCode).IssueNo && gameCode!="sfc" && gameCode != "jq4" && gameCode != "zc6")
+                    if (_ILotteryDetailService.GetCodelotterydetail(gameCode, item.IssueNo) != null)
                     {
-                        break;
-                    }
-                  //数据库查到有胜负彩最新一期，获取采集下来的3期，用来更新数据
-                    if (gameCode == "sfc" || gameCode == "jq4" || gameCode == "zc6")
-                    {
-                        SfcIndex++;
-                        if (SfcIndex == 3)
+                        string CurrentSales = _ILotteryDetailService.GetCodelotterydetail(gameCode, item.IssueNo).CurrentSales;
+                        bool tf = NeedReGet(CurrentSales);
+                        if (item.IssueNo == _ILotteryDetailService.GetNowIssuNo(gameCode).IssueNo && !tf)
                         {
-                            break;
+                            continue;
                         }
                     }
+                   
                 }
                 lotterydetail lotterydetail = new lotterydetail();
                 lotterydetail.expect = item.IssueNo;
