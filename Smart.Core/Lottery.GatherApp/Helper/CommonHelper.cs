@@ -257,6 +257,8 @@ namespace Lottery.GatherApp.Helper
                 throw ex;
             }
         }
+
+
     }
     public class UserAgent_Cookies
     {
