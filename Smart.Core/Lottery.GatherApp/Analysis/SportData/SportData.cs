@@ -211,7 +211,8 @@ namespace Lottery.GatherApp
         {
             try
             {
-                DateTime olddate = Convert.ToDateTime(_SportService.GetJCZQ_JCDate())==null|| String.IsNullOrEmpty(_SportService.GetJCZQ_JCDate())==true? DateTime.Now.AddMonths(-1): Convert.ToDateTime(_SportService.GetJCZQ_JCDate());
+                var JCDate = _SportService.GetJCZQ_JCDate();
+                DateTime olddate = Convert.ToDateTime(JCDate) ==null|| String.IsNullOrEmpty(JCDate) ==true? DateTime.Now.AddMonths(-1): Convert.ToDateTime(JCDate);
                 string date = DateTime.Now.Date.AddDays(-1).ToString("yyyy-MM-dd");
                 var span = (Convert.ToDateTime(date) - olddate).Days;
                 for (int h = 0; h < span; h++)
@@ -370,7 +371,8 @@ namespace Lottery.GatherApp
         {
             try
             {
-                DateTime olddate = Convert.ToDateTime(_SportService.GetJCLQ_JCDate())==null || String.IsNullOrEmpty(_SportService.GetJCLQ_JCDate()) == true ? DateTime.Now.AddMonths(-1) : Convert.ToDateTime(_SportService.GetJCLQ_JCDate()).AddDays(-1);
+                var JCDate = _SportService.GetJCLQ_JCDate();
+                DateTime olddate = Convert.ToDateTime(JCDate) ==null || String.IsNullOrEmpty(JCDate) == true ? DateTime.Now.AddMonths(-1) : Convert.ToDateTime(JCDate).AddDays(-1);
                 DateTime date = DateTime.Now;
                 int ts = (date - olddate).Days;
                 for (int h = 0; h <= ts; h++)
