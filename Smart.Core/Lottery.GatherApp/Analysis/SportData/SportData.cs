@@ -34,17 +34,17 @@ namespace Lottery.GatherApp
                 Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~★北京单场开始爬取★~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                 GetBjdc();
                 Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~★北京单场爬取数据完成★~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-                System.Threading.Tasks.Task.Delay(5000);
+                //System.Threading.Tasks.Task.Delay(5000);
 
                 Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~★竞彩足球开始爬取★~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                 GetJCZQ();
                 Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~★竞彩足球爬取数据完成★~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-                System.Threading.Tasks.Task.Delay(5000);
+                //System.Threading.Tasks.Task.Delay(5000);
 
                 Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~★竞彩篮球开始爬取★~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                 GetJCLQ();
                 Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~★竞彩篮球爬取数据完成★~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-                System.Threading.Tasks.Task.Delay(5000);
+                //System.Threading.Tasks.Task.Delay(5000);
             }
             catch (Exception ex)
             {
@@ -63,140 +63,147 @@ namespace Lottery.GatherApp
                 var NowIssueNo = anode.Select(x => Convert.ToInt32(x.Attributes["value"].Value)).Where(x => x >= Convert.ToInt32(Past_IssueNo)).ToList();
                 foreach (var code in NowIssueNo)
                 {
-                    List<jczq> jczqs = new List<jczq>();
-                    var tableNode = CommonHelper.LoadGziphtml("http://zx.500.com/zqdc/kaijiang.php?&expect=" + code, CollectionUrlEnum.url_500zx).DocumentNode.SelectSingleNode("//table[@class='ld_table']");
-                    if (tableNode == null)
-                    {  
-                        Console.WriteLine($"奖期{code}北京单场获取根节点失败");
-                        continue;
-                    }
-                    //获取平均欧赔
-                    var trNodes = CommonHelper.LoadGziphtml("http://zx.500.com/zqdc/kaijiang.php?playid=1&expect=" + code, CollectionUrlEnum.url_500zx).DocumentNode.SelectSingleNode("//table[@class='ld_table']").SelectNodes("tr").Skip(1);
-                    if (trNodes == null)
+                    try
                     {
-                        Console.WriteLine($"奖期{code}北京单场获取平均欧赔节点失败");
-                        continue;
-                    }
-                    var trNode = tableNode.SelectNodes("tr").Skip(1);
-
-                    int OpIndex = 1;
-                    jczq jczq;
-                    //赛果开奖情况
-                    foreach (var item in trNode)
-                    {
-                        OpIndex++;
-                        jczq = new jczq();
-                        jczq.id = code.ToString();
-                        int tdIndex = 1;
-                        var game = new GameType();
-                        var GameTypes = new List<GameType>();
-                        foreach (var item2 in item.SelectNodes("td"))
+                        List<jczq> jczqs = new List<jczq>();
+                        var tableNode = CommonHelper.LoadGziphtml("http://zx.500.com/zqdc/kaijiang.php?&expect=" + code, CollectionUrlEnum.url_500zx).DocumentNode.SelectSingleNode("//table[@class='ld_table']");
+                        if (tableNode == null)
                         {
-
-                            string strText = Regex.Replace(item2.InnerHtml, "<[^>]+>", "");//不包含>的任意字符，字符个数不限，但至少一个字符
-                            if (strText == "&nbsp;")
-                            {
-                                continue;
-                            }
-                            switch (tdIndex)
-                            {
-                                case 1:
-                                    jczq.TournamentNumber = strText;
-                                    break;
-                                case 2:
-                                    jczq.League_Color = item2.SelectSingleNode("a").Attributes["style"].Value.Replace("background-color:", "");
-                                    jczq.TournamentType = strText;
-                                    break;
-                                case 3:
-                                    jczq.MatchTime = strText;
-                                    break;
-                                case 4:
-                                    jczq.HomeTeam = strText;
-                                    break;
-                                case 5:
-                                    jczq.LetBall = strText;
-                                    break;
-                                case 6:
-                                    jczq.VisitingTeam = strText;
-                                    break;
-                                case 7:
-                                    jczq.Score = strText;
-                                    break;
-                                case 8:
-                                    game.game = Game.让球胜平负;
-                                    game.FruitColor = strText;
-                                    break;
-                                case 9:
-                                    game.Bonus = strText;
-                                    GameTypes.Add(game);
-                                    break;
-                                case 10:
-                                    game = new GameType();
-                                    game.game = Game.总进球数;
-                                    game.FruitColor = strText;
-                                    break;
-                                case 11:
-                                    game.Bonus = strText;
-                                    GameTypes.Add(game);
-                                    break;
-                                case 12:
-                                    game = new GameType();
-                                    game.game = Game.比分;
-                                    game.FruitColor = strText;
-                                    break;
-                                case 13:
-                                    game.Bonus = strText;
-                                    GameTypes.Add(game);
-                                    break;
-                                case 14:
-                                    game = new GameType();
-                                    game.game = Game.上下单双;
-                                    game.FruitColor = strText;
-                                    break;
-                                case 15:
-                                    game.Bonus = strText;
-                                    GameTypes.Add(game);
-                                    break;
-                                case 16:
-                                    game = new GameType();
-                                    game.game = Game.半全场;
-                                    game.FruitColor = strText;
-                                    break;
-                                case 17:
-                                    game.Bonus = strText;
-                                    GameTypes.Add(game);
-                                    jczq.gameTypes.AddRange(GameTypes);
-                                    break;
-
-                            }
-                            tdIndex = tdIndex + 1;
+                            Console.WriteLine($"奖期{code}北京单场获取根节点失败");
+                            continue;
                         }
-                        int indexop = 1;
-                        foreach (var item3 in trNodes)
+                        //获取平均欧赔
+                        var trNodes = CommonHelper.LoadGziphtml("http://zx.500.com/zqdc/kaijiang.php?playid=1&expect=" + code, CollectionUrlEnum.url_500zx).DocumentNode.SelectSingleNode("//table[@class='ld_table']").SelectNodes("tr").Skip(1);
+                        if (trNodes == null)
                         {
-                            indexop++;
-                            if (indexop != OpIndex)
+                            Console.WriteLine($"奖期{code}北京单场获取平均欧赔节点失败");
+                            continue;
+                        }
+                        var trNode = tableNode.SelectNodes("tr").Skip(1);
+
+                        int OpIndex = 1;
+                        jczq jczq;
+                        //赛果开奖情况
+                        foreach (var item in trNode)
+                        {
+                            OpIndex++;
+                            jczq = new jczq();
+                            jczq.id = code.ToString();
+                            int tdIndex = 1;
+                            var game = new GameType();
+                            var GameTypes = new List<GameType>();
+                            foreach (var item2 in item.SelectNodes("td"))
                             {
-                                continue;
-                            }
-                            for (int i = 0; i < item3.SelectNodes("td").Count(); i++)
-                            {
-                                if (i > 10 && i < 14)
+
+                                string strText = Regex.Replace(item2.InnerHtml, "<[^>]+>", "");//不包含>的任意字符，字符个数不限，但至少一个字符
+                                if (strText == "&nbsp;")
                                 {
-                                    jczq.AvgOuCompensation += item3.SelectNodes("td")[i].InnerHtml + ",";
+                                    continue;
+                                }
+                                switch (tdIndex)
+                                {
+                                    case 1:
+                                        jczq.TournamentNumber = strText;
+                                        break;
+                                    case 2:
+                                        jczq.League_Color = item2.SelectSingleNode("a").Attributes["style"].Value.Replace("background-color:", "");
+                                        jczq.TournamentType = strText;
+                                        break;
+                                    case 3:
+                                        jczq.MatchTime = strText;
+                                        break;
+                                    case 4:
+                                        jczq.HomeTeam = strText;
+                                        break;
+                                    case 5:
+                                        jczq.LetBall = strText;
+                                        break;
+                                    case 6:
+                                        jczq.VisitingTeam = strText;
+                                        break;
+                                    case 7:
+                                        jczq.Score = strText;
+                                        break;
+                                    case 8:
+                                        game.game = Game.让球胜平负;
+                                        game.FruitColor = strText;
+                                        break;
+                                    case 9:
+                                        game.Bonus = strText;
+                                        GameTypes.Add(game);
+                                        break;
+                                    case 10:
+                                        game = new GameType();
+                                        game.game = Game.总进球数;
+                                        game.FruitColor = strText;
+                                        break;
+                                    case 11:
+                                        game.Bonus = strText;
+                                        GameTypes.Add(game);
+                                        break;
+                                    case 12:
+                                        game = new GameType();
+                                        game.game = Game.比分;
+                                        game.FruitColor = strText;
+                                        break;
+                                    case 13:
+                                        game.Bonus = strText;
+                                        GameTypes.Add(game);
+                                        break;
+                                    case 14:
+                                        game = new GameType();
+                                        game.game = Game.上下单双;
+                                        game.FruitColor = strText;
+                                        break;
+                                    case 15:
+                                        game.Bonus = strText;
+                                        GameTypes.Add(game);
+                                        break;
+                                    case 16:
+                                        game = new GameType();
+                                        game.game = Game.半全场;
+                                        game.FruitColor = strText;
+                                        break;
+                                    case 17:
+                                        game.Bonus = strText;
+                                        GameTypes.Add(game);
+                                        jczq.gameTypes.AddRange(GameTypes);
+                                        break;
 
                                 }
-                                if (i >= 14)
-                                {
-                                    break;
-                                }
+                                tdIndex = tdIndex + 1;
                             }
-                            break;
+                            int indexop = 1;
+                            foreach (var item3 in trNodes)
+                            {
+                                indexop++;
+                                if (indexop != OpIndex)
+                                {
+                                    continue;
+                                }
+                                for (int i = 0; i < item3.SelectNodes("td").Count(); i++)
+                                {
+                                    if (i > 10 && i < 14)
+                                    {
+                                        jczq.AvgOuCompensation += item3.SelectNodes("td")[i].InnerHtml + ",";
+
+                                    }
+                                    if (i >= 14)
+                                    {
+                                        break;
+                                    }
+                                }
+                                break;
+                            }
+                            jczq.AvgOuCompensation = jczq.AvgOuCompensation.Substring(0, jczq.AvgOuCompensation.Length - 1);
+                            jczqs.Add(jczq);
                         }
-                        jczq.AvgOuCompensation = jczq.AvgOuCompensation.Substring(0, jczq.AvgOuCompensation.Length - 1);
-                        jczqs.Add(jczq);
+                        _SportService.Add_BJDC(jczqs);
                     }
-                    _SportService.Add_BJDC(jczqs);
+                    catch (Exception ex)
+                    {
+                        log.Error(ex.Message);
+                    }
                 }
             }
             catch (Exception ex)
@@ -561,7 +568,13 @@ namespace Lottery.GatherApp
                 Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~★福彩3D开始爬取★~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                 GetFc3Ds();
                 Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~★福彩3D爬取数据完成★~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex.Message);
+            }
+            try
+            {
                 Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~★足球单场胜负过关开始爬取★~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                 GetZqdc_SfggExpect();
                 Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~★足球单场胜负过关爬取数据完成★~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");

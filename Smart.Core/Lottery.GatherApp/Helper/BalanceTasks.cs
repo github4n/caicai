@@ -202,27 +202,59 @@ namespace Lottery.GatherApp
                         old_Time = now;
                         info = "北京单场期号开始采集";
                         log.Info(info);
-                        count = await manager.GetBjdcAsync();
+                        try
+                        {
+                            count = await manager.GetBjdcAsync();
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(info + ex.Message);
+                            log.Error(info + ex.Message);
+                        }
                         info = "北京单场期号采集完毕.新采集了" + count + "条";
 
                         log.Info(info);
                         info = "北京单场——胜负过关期号开始采集";
                         log.Info(info);
-                        count = await manager.GetSfggAsync();
+                        try
+                        {
+                            count = await manager.GetSfggAsync();
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(info + ex.Message);
+                            log.Error(info + ex.Message);
+                        }
                         info = "北京单场——胜负过关期号采集完毕.新采集了" + count + "条";
 
                         log.Info(info);
 
                         info = "福彩3D期号开始采集";
                         log.Info(info);
-                        count = await manager.LoadSDhtml("sd");
+                        try
+                        {
+                            count = await manager.LoadSDhtml("sd");
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(info + ex.Message);
+                            log.Error(info + ex.Message);
+                        }
                         info = "福彩3D期号采集完毕.新采集了" + count + "条";
 
                         log.Info(info);
 
                         info = "排列3期号开始采集";
                         log.Info(info);
-                        count = await manager.LoadPlsHtml("pls");
+                        try
+                        {
+                            count = await manager.LoadPlsHtml("pls");
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(info + ex.Message);
+                            log.Error(info + ex.Message);
+                        }
                         info = "排列3期号采集完毕.新采集了" + count + "条";
 
                         log.Info(info);
@@ -230,35 +262,43 @@ namespace Lottery.GatherApp
                         LotteryData();
                         foreach (var item in _xml_DataService.GetHighFrequency())
                         {
-                            if (item.HighFrequency == 1)
+                            try
                             {
-                                info = item.LotteryName + "期号开始采集";
-                                log.Info(info);
-                                count = await manager.LoadXml(item.LotteryCode);
-                                info = item.LotteryName + "期号采集完毕.新采集了" + count + "条";
+                                if (item.HighFrequency == 1)
+                                {
+                                    info = item.LotteryName + "期号开始采集";
+                                    log.Info(info);
+                                    count = await manager.LoadXml(item.LotteryCode);
+                                    info = item.LotteryName + "期号采集完毕.新采集了" + count + "条";
 
-                                log.Info(info);
-                                //Thread.Sleep(new Random().Next(1000, 5000));
+                                    log.Info(info);
+                                    //Thread.Sleep(new Random().Next(1000, 5000));
+                                }
+                                if (item.HighFrequency != 1 && item.LotteryCode != "zqdc" && item.LotteryCode != "sd" && item.LotteryCode != "pls" && item.LotteryCode != "jczq" && item.LotteryCode != "jclq" && item.LotteryCode != "zqdcsfgg")
+                                {
+                                    info = item.LotteryName + "期号开始采集";
+                                    log.Info(info);
+                                    count = await manager.LoadQGDFCXml(item.LotteryCode);
+                                    info = item.LotteryName + "期号采集完毕.新采集了" + count + "条";
+
+                                    log.Info(info);
+                                    //Thread.Sleep(new Random().Next(1000, 5000));
+                                }
+                                if (item.HighFrequency != 1 && item.LotteryCode != "zqdc" && item.LotteryCode != "jczq" && item.LotteryCode != "jclq" && item.LotteryCode != "sd" && item.LotteryCode != "zqdcsfgg")
+                                {
+                                    info = item.LotteryName + "详情开始采集";
+                                    log.Info(info);
+                                    count = await LotteryDetal.LoadLotteryDetal(item.LotteryCode);
+                                    info = item.LotteryName + "详情采集完毕.新采集了" + count + "条";
+
+                                    log.Info(info);
+                                    //Thread.Sleep(new Random().Next(1000, 5000));
+                                }
                             }
-                            if (item.HighFrequency != 1 && item.LotteryCode != "zqdc" && item.LotteryCode != "sd" && item.LotteryCode != "pls" && item.LotteryCode != "jczq" && item.LotteryCode != "jclq" && item.LotteryCode != "zqdcsfgg")
+                            catch (Exception ex)
                             {
-                                info = item.LotteryName + "期号开始采集";
-                                log.Info(info);
-                                count = await manager.LoadQGDFCXml(item.LotteryCode);
-                                info = item.LotteryName + "期号采集完毕.新采集了" + count + "条";
-
-                                log.Info(info);
-                                //Thread.Sleep(new Random().Next(1000, 5000));
-                            }
-                            if (item.HighFrequency != 1 && item.LotteryCode != "zqdc" && item.LotteryCode != "jczq" && item.LotteryCode != "jclq" && item.LotteryCode != "sd" && item.LotteryCode != "zqdcsfgg")
-                            {
-                                info = item.LotteryName + "详情开始采集";
-                                log.Info(info);
-                                count = await LotteryDetal.LoadLotteryDetal(item.LotteryCode);
-                                info = item.LotteryName + "详情采集完毕.新采集了" + count + "条";
-
-                                log.Info(info);
-                                //Thread.Sleep(new Random().Next(1000, 5000));
+                                Console.WriteLine(info + ex.Message);
+                                log.Error(info + ex.Message);
                             }
                         }
                     }
