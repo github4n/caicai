@@ -67,10 +67,10 @@ namespace Lottery.GatherApp
             var tasks = provider.GetRequiredService<BalanceTasks>();
             Task t1 = new Task(() => tasks.AgentIP());
             t1.Start();
-            Task t2 = new Task(() => tasks.Run1122());
-            t2.Start();
-            Task t3 = new Task(() => tasks.RunCaikeBall());
-            t3.Start();
+            //Task t2 = new Task(() => tasks.Run1122());
+            //t2.Start();
+            //Task t3 = new Task(() => tasks.RunCaikeBall());
+            //t3.Start();
             Console.WriteLine("Done.");
             Console.ReadLine();
 

@@ -21,13 +21,16 @@ namespace Lottery.GatherApp
         private List<IP> TotaliPs = new List<IP>();
         private WebProxy CurrentWebProxy;
         private IP CurrentIP;
+        private int UseAgent;
         public AgentIPControl(IAgentIPService agentIPService)
         {
             _agentIPService = agentIPService;
             log = LogManager.GetLogger("LotteryRepository", typeof(AgentIPControl));
+            int.TryParse(Smart.Core.Utils.ConfigFileHelper.Get("UseIPAgent"),out int UseAgent);
         }
         public void StartLoadAgentIP()
         {
+            SetProxy();
             GetIP();
         }
         private void GetIP()
@@ -45,12 +48,13 @@ namespace Lottery.GatherApp
                     IP _ip = new IP
                     {
                         IPAddress = trNode[i].ChildNodes[3].InnerText,
-                        Port =trNode[i].ChildNodes[5].InnerText,
+                        Port = trNode[i].ChildNodes[5].InnerText,
                         Type = trNode[i].ChildNodes[11].InnerText,
-                        Speed =Convert.ToSingle(trNode[i].ChildNodes[13].ChildNodes[1].Attributes["title"].Value.Replace("秒", "")),
+                        Speed = Convert.ToSingle(trNode[i].ChildNodes[13].ChildNodes[1].Attributes["title"].Value.Replace("秒", "")),
                         ConnectionTime = Convert.ToSingle(trNode[i].ChildNodes[15].ChildNodes[1].Attributes["title"].Value.Replace("秒", "")),
                         CreateTime = DateTime.Now,
-                        FailNum=0
+                        FailNum = 0,
+                        IsDelete = false
                     };
                     IPList.Add(_ip);
                 }
@@ -61,40 +65,56 @@ namespace Lottery.GatherApp
         }
         private HtmlDocument RequestHtmlDoc(string URl)
         {
-            TotaliPs = _agentIPService.GetIPs();
-            SetProxy();
             var num = 0;
             while (true)
             {
                 try
                 {
-                    HtmlDocument htmlDoc = new HtmlDocument();
-                    if (string.IsNullOrEmpty(DataURI)) throw new Exception("URL为空");
-                    HttpWebRequest request;
-                    if (CurrentIP != null && CurrentIP.Type == "HTTPS")
+                    RequestType Type;
+                    if (CurrentIP!=null&&"HTTPS" == CurrentIP.Type)
                     {
-                        request = (HttpWebRequest)WebRequest.Create(URl);
-                        ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(OnRemoteCertificateValidationCallback);
-                        request.ProtocolVersion = HttpVersion.Version10;
+                        Type = RequestType.HTTPS;
+                    }
+                    else {Type= RequestType.HTTP; }
+                    string UserAgent = "Mozilla / 5.0(Windows NT 10.0; Win64; x64) AppleWebKit / 537.36(KHTML, like Gecko) Chrome / 71.0.3578.98 Safari / 537.36";
+                    if (CurrentIP == null)
+                    {
+                        return RequestHelper<HtmlDocument>.DoRequest(URl, Type, null, false,"","", UserAgent, string.Empty, Method.Get,null);
                     }
                     else
                     {
-                        request = (HttpWebRequest)WebRequest.Create(URl);
+                        return RequestHelper<HtmlDocument>.DoRequest(URl, Type, null, true, CurrentIP.IPAddress, CurrentIP.Port, UserAgent, string.Empty, Method.Get, null);
                     }
-                    request.Timeout = 10000;
-                    if (CurrentWebProxy != null && CurrentIP != null)
-                    {
-                        request.Proxy = CurrentWebProxy;
-                    }
-                    HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                    using (Stream ResponseStream = response.GetResponseStream())
-                    {
-                        using (StreamReader StreamReader = new StreamReader(ResponseStream, Encoding.UTF8))
-                        {
-                            htmlDoc.LoadHtml(StreamReader.ReadToEnd());
-                        }
-                    }
-                    return htmlDoc;
+                   
+                    #region
+                    //HtmlDocument htmlDoc = new HtmlDocument();
+                    //if (string.IsNullOrEmpty(DataURI)) throw new Exception("URL为空");
+                    //HttpWebRequest request;
+                    //if (CurrentIP != null && CurrentIP.Type == RequestType.HTTPS)
+                    //{
+                    //    request = (HttpWebRequest)WebRequest.Create(URl);
+                    //    ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(OnRemoteCertificateValidationCallback);
+                    //    request.ProtocolVersion = HttpVersion.Version10;
+                    //}
+                    //else
+                    //{
+                    //    request = (HttpWebRequest)WebRequest.Create(URl);
+                    //}
+                    //request.Timeout = 10000;
+                    //if (CurrentWebProxy != null && CurrentIP != null)
+                    //{
+                    //    request.Proxy = CurrentWebProxy;
+                    //}
+                    //HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                    //using (Stream ResponseStream = response.GetResponseStream())
+                    //{
+                    //    using (StreamReader StreamReader = new StreamReader(ResponseStream, Encoding.UTF8))
+                    //    {
+                    //        htmlDoc.LoadHtml(StreamReader.ReadToEnd());
+                    //    }
+                    //}
+                    //return htmlDoc;
+                    #endregion
                 }
                 catch (Exception ex)
                 {
@@ -102,7 +122,6 @@ namespace Lottery.GatherApp
                     {
                         if (num <= 50)
                         {
-                            TotaliPs.Remove(CurrentIP);
                             _agentIPService.DeleteNotUseAgentIP(CurrentIP.ID);
                             SetProxy();
                         }
@@ -120,16 +139,12 @@ namespace Lottery.GatherApp
                 }
             }
         }
-        private static bool OnRemoteCertificateValidationCallback(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
-        {
-            return true;
-        }
         private void SetProxy()
         {
+            TotaliPs = _agentIPService.GetIPs();
             if (TotaliPs == null || TotaliPs.Count == 0) return;
             int rand = new Random().Next(0, TotaliPs.Count);
             CurrentWebProxy = new WebProxy(TotaliPs[rand].IPAddress, Convert.ToInt32(TotaliPs[rand].Port));
-            //CurrentWebProxy = new WebProxy("119.101.118.172", 9999);
             CurrentIP = TotaliPs[rand];
         }
     }
