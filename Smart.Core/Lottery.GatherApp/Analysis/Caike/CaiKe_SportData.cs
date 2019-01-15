@@ -41,10 +41,19 @@ namespace Lottery.GatherApp.Analysis.Caike
         {
             try
             {
-                //0.从数据库拿到最后采集的日期，从该日开始采集
-                
-                //1.彩客数据的日期是往前一天算的(正常11号，彩客10号)
-                var result = GetJclqList();
+                //0.从数据库拿到最后采集的日期，从该日开始采集(这一天必采，然后就开始按照返回的数据中的日期采集)
+                //1.彩客数据的日期是往前一天算的(正常11号，彩客10号)20190114
+                //2.根据数据判断是否要插入
+                //3
+                #region 先彩旧数据
+                var JCDate = _SportService.GetJCLQ_JCDate();
+                var OldDate = Convert.ToDateTime(JCDate).AddDays(-1).ToString("yyyyMMdd");
+                var OldList = GetJclqList(OldDate);
+
+                #endregion
+                #region 根据返回的日期继续采集
+
+                #endregion
             }
             catch (Exception ex)
             {
