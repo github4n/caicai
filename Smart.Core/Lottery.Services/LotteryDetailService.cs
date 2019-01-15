@@ -33,16 +33,16 @@ namespace Lottery.Services
                 int count = 0;
                 int insertCount = 0;
                 var LotteryCode = db.Queryable<sys_lottery>().Where(x => x.LotteryCode == gameCode).First();
-                normal_lotterydetail nld = GetNowIssuNo(gameCode);
+                //normal_lotterydetail nld = GetNowIssuNo(gameCode);
                 foreach (var item in lotterydetails)
                 {
-                    if (nld != null && gameCode != "sfc" && gameCode != "jq4" && gameCode != "zc6")
-                    {
-                        if (nld.IssueNo == item.expect)
-                        {
-                            break;
-                        }
-                    }
+                    //if (nld != null && gameCode != "sfc" && gameCode != "jq4" && gameCode != "zc6")
+                    //{
+                    //    if (nld.IssueNo == item.expect)
+                    //    {
+                    //        break;
+                    //    }
+                    //}
                     var strlotterydetail = GetCodelotterydetail(gameCode, item.expect);
 
                     if (strlotterydetail != null)
