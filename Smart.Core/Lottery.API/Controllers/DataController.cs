@@ -126,6 +126,10 @@ namespace Lottery.API.Controllers
                         });
                 }
                 var issuesList = _api_DataService.GetLotteryIssuesByCode(LotteryCode);
+                if (LotteryCode.ToLower() == "zqdc" || LotteryCode.ToLower() == "zqdcsfgg")
+                {
+                    issuesList = issuesList.OrderByDescending(c => c.IssueNo).ToList();
+                }
                 return Ok(
                         new LotteryServiceResponse()
                         {
