@@ -46,7 +46,6 @@ namespace Lottery.GatherApp.Analysis.LotteryDetail
                 //{
                 //    continue;
                 //}
-                if (item.Url_Type != (int)CollectionUrlEnum.url_500kaijiang&&item.Url_Type!= (int)CollectionUrlEnum.url_unknow) continue;
                 //查询彩种最新一期
                 if (_ILotteryDetailService.GetNowIssuNo(gameCode) != null)
                 {
