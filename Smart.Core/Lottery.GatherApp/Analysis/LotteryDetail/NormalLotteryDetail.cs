@@ -19,7 +19,7 @@ using static Smart.Core.Utils.CommonHelper;
 
 namespace Lottery.GatherApp.Analysis.LotteryDetail
 {
-   public class NormalLotteryDetail
+    public class NormalLotteryDetail
     {
         protected ILotteryDetailService _ILotteryDetailService;
         protected readonly IXML_DataService _xml_DataService;
@@ -27,18 +27,18 @@ namespace Lottery.GatherApp.Analysis.LotteryDetail
         public NormalLotteryDetail(ILotteryDetailService ILotteryDetailService)
         {
             _ILotteryDetailService = ILotteryDetailService;
-      
+
         }
 
         public async Task<int> LoadLotteryDetal(string gameCode)
         {
-           
-            var anode = _ILotteryDetailService.GetLotteryCodeList(gameCode).Take(3);
+
+            var anode = _ILotteryDetailService.GetLotteryCodeList(gameCode).Take(3).ToList();
 
 
             List<lotterydetail> lotterydetails = new List<lotterydetail>();
-         
-          
+
+
             foreach (var item in anode)
             {
                 //string IssueNo = LoadQGDFCXml(item.LotteryCode);
@@ -47,19 +47,20 @@ namespace Lottery.GatherApp.Analysis.LotteryDetail
                 //    continue;
                 //}
                 //查询彩种最新一期
-                if (_ILotteryDetailService.GetNowIssuNo(gameCode) != null)
+                //if (_ILotteryDetailService.GetNowIssuNo(gameCode) != null)
+                //{
+                var oldIssueItem = _ILotteryDetailService.GetCodelotterydetail(gameCode, item.IssueNo);
+                if (oldIssueItem != null)
                 {
-                    if (_ILotteryDetailService.GetCodelotterydetail(gameCode, item.IssueNo) != null)
+                    string CurrentSales = oldIssueItem.CurrentSales;
+                    bool tf = NeedReGet(CurrentSales);
+                    if (!tf)
                     {
-                        string CurrentSales = _ILotteryDetailService.GetCodelotterydetail(gameCode, item.IssueNo).CurrentSales;
-                        bool tf = NeedReGet(CurrentSales);
-                        if (item.IssueNo == _ILotteryDetailService.GetNowIssuNo(gameCode).IssueNo && !tf)
-                        {
-                            continue;
-                        }
+                        continue;
                     }
-                   
                 }
+
+                //}
                 lotterydetail lotterydetail = new lotterydetail();
                 lotterydetail.expect = item.IssueNo;
                 lotterydetail.Sys_IssueId = _ILotteryDetailService.GetIssue(item.IssueNo).Id;
@@ -85,7 +86,7 @@ namespace Lottery.GatherApp.Analysis.LotteryDetail
                     {
                         PubSecondTable(htmlDoc, lotterydetail, gameCode);
                     }
-                  
+
                     if (gameCode == "gdslxq")
                     {
                         PubThirdTable(htmlDoc, lotterydetail, gameCode);
@@ -94,10 +95,10 @@ namespace Lottery.GatherApp.Analysis.LotteryDetail
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(gameCode+"彩种"+ex.Message);
+                    Console.WriteLine(gameCode + "彩种" + ex.Message);
                     continue;
                 }
-              
+
             }
             int count = await _ILotteryDetailService.AddLotteryDetal(lotterydetails, gameCode);
             return count;
@@ -111,7 +112,7 @@ namespace Lottery.GatherApp.Analysis.LotteryDetail
             bool TF = true;
             foreach (HtmlNode item in firstTable_trnode)  //循环第一个table的tr
             {
-             
+
                 switch (k)
                 {
                     case 1:
@@ -138,10 +139,10 @@ namespace Lottery.GatherApp.Analysis.LotteryDetail
                                 teams.TeamTitle = item.SelectNodes("td")[i].Attributes["title"].Value.Replace("&nbsp;", "");
                                 teams.openTeam = item.SelectNodes("td")[i].InnerHtml.Replace("&nbsp;", "");
                                 lotterydetail.teams.Add(teams);
-                             
-                            }
 
                             }
+
+                        }
                         break;
 
                     case 3:
@@ -163,7 +164,7 @@ namespace Lottery.GatherApp.Analysis.LotteryDetail
                         for (int i = 0; i < item.SelectNodes("td").Count; i++)
                         {
                             lotterydetail.teams[i].openCode = item.SelectNodes("td")[i].SelectSingleNode("./span").InnerHtml;
-                        }                      
+                        }
                         break;
 
                     case 4:
@@ -175,10 +176,11 @@ namespace Lottery.GatherApp.Analysis.LotteryDetail
                             lotterydetail.SalesVolume += "|" + item.SelectSingleNode("td").SelectNodes("span")[1].InnerHtml;
                             lotterydetail.PoolRolling = item.SelectSingleNode("td").SelectNodes("span")[2].InnerHtml;
                         }
-                        else {
+                        else
+                        {
                             lotterydetail.PoolRolling = item.SelectSingleNode("td").SelectNodes("span")[1].InnerHtml;
                         }
-                         
+
                         break;
                 }
 
@@ -186,7 +188,7 @@ namespace Lottery.GatherApp.Analysis.LotteryDetail
             }
         }
 
-        public void PubPlsFirstTable(HtmlDocument htmlDoc, lotterydetail lotterydetail, List<lotterydetail> lotterydetails,string gameCode)
+        public void PubPlsFirstTable(HtmlDocument htmlDoc, lotterydetail lotterydetail, List<lotterydetail> lotterydetails, string gameCode)
         {
             var FirstTableTrNode = htmlDoc.DocumentNode.SelectNodes("//table[@class='kj_tablelist02']")[0].SelectNodes("tr");
             int k = 1;
@@ -217,10 +219,10 @@ namespace Lottery.GatherApp.Analysis.LotteryDetail
                                             lotterydetail.openCode += item3.InnerHtml + ",";
 
                                         }
-                                        lotterydetail.openCode=lotterydetail.openCode.Trim(',');
+                                        lotterydetail.openCode = lotterydetail.openCode.Trim(',');
                                         break;
                                     case 2:
-                                        lotterydetail.openCode += (gameCode == "dlt"?"+":"|") + itemTr.SelectNodes("td")[1].InnerHtml.TrimStart();
+                                        lotterydetail.openCode += (gameCode == "dlt" ? "+" : "|") + itemTr.SelectNodes("td")[1].InnerHtml.TrimStart();
                                         break;
 
                                 }
@@ -256,7 +258,7 @@ namespace Lottery.GatherApp.Analysis.LotteryDetail
 
                         if (gameCode == "gdslxq")
                         {
-                            lotterydetail.SalesVolume += "|"+item2.SelectSingleNode("td").SelectNodes("span")[1].InnerHtml;
+                            lotterydetail.SalesVolume += "|" + item2.SelectSingleNode("td").SelectNodes("span")[1].InnerHtml;
                         }
                         if (gameCode != "pls" & gameCode != "ttcx4")
                         {
@@ -298,7 +300,7 @@ namespace Lottery.GatherApp.Analysis.LotteryDetail
                     minLnode = 1;
                     lnode = 3;
                 }
-               else if (gameCode == "pls" || gameCode == "sfc" || gameCode == "jq4" || gameCode == "zc6" || gameCode == "qxc" || gameCode == "plw" || gameCode == "qlc" || gameCode == "ssq")
+                else if (gameCode == "pls" || gameCode == "sfc" || gameCode == "jq4" || gameCode == "zc6" || gameCode == "qxc" || gameCode == "plw" || gameCode == "qlc" || gameCode == "ssq")
                 {
                     minLnode = 2;
                     lnode = SecondTable_trnode.Count();
@@ -306,7 +308,7 @@ namespace Lottery.GatherApp.Analysis.LotteryDetail
                 else
                 {
                     minLnode = 2;
-                    lnode = SecondTable_trnode.Count()+1;
+                    lnode = SecondTable_trnode.Count() + 1;
 
                 }
                 if (minLnode < trIndex && trIndex < lnode)
@@ -480,32 +482,32 @@ namespace Lottery.GatherApp.Analysis.LotteryDetail
             foreach (HtmlNode item3 in ThirdTable_trnode)  //循环第二个table的tr
             {
 
-                int lnode = ThirdTable_trnode.Count()+1;
-             
+                int lnode = ThirdTable_trnode.Count() + 1;
+
                 if (2 < trIndex && trIndex < lnode)
                 {
                     IEnumerable<HtmlNode> getTdList = item3.SelectNodes("td");
                     int tdIndex = 1;
                     var jq4LotteryDetails = new LotteryDetails();
                     var ttcx4Detail = new ttcx4Details();
-               
-                        foreach (var tdItem in getTdList)
-                        {
-                            switch (tdIndex)
-                            {
 
-                                case 1:
-                                    jq4LotteryDetails.openPrize = Regex.Replace(tdItem.InnerHtml, @"\s", "");
-                                    break;
-                                case 2:
-                                    jq4LotteryDetails.openWinNumber = Regex.Replace(tdItem.InnerHtml, @"\s", "");
-                                    break;
-                                case 3:
-                                    jq4LotteryDetails.openSingleBonus = Regex.Replace(tdItem.InnerHtml, @"\s", "");
-                                    break;
-                            }
-                            tdIndex = tdIndex + 1;
-                        }                    
+                    foreach (var tdItem in getTdList)
+                    {
+                        switch (tdIndex)
+                        {
+
+                            case 1:
+                                jq4LotteryDetails.openPrize = Regex.Replace(tdItem.InnerHtml, @"\s", "");
+                                break;
+                            case 2:
+                                jq4LotteryDetails.openWinNumber = Regex.Replace(tdItem.InnerHtml, @"\s", "");
+                                break;
+                            case 3:
+                                jq4LotteryDetails.openSingleBonus = Regex.Replace(tdItem.InnerHtml, @"\s", "");
+                                break;
+                        }
+                        tdIndex = tdIndex + 1;
+                    }
                     lotterydetail.openLotteryDetails.Add(jq4LotteryDetails);
 
 
@@ -521,7 +523,7 @@ namespace Lottery.GatherApp.Analysis.LotteryDetail
             XmlNodeList list = null;
             HttpWebRequest request;
             HttpWebResponse response = null;
-       
+
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             string Url = "http://kaijiang.500.com/static/info/kaijiang/xml/" + gameCode + "/list.xml";
             try
@@ -533,7 +535,7 @@ namespace Lottery.GatherApp.Analysis.LotteryDetail
             catch (Exception ex)
             {
                 Console.WriteLine(gameCode + "没有" + ex.Message);
-             
+
             }
 
             if (response.ContentEncoding != null && response.ContentEncoding.ToLower() == "gzip")
@@ -558,13 +560,13 @@ namespace Lottery.GatherApp.Analysis.LotteryDetail
             //List<DataModel> lists = new List<DataModel>();
 
             list = doc.SelectNodes("//row");
-            string IssueNo="";
+            string IssueNo = "";
             foreach (XmlNode item in list)
             {
                 IssueNo = item.Attributes["expect"].Value;
                 break;
             }
-                Thread.Sleep(new Random().Next(10000, 15000));
+            Thread.Sleep(new Random().Next(10000, 15000));
             return IssueNo;
         }
     }

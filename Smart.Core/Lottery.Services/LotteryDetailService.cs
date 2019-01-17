@@ -108,7 +108,7 @@ namespace Lottery.Services
         {
             using (var db = BaseFactory.GetDbContext())
             {
-                normal_lotterydetail issue = db.Queryable<normal_lotterydetail>().Where(n => n.LotteryCode == LotteryCode).OrderBy(n => n.OpenTime, OrderByType.Desc).Take(1).First();
+                normal_lotterydetail issue = db.Queryable<normal_lotterydetail>().Where(n => n.LotteryCode == LotteryCode).OrderBy(n => n.OpenTime, OrderByType.Desc).First();
                 
                 return issue;
                
