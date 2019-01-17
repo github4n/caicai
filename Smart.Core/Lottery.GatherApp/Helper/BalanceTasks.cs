@@ -201,63 +201,61 @@ namespace Lottery.GatherApp
                     {
                         old_Time = now;
                         info = "北京单场期号开始采集";
-                        log.Info(info);
+                        log.Info("url_500zx网" + info);
                         try
                         {
                             count = await manager.GetBjdcAsync();
                         }
                         catch (Exception ex)
                         {
-                            Console.WriteLine(info + ex.Message);
-                            log.Error(info + ex.Message);
+                            log.Error("url_500zx网"+info + ex.Message);
                         }
-                        info = "北京单场期号采集完毕.新采集了" + count + "条";
-
-                        log.Info(info);
+                        info ="北京单场期号采集完毕.新采集了" + count + "条";
+                        log.Info("url_500zx网" + info);
                         info = "北京单场——胜负过关期号开始采集";
-                        log.Info(info);
+                        log.Info("url_500zx网" + info);
                         try
                         {
                             count = await manager.GetSfggAsync();
                         }
                         catch (Exception ex)
                         {
-                            Console.WriteLine(info + ex.Message);
-                            log.Error(info + ex.Message);
+                           
+                            log.Error("url_500zx网" + info + ex.Message);
                         }
                         info = "北京单场——胜负过关期号采集完毕.新采集了" + count + "条";
 
-                        log.Info(info);
+                        log.Info("url_500zx网" + info);
 
                         info = "福彩3D期号开始采集";
-                        log.Info(info);
+                        log.Info("url_500kaijiang网"+info);
                         try
                         {
                             count = await manager.LoadSDhtml("sd");
                         }
                         catch (Exception ex)
                         {
-                            Console.WriteLine(info + ex.Message);
-                            log.Error(info + ex.Message);
+                        
+                            log.Error("url_500kaijiang网"+info + ex.Message);
                         }
                         info = "福彩3D期号采集完毕.新采集了" + count + "条";
 
-                        log.Info(info);
+                        log.Info("url_500kaijiang网"+info);
 
                         info = "排列3期号开始采集";
-                        log.Info(info);
+                        log.Info("url_500kaijiang网"+info);
                         try
                         {
                             count = await manager.LoadPlsHtml("pls");
                         }
                         catch (Exception ex)
                         {
-                            Console.WriteLine(info + ex.Message);
-                            log.Error(info + ex.Message);
+                            
+                            log.Error("url_500kaijiang网"+info + ex.Message);
                         }
                         info = "排列3期号采集完毕.新采集了" + count + "条";
 
-                        log.Info(info);
+                        log.Info("url_500kaijiang网"+info);
                         SportData();
                         LotteryData();
                         foreach (var item in _xml_DataService.GetHighFrequency())
@@ -267,37 +265,37 @@ namespace Lottery.GatherApp
                                 if (item.HighFrequency == 1)
                                 {
                                     info = item.LotteryName + "期号开始采集";
-                                    log.Info(info);
+                                    log.Info("url_500kaijiang网" + info);
                                     count = await manager.LoadXml(item.LotteryCode);
                                     info = item.LotteryName + "期号采集完毕.新采集了" + count + "条";
 
-                                    log.Info(info);
+                                    log.Info("url_500kaijiang网" + info);
                                     //Thread.Sleep(new Random().Next(1000, 5000));
                                 }
                                 if (item.HighFrequency != 1 && item.LotteryCode != "zqdc" && item.LotteryCode != "sd" && item.LotteryCode != "pls" && item.LotteryCode != "jczq" && item.LotteryCode != "jclq" && item.LotteryCode != "zqdcsfgg")
                                 {
                                     info = item.LotteryName + "期号开始采集";
-                                    log.Info(info);
+                                    log.Info("url_500kaijiang网" + info);
                                     count = await manager.LoadQGDFCXml(item.LotteryCode);
                                     info = item.LotteryName + "期号采集完毕.新采集了" + count + "条";
 
-                                    log.Info(info);
+                                    log.Info("url_500kaijiang网" + info);
                                     //Thread.Sleep(new Random().Next(1000, 5000));
                                 }
                                 if (item.HighFrequency != 1 && item.LotteryCode != "zqdc" && item.LotteryCode != "jczq" && item.LotteryCode != "jclq" && item.LotteryCode != "sd" && item.LotteryCode != "zqdcsfgg")
                                 {
                                     info = item.LotteryName + "详情开始采集";
-                                    log.Info(info);
+                                    log.Info("url_500kaijiang网" + info);
                                     count = await LotteryDetal.LoadLotteryDetal(item.LotteryCode);
                                     info = item.LotteryName + "详情采集完毕.新采集了" + count + "条";
 
-                                    log.Info(info);
+                                    log.Info("url_500kaijiang网" + info);
                                     //Thread.Sleep(new Random().Next(1000, 5000));
                                 }
                             }
                             catch (Exception ex)
                             {
-                                Console.WriteLine(info + ex.Message);
+                              
                                 log.Error(info + ex.Message);
                             }
                         }
@@ -320,7 +318,8 @@ namespace Lottery.GatherApp
                 try
                 {
                     int count = 0;
-                    #region 奖多多非高频
+                    #region 
+                    log.Info("奖多多非高频开始采集");
                     count = await JddManager.LoadJdd("nonhighfreq");
                     log.Info("奖多多非高频共采集" + count + "条");
                     #endregion

@@ -31,19 +31,21 @@ namespace Lottery.GatherApp
         {
             try
             {
-                Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~★北京单场开始爬取★~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                log.Info("url_500zx网★北京单场开始爬取★");
                 GetBjdc();
-                Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~★北京单场爬取数据完成★~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                log.Info("url_500zx网★北京单场爬取数据完成★");
                 //System.Threading.Tasks.Task.Delay(5000);
-
-                Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~★竞彩足球开始爬取★~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                log.Info("url_500zx网★竞彩足球开始爬取★");
+              
                 GetJCZQ();
-                Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~★竞彩足球爬取数据完成★~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-                //System.Threading.Tasks.Task.Delay(5000);
+                log.Info("url_500zx网★竞彩足球爬取数据完成★");
 
-                Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~★竞彩篮球开始爬取★~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                //System.Threading.Tasks.Task.Delay(5000);
+                log.Info("url_500zx网★竞彩篮球开始爬取★");
+               
                 GetJCLQ();
-                Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~★竞彩篮球爬取数据完成★~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                log.Info("url_500zx网★竞彩篮球爬取数据完成★");
+         
                 //System.Threading.Tasks.Task.Delay(5000);
             }
             catch (Exception ex)
@@ -558,16 +560,16 @@ namespace Lottery.GatherApp
         public DigitalLottery(IDigitalLotteryService DigitalLotteryService)
         {
             _digitalLotteryService = DigitalLotteryService;
-            log = LogManager.GetLogger("LotteryRepository", typeof(XML_DataService));
+            log = LogManager.GetLogger("LotteryRepository", typeof(DigitalLottery));
 
         }
         public void Start()
         {
             try
             {
-                Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~★福彩3D开始爬取★~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                log.Info("url_500kaijiang网★北京单场开始爬取★");
                 GetFc3Ds();
-                Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~★福彩3D爬取数据完成★~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                log.Info("url_500kaijiang网★福彩3D爬取数据完成★");
             }
             catch (Exception ex)
             {
@@ -575,9 +577,10 @@ namespace Lottery.GatherApp
             }
             try
             {
-                Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~★足球单场胜负过关开始爬取★~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                log.Info("url_500zx网★足球单场胜负过关开始爬取★");
                 GetZqdc_SfggExpect();
-                Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~★足球单场胜负过关爬取数据完成★~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                log.Info("url_500zx网★足球单场胜负过关爬取数据完成★");
+             
             }
             catch (Exception ex)
             {

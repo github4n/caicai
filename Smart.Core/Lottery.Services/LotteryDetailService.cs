@@ -36,6 +36,7 @@ namespace Lottery.Services
                 //normal_lotterydetail nld = GetNowIssuNo(gameCode);
                 foreach (var item in lotterydetails)
                 {
+
                     //if (nld != null && gameCode != "sfc" && gameCode != "jq4" && gameCode != "zc6")
                     //{
                     //    if (nld.IssueNo == item.expect)

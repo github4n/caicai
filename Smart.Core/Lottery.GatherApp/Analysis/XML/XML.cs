@@ -131,7 +131,7 @@ namespace Lottery.GatherApp
             }
             catch (Exception ex)
             {
-                Console.WriteLine(gameCode+"没有"+ex.Message);
+             
                 return 0;
             }
 

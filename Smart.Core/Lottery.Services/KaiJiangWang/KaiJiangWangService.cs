@@ -102,7 +102,7 @@ namespace Lottery.Services
                     if (model == null)
                     {
                         db.Insertable<sys_issue>(_Issue).ExecuteCommand();
-                        log.Info($"{LotteryCode}奖期{_Issue.IssueNo}成功新增数据");
+                        log.Info("url_1122网" + $"{LotteryCode}奖期{_Issue.IssueNo}成功新增数据");
                     }
                 }
                 catch (Exception ex)

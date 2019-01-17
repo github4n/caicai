@@ -25,12 +25,12 @@ namespace Lottery.GatherApp.Analysis
         }
         public void Start()
         {
-            Console.WriteLine("1122开始高频彩采集");
+            log.Info("1122开始高频彩采集");
             RequestJson(KaiJiangWangDic.GaoPindic, GaoPinUrI);
-            Console.WriteLine("1122高频彩采集完毕");
-            Console.WriteLine("1122开始全国彩采集");
+            log.Info("1122高频彩采集完毕");
+            log.Info("1122开始全国彩采集");
             RequestJson(KaiJiangWangDic.QuanguoDic, quanguoURL);
-            Console.WriteLine("1122全国彩采集完毕");
+            log.Info("1122全国彩采集完毕");
         }
         #region 获取JSON
         private void RequestJson(Dictionary<string, string> dic, string url)

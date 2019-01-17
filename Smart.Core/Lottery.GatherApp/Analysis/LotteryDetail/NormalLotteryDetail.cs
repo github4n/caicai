@@ -16,6 +16,7 @@ using System.Net;
 using System.IO;
 using System.Threading;
 using static Smart.Core.Utils.CommonHelper;
+using log4net;
 
 namespace Lottery.GatherApp.Analysis.LotteryDetail
 {
@@ -23,11 +24,11 @@ namespace Lottery.GatherApp.Analysis.LotteryDetail
     {
         protected ILotteryDetailService _ILotteryDetailService;
         protected readonly IXML_DataService _xml_DataService;
-
+        private ILog log;
         public NormalLotteryDetail(ILotteryDetailService ILotteryDetailService)
         {
             _ILotteryDetailService = ILotteryDetailService;
-
+            log = LogManager.GetLogger("LotteryRepository", typeof(NormalLotteryDetail));
         }
 
         public async Task<int> LoadLotteryDetal(string gameCode)
@@ -59,7 +60,7 @@ namespace Lottery.GatherApp.Analysis.LotteryDetail
                         continue;
                     }
                 }
-
+                log.Info(item.LotteryCode+"彩种"+"采集" +item.IssueNo+"详情");
                 //}
                 lotterydetail lotterydetail = new lotterydetail();
                 lotterydetail.expect = item.IssueNo;
@@ -95,7 +96,7 @@ namespace Lottery.GatherApp.Analysis.LotteryDetail
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(gameCode + "彩种" + ex.Message);
+                   
                     continue;
                 }
 
