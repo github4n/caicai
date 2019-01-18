@@ -142,17 +142,22 @@ namespace Lottery.GatherApp.Helper
             var responses= SettingProxyCookit(request, response, urlenum);
             //HttpWebResponse response = (HttpWebResponse)request.GetResponse();
             //foreach (Cookie cookie in response.Cookies) userAgentModel.CookiesContainer.Add(cookie);//将Cookie加入容器，保存登录状态
+            Encoding Code= Encoding.GetEncoding("GB2312");
+            if (urlenum == CollectionUrlEnum.url_caike)
+            {
+                Code = Encoding.UTF8;
+            }
             if (responses.ContentEncoding != null && responses.ContentEncoding.ToLower() == "gzip")
             {
                     System.IO.Stream streamReceive = responses.GetResponseStream();
                     var zipStream = new System.IO.Compression.GZipStream(streamReceive, System.IO.Compression.CompressionMode.Decompress);
-                    StreamReader sr = new System.IO.StreamReader(zipStream, Encoding.GetEncoding("GB2312"));
+                    StreamReader sr = new System.IO.StreamReader(zipStream, Code);
                     htmlCode = sr.ReadToEnd();
             }
             else
             {
                 System.IO.Stream streamReceive = responses.GetResponseStream();
-                StreamReader sr = new System.IO.StreamReader(streamReceive, Encoding.GetEncoding("GB2312"));
+                StreamReader sr = new System.IO.StreamReader(streamReceive, Code);
                 htmlCode = sr.ReadToEnd();
             }
 
@@ -214,6 +219,7 @@ namespace Lottery.GatherApp.Helper
             var anode = lastnode.SelectNodes("option"); //获取option标签里面的期号
             return anode;
         }
+
 
         public static string Post(string url, string requestString, Encoding encoding,  CollectionUrlEnum urlenum= CollectionUrlEnum.url_caike)
         {

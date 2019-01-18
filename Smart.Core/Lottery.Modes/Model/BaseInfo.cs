@@ -64,6 +64,10 @@ namespace EntityModel.Model
         /// DLT合计金额
         /// </summary>
         public decimal TotalBonus { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public int Url_Type { get; set; }
     }
 
     public class LotteryDetails

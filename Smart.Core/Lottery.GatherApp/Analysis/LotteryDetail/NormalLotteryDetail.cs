@@ -17,6 +17,7 @@ using System.IO;
 using System.Threading;
 using static Smart.Core.Utils.CommonHelper;
 using log4net;
+using Newtonsoft.Json.Linq;
 
 namespace Lottery.GatherApp.Analysis.LotteryDetail
 {
@@ -24,11 +25,16 @@ namespace Lottery.GatherApp.Analysis.LotteryDetail
     {
         protected ILotteryDetailService _ILotteryDetailService;
         protected readonly IXML_DataService _xml_DataService;
+        private string Url_310winKJ;
         private ILog log;
         public NormalLotteryDetail(ILotteryDetailService ILotteryDetailService)
         {
             _ILotteryDetailService = ILotteryDetailService;
             log = LogManager.GetLogger("LotteryRepository", typeof(NormalLotteryDetail));
+            if (string.IsNullOrEmpty(Url_310winKJ))
+            {
+                Url_310winKJ = Smart.Core.Utils.ConfigFileHelper.Get("Url_310winKJ");
+            }
         }
 
         public async Task<int> LoadLotteryDetal(string gameCode)
@@ -65,6 +71,7 @@ namespace Lottery.GatherApp.Analysis.LotteryDetail
                 lotterydetail lotterydetail = new lotterydetail();
                 lotterydetail.expect = item.IssueNo;
                 lotterydetail.Sys_IssueId = _ILotteryDetailService.GetIssue(item.IssueNo).Id;
+                lotterydetail.Url_Type = (int)CollectionUrlEnum.url_500kaijiang;
                 try
                 {
 
@@ -122,7 +129,7 @@ namespace Lottery.GatherApp.Analysis.LotteryDetail
                         string EndTime = Date.Split('：')[2];
 
                         lotterydetail.openTime = Convert.ToDateTime(openTime).ToString("yyyy-MM-dd");
-                        lotterydetail.endTime = Convert.ToDateTime(EndTime).ToString("yyyy-MM-dd"); ;
+                        lotterydetail.endTime = Convert.ToDateTime(EndTime).ToString("yyyy-MM-dd");
                         lotterydetails.Add(lotterydetail);
                         break;
 
@@ -570,5 +577,138 @@ namespace Lottery.GatherApp.Analysis.LotteryDetail
             Thread.Sleep(new Random().Next(10000, 15000));
             return IssueNo;
         }
+
+        public async Task<int> LoadWin310LotteryDetal(string number)
+        {
+
+            int count = 0;
+            List<lotterydetail> lotterydetails = new List<lotterydetail>();
+            var onode = CommonHelper.LoadGziphtml(Url_310winKJ + "zucai/14changshengfucai/kaijiang_zc_" + number + ".html", CollectionUrlEnum.url_caike).DocumentNode.SelectSingleNode("//select[@id='dropIssueNum']").SelectNodes("option");
+            var node = StNode(onode);
+            string LotteryCode = ChangeLotteryCode(number);
+            foreach (var item in node)
+            {
+                lotterydetail lotterydetail = new lotterydetail();
+                var htmlDoc = CommonHelper.LoadGziphtml(Url_310winKJ + "Info/Result/Soccer.aspx?load=ajax&typeID=" + number + "&IssueID=" + item.Key, CollectionUrlEnum.url_caike);
+                var jObject = JObject.Parse(htmlDoc.Text);
+                lotterydetail.expect = jObject["IssueNum"].ToString().Remove(0, 2);
+
+                var IssueNo = _ILotteryDetailService.GetIssue(lotterydetail.expect);
+                if (IssueNo != null)
+                {
+                    lotterydetail.Sys_IssueId = IssueNo.Id;
+                }
+                lotterydetail.openTime = jObject["AwardTime"].ToString();
+                lotterydetail.endTime = jObject["CashInStopTime"].ToString();
+                lotterydetail.Url_Type = (int)CollectionUrlEnum.url_caike;
+                string Bottom = jObject["Bottom"].ToString();
+
+                var oldIssueItem = _ILotteryDetailService.GetCodelotterydetail(LotteryCode, lotterydetail.expect);
+                if (oldIssueItem != null)
+                {
+                    string CurrentSales = oldIssueItem.CurrentSales;
+                    bool tf = NeedReGet(CurrentSales);
+                    if (!tf)
+                    {
+                        continue;
+                    }
+                }
+
+                lotterydetail.SalesVolume = String.Format("{0:N0}", Convert.ToInt32(Regex.Replace(Bottom.Split('，')[0].Split('：')[1], @"[^\d.\d]", ""))) + "元";
+                if (LotteryCode == "sfc")
+                {
+                    lotterydetail.SalesVolume += "|" + String.Format("{0:N0}", Convert.ToInt32(Regex.Replace(Bottom.Split('，')[1].Split('，')[0].Split('：')[1], @"[^\d.\d]", ""))) + "元";
+                    lotterydetail.PoolRolling = String.Format("{0:N0}", Convert.ToInt32(Regex.Replace(Bottom.Split('，')[2].Split('：')[1], @"[^\d.\d]", ""))) + "元";
+                }
+                else
+                {
+                    lotterydetail.PoolRolling = String.Format("{0:N0}", Convert.ToInt32(Regex.Replace(Bottom.Split('，')[1].Split('：')[1], @"[^\d.\d]", ""))) + "元";
+                }
+
+                foreach (var list in jObject["Table"])
+                {
+                    var teams = new Team();
+                    teams.TeamTitle = list["HomeTeam"].ToString() + "VS" + list["GuestTeam"].ToString();
+                    teams.openTeam = list["HomeTeam"].ToString();
+                    if (LotteryCode == "zc6" || LotteryCode == "jq4")
+                    {
+                        teams.openCode = list["Result_1"].ToString();
+                        if (LotteryCode == "zc6")
+                        {
+                            teams.halfull = "半";
+                        }
+                    }
+                    else
+                    {
+
+                        teams.openCode = list["Result"].ToString();
+                    }
+
+                    lotterydetail.teams.Add(teams);
+
+                    if (LotteryCode == "zc6" || LotteryCode == "jq4")
+                    {
+                        teams = new Team();
+                        teams.TeamTitle = list["HomeTeam"].ToString() + "VS" + list["GuestTeam"].ToString();
+                        teams.openTeam = list["HomeTeam"].ToString();
+                        teams.openCode = list["Result_2"].ToString();
+                        if (LotteryCode == "zc6")
+                        {
+                            teams.halfull = "全";
+                        }
+
+                        lotterydetail.teams.Add(teams);
+                    }
+
+                }
+                foreach (var list in jObject["Bonus"])
+                {
+                    var BonusLotteryDetails = new LotteryDetails();
+                    BonusLotteryDetails.openPrize = list["Grade"].ToString();
+                    BonusLotteryDetails.openWinNumber = list["BasicStakes"].ToString();
+                    BonusLotteryDetails.openSingleBonus = String.Format("{0:N0}", Convert.ToInt32(Regex.Replace(list["BasicBonus"].ToString(), @"[^\d.\d]", "")));
+                    lotterydetail.openLotteryDetails.Add(BonusLotteryDetails);
+                }
+                lotterydetails.Add(lotterydetail);
+
+            }
+            count = await _ILotteryDetailService.AddLotteryDetal(lotterydetails, LotteryCode);
+            return count;
+        }
+
+        public static Dictionary<string, string> StNode(HtmlNodeCollection htmlNode)
+        {
+            var keyValue = new Dictionary<string, string>();
+            string key=""; string value="";
+            foreach (var item in htmlNode.Take(3))
+            {
+                key = item.Attributes["value"].Value;
+                value = item.InnerHtml;
+                keyValue.Add(key, value);
+            }
+          
+            return keyValue;
+        }
+
+
+        public string ChangeLotteryCode(string number)
+        {
+            switch (number)
+            {
+                case "1":
+                    number = "sfc";
+                    break;
+                case "3":
+                    number = "zc6";
+                    break;
+                case "4":
+                    number = "jq4";
+                    break;
+               
+            }
+
+            return number;
+        }
+
     }
 }

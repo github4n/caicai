@@ -49,7 +49,8 @@ namespace Smart.Core.Utils
             /// <summary>
             /// 彩客
             /// </summary>
-            url_caike = 5
+            url_caike = 5,
+       
         }
 
 

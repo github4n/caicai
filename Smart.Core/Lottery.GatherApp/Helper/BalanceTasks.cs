@@ -184,12 +184,15 @@ namespace Lottery.GatherApp
         //gzk3(贵州快3)  sxsyxw(陕西11选5)  sxklsf(陕西快乐十分)  gssyxw(甘肃11选5)  gsk3(甘肃快3)  qhk3(青海快3)  xjsyxw(新疆11选5)
         //xjssc(新疆时时彩)   xjxlc(新疆喜乐彩)  shxsyxw(山西11选5)  ytdj(山西泳坛夺金) shxklsf(山西快乐十分)  ynsyxw(云南11选5)
         //ynklsf(云南快乐10分)  ynssc(云南时时彩)
+        String[] strNumber = { "1", "3", "4" };
         public async Task XML()
         {
             int count = 0;
             var manager = new XML(_xml_DataService);
             var LotteryDetal = new NormalLotteryDetail(_ILotteryDetailService);
             string info = "";
+           
+
             while (true)
             {
                 try
@@ -208,9 +211,9 @@ namespace Lottery.GatherApp
                         }
                         catch (Exception ex)
                         {
-                            log.Error("url_500zx网"+info + ex.Message);
+                            log.Error("url_500zx网" + info + ex.Message);
                         }
-                        info ="北京单场期号采集完毕.新采集了" + count + "条";
+                        info = "北京单场期号采集完毕.新采集了" + count + "条";
                         log.Info("url_500zx网" + info);
                         info = "北京单场——胜负过关期号开始采集";
                         log.Info("url_500zx网" + info);
@@ -220,7 +223,7 @@ namespace Lottery.GatherApp
                         }
                         catch (Exception ex)
                         {
-                           
+
                             log.Error("url_500zx网" + info + ex.Message);
                         }
                         info = "北京单场——胜负过关期号采集完毕.新采集了" + count + "条";
@@ -228,34 +231,34 @@ namespace Lottery.GatherApp
                         log.Info("url_500zx网" + info);
 
                         info = "福彩3D期号开始采集";
-                        log.Info("url_500kaijiang网"+info);
+                        log.Info("url_500kaijiang网" + info);
                         try
                         {
                             count = await manager.LoadSDhtml("sd");
                         }
                         catch (Exception ex)
                         {
-                        
-                            log.Error("url_500kaijiang网"+info + ex.Message);
+
+                            log.Error("url_500kaijiang网" + info + ex.Message);
                         }
                         info = "福彩3D期号采集完毕.新采集了" + count + "条";
 
-                        log.Info("url_500kaijiang网"+info);
+                        log.Info("url_500kaijiang网" + info);
 
                         info = "排列3期号开始采集";
-                        log.Info("url_500kaijiang网"+info);
+                        log.Info("url_500kaijiang网" + info);
                         try
                         {
                             count = await manager.LoadPlsHtml("pls");
                         }
                         catch (Exception ex)
                         {
-                            
-                            log.Error("url_500kaijiang网"+info + ex.Message);
+
+                            log.Error("url_500kaijiang网" + info + ex.Message);
                         }
                         info = "排列3期号采集完毕.新采集了" + count + "条";
 
-                        log.Info("url_500kaijiang网"+info);
+                        log.Info("url_500kaijiang网" + info);
                         SportData();
                         LotteryData();
                         foreach (var item in _xml_DataService.GetHighFrequency())
@@ -292,10 +295,21 @@ namespace Lottery.GatherApp
                                     log.Info("url_500kaijiang网" + info);
                                     //Thread.Sleep(new Random().Next(1000, 5000));
                                 }
+
+                                foreach (var number in strNumber)
+                                {
+                                    string LotteryCode = LotteryDetal.ChangeLotteryCode(number);
+                                    info = LotteryCode + "开始采集";
+                                    log.Info("Url_Caike网" + info);
+                                    count = await LotteryDetal.LoadWin310LotteryDetal(number);
+                                    info = LotteryCode + "采集完毕，新采集了" + count + "条";
+                                    log.Info("Url_Caike网" + info);
+                                }
+
                             }
                             catch (Exception ex)
                             {
-                              
+
                                 log.Error(info + ex.Message);
                             }
                         }
