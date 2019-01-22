@@ -29,7 +29,7 @@ namespace Lottery.GatherApp
         protected readonly ILotteryDetailService _ILotteryDetailService;
         protected readonly IKaiJiangWangService _kaiJiangWangService;
         protected readonly IJddDataService _IJddDataService;
-        protected readonly IAgentIPService _agentIPService; 
+        protected readonly IAgentIPService _agentIPService;
         public BalanceTasks(IUsersService usersSvc, ILogger logger, ISport_DataService sport_DataService, IXML_DataService xml_DataService, IDigitalLotteryService digitalLotteryService, ILotteryDetailService lotteryDetailService,IKaiJiangWangService kaiJiangWangService,IJddDataService jddDataService,IAgentIPService agentIPService)
         {
             this._userSvc = usersSvc;
@@ -359,7 +359,7 @@ namespace Lottery.GatherApp
         public async Task RunCaikeBall()
         {
             var service = new CaiKe_SportData(_sport_DataService);
-            service.GetJCLQ();
+            service.Start();
         }
     }
 }

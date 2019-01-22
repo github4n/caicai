@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using EntityModel.Model;
 using System.Linq;
 using static Smart.Core.Utils.CommonHelper;
+using Lottery.Modes.OtherModel;
 
 namespace Lottery.Services
 {
@@ -263,6 +264,14 @@ namespace Lottery.Services
                 throw new Exception(ex.Message);
             }
         }
+        public List<int> GetIssuNoList(string GameCode)
+        {
+            return db.Queryable<sys_issue>().Where(x => x.LotteryCode == GameCode).OrderBy(x => x.IssueNo, OrderByType.Desc).Select(x => Convert.ToInt32(x.IssueNo)).ToList();
+        }
+        public int GetIssueInResult()
+        {
+            return db.Queryable<bjdc_result>().OrderBy(x => x.IssueNo, OrderByType.Desc).Select(x =>Convert.ToInt32(x.IssueNo)).First();
+        }
         /// <summary>
         /// 获取数据库最迟的竞彩时间(JCZQ)
         /// </summary>
@@ -302,6 +311,265 @@ namespace Lottery.Services
             else if(Type=="A")
             {
                 Console.WriteLine($"{GameCode}奖期{Issue}成功新增数据{Count}条");
+            }
+        }
+        
+        public int AddCaiKeJCLQ(Caike_Body caike_Body, string matchDateCode, DateTime dateTime)
+        {
+            try
+            {
+                int m = 0;
+                caike_Body.records.ForEach((record) =>
+                {
+                    jclq_result _Result = new jclq_result();
+                    _Result.MatchId = matchDateCode + record.matchNo;
+                    _Result.MatchDate = "";
+                    _Result.MatchNumber = record.matchNo;
+                    _Result.HomeTeam = record.homeTeam;
+                    _Result.GuestTeam = record.guestTeam;
+                    _Result.LeagueName = record.leagueName;
+                    _Result.FullScore = record.scoreText.Substring(record.scoreText.IndexOf(">") + 1, record.scoreText.Substring(record.scoreText.IndexOf(">") + 1).IndexOf("<")).Replace("-", ":");
+                    _Result.AvgEu_SP = "123456";
+                    _Result.JCDate = dateTime.ToString("yyyy-MM-dd");
+                    _Result.CreateTime = DateTime.Now;
+                    int i = 0;
+                    record.details.ForEach((detail) =>
+                    {
+                        if (detail.name != "" && detail.name != "-" && detail.value != "" && detail.value != "-")
+                        {
+                            if (i == 0)
+                            {
+                                _Result.SF_Result = detail.name;
+                                i++;
+                            }
+                            else if (i == 1)
+                            {
+                                _Result.RFSF_Result = detail.name.Substring(0, detail.name.IndexOf("（") - 1);
+                                _Result.LetBall = detail.name.Substring(detail.name.IndexOf("（") + 1, detail.name.IndexOf("）") - detail.name.IndexOf("（") - 1);
+                                i++;
+                            }
+                            else if (i == 2)
+                            {
+                                var SFC = detail.name.Replace("胜", "").Replace("负", "");
+                                _Result.SFC_Result = _Result.RFSF_Result + SFC;
+                                _Result.GG_SFC_Result = _Result.RFSF_Result + SFC;
+                                _Result.GG_RFSF_Result = "让分" + _Result.RFSF_Result;
+                                i++;
+                            }
+                            else if (i == 3)
+                            {
+                                _Result.YSZF = detail.name.Substring(detail.name.IndexOf("（") + 1, detail.name.IndexOf("）") - detail.name.IndexOf("（") - 1);
+                                _Result.DXF_Result = detail.name.Split("（")[0];
+                                _Result.GG_DXF_Result = detail.name.Split("（")[0] + "分";
+                                i++;
+                            }
+                        }
+                    });
+                    var Model = db.Queryable<jclq_result>().Where(x => x.MatchId == _Result.MatchId).First();
+                    if (Model == null)
+                    {
+                        db.Insertable(_Result).ExecuteCommand();
+                        m++;
+                    }
+                });
+                return m;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        public int AddCaikeJCZQ(Caike_Body caike_Body, string matchDateCode,DateTime dateTime)
+        {
+            try
+            {
+                int m = 0;
+                caike_Body.records.ForEach((record) =>
+                {
+                    jczq_result _Result = new jczq_result();
+                    _Result.MatchId = matchDateCode + record.matchNo;
+                    _Result.MatchDate = "";
+                    _Result.MatchNumber = record.matchNo;
+                    _Result.HomeTeam = record.homeTeam;
+                    _Result.GuestTeam = record.guestTeam;
+                    _Result.HalfScore = record.hScoreText;
+                    _Result.FullScore = record.scoreText.Substring(record.scoreText.IndexOf(">") + 1, record.scoreText.Substring(record.scoreText.IndexOf(">") + 1).IndexOf("<")).Replace("-",":");
+                    _Result.LeagueName = record.leagueName;
+                    int i = 0;
+                    record.details.ForEach((detail) =>
+                    {
+                        if (detail.name != "" && detail.name != "-" && detail.value != "" && detail.value != "-")
+                        {
+                            if (i == 0)
+                            {
+                                _Result.RQSPF_Result = detail.name.Substring(0, 1);
+                                _Result.LetBall = detail.name.Substring(detail.name.IndexOf("（") + 1, detail.name.IndexOf("）") - detail.name.IndexOf("（") - 1);
+                                _Result.RQSPF_SP = detail.value;
+                                i++;
+                            }
+                            else if (i == 1)
+                            {
+                                _Result.SPF_Result = detail.name;
+                                _Result.SPF_SP = detail.value;
+                                i++;
+                            }
+                            else if (i == 2)
+                            {
+                                _Result.BF_SP = detail.value;
+                                i++;
+                            }
+                            else if (i == 3)
+                            {
+                                _Result.ZJQ_Result = detail.name.Replace("球", "");
+                                _Result.ZJQ_SP = detail.value;
+                                i++;
+                            }
+                            else if (i == 4)
+                            {
+                                _Result.BQC_Result = detail.name;
+                                _Result.BQC_SP = detail.value;
+                                i++;
+                            }
+                        }
+                    });
+                    _Result.AvgEu_SP = "123456";
+                    _Result.JCDate = dateTime.ToString("yyyy-MM-dd");
+                    _Result.CreateTime = DateTime.Now;
+                    var Model = db.Queryable<jczq_result>().Where(x => x.MatchId == _Result.MatchId).First();
+                    if (Model == null)
+                    {
+                        db.Insertable(_Result).ExecuteCommand();
+                        m++;
+                    }
+                });
+                return m;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        public int AddCaiKeBJDC(Caike_Body caike_Body, string matchDateCode)
+        {
+            try
+            {
+                int m = 0;
+                caike_Body.records.ForEach((record) =>
+                {
+                    bjdc_result _Result = new bjdc_result();
+                    _Result.MatchId = matchDateCode + record.matchNo;
+                    _Result.MatchDate = "";
+                    _Result.MatchNumber = record.matchNo;
+                    _Result.HomeTeam = record.homeTeam;
+                    _Result.GuestTeam = record.guestTeam;
+                    _Result.HalfScore = record.hScoreText.Replace("-", ":");
+                    _Result.FullScore = record.scoreText.Substring(record.scoreText.IndexOf(">") + 1, record.scoreText.Substring(record.scoreText.IndexOf(">") + 1).IndexOf("<")).Replace("-", ":");
+                    _Result.LeagueName = record.leagueName;
+                    _Result.AvgEu_SP = "123456";
+                    int i = 0;
+                    record.details.ForEach((detail) =>
+                    {
+                        if (detail.name != "" && detail.name != "-" && detail.value != "" && detail.value != "-")
+                        {
+                            if (i == 0)
+                            {
+                                _Result.LetBall = detail.name.Substring(detail.name.IndexOf("（") + 1, detail.name.IndexOf("）") - detail.name.IndexOf("（") - 1);
+                                _Result.RQSPF_Result = detail.name.Substring(detail.name.IndexOf("（") + 1, detail.name.IndexOf("）") - detail.name.IndexOf("（") - 1);
+                                _Result.RQSPF_SP = detail.value;
+                                i++;
+                            }
+                            else if (i == 1)
+                            {
+                                _Result.ZJQ_Result = Convert2Number(detail.name.Replace("球", "")).ToString();
+                                _Result.ZJQ_SP = detail.value;
+                                i++;
+                            }
+                            else if (i == 2)
+                            {
+                                _Result.SXDS_Result = detail.name;
+                                _Result.SXDS_SP = detail.value;
+                                i++;
+                            }
+                            else if (i == 3)
+                            {
+                                _Result.BF_SP = detail.name;
+                                i++;
+                            }
+                            else if (i == 4)
+                            {
+                                _Result.BQC_Result = detail.name;
+                                _Result.BQC_SP = detail.value;
+                                i++;
+                            }
+                        }
+                    });
+                    var model = db.Queryable<bjdc_result>().Where(x => x.MatchId == _Result.MatchId).First();
+                    if (model == null)
+                    {
+                        db.Insertable(_Result).ExecuteCommand();
+                        m++;
+                    }
+                });
+
+                var lottery = db.Queryable<sys_lottery>().Where(x => x.LotteryCode == "zqdc").First();
+                caike_Body.matchDates.ForEach((matchDate) =>
+                {
+                    sys_issue _sys_Issue = new sys_issue();
+                    _sys_Issue.LotteryId = lottery.Lottery_Id;
+                    _sys_Issue.IssueNo = matchDate.code;
+                    _sys_Issue.LotteryCode = lottery.LotteryCode;
+                    _sys_Issue.CreateTime = DateTime.Now;
+                    var Model = db.Queryable<sys_issue>().Where(x => x.LotteryId == _sys_Issue.LotteryId && x.LotteryCode == _sys_Issue.LotteryCode && x.IssueNo == _sys_Issue.IssueNo).First();
+                    if (Model == null)
+                    {
+                        db.Insertable(_sys_Issue).ExecuteCommand();
+                    }
+                });
+                return m;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        public static int Convert2Number(string src)
+        {
+            try
+            {
+                string numberString = "零一二三四五六七八九";
+                string unitString = "零十百千";
+                char[] charArr = src.Replace(" ", "").ToCharArray();
+                int result = 0;
+                if (string.IsNullOrEmpty(src) || string.IsNullOrWhiteSpace(src))
+                {
+                    return 0;
+                }
+                if (numberString.IndexOf(charArr[0]) == -1)
+                {
+                    return 0;
+                }
+                for (int i = 0; i < charArr.Length; i++)
+                {
+                    for (int j = 0; j < unitString.Length; j++)
+                    {
+                        if (charArr[i] == unitString[j])
+                        {
+                            if (charArr[i] != '零')
+                            {
+                                result += Convert.ToInt32(int.Parse(numberString.IndexOf(charArr[i - 1]).ToString()) * Math.Pow(10, j));
+                            }
+                        }
+                    }
+                }
+                if (numberString.IndexOf(charArr[charArr.Length - 1]) != -1)
+                {
+                    result += numberString.IndexOf(charArr[charArr.Length - 1]);
+                }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
             }
         }
     }

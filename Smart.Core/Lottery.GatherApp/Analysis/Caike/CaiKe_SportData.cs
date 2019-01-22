@@ -5,6 +5,7 @@ using Lottery.Services.Abstractions;
 using Smart.Core.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using static Smart.Core.Utils.CommonHelper;
 
@@ -21,81 +22,190 @@ namespace Lottery.GatherApp.Analysis.Caike
             log = LogManager.GetLogger("LotteryRepository", typeof(CaiKe_SportData));
             Url_Caike= Smart.Core.Utils.ConfigFileHelper.Get("Url_Caike");
         }
-        private void GetJCZQ()
+        public void Start()
         {
-            //DateTime olddate = Convert.ToDateTime(_SportService.GetJCZQ_JCDate()) == null || String.IsNullOrEmpty(_SportService.GetJCZQ_JCDate()) == true ? DateTime.Now.AddMonths(-1) : Convert.ToDateTime(_SportService.GetJCZQ_JCDate());
-            //string date = DateTime.Now.Date.AddDays(-1).ToString("yyyy-MM-dd");
-            //var span = (Convert.ToDateTime(date) - olddate).Days;
-            //for (int h = 0; h < span; h++)
-            //{
-            //    var tableNode = CommonHelper.LoadGziphtml("http://zx.500.com/jczq/kaijiang.php?d=" + olddate.AddDays(h).ToString("yyyy-MM-dd")).DocumentNode.SelectSingleNode("//table[@class='ld_table']");
-            //    if (tableNode == null)
-            //    {
-            //        Console.WriteLine($"奖期{olddate.AddDays(h).ToString("yyyy-MM-dd")}竞猜足球获取根节点失败");
-            //        continue;
-            //    }
-            //}
+            Console.WriteLine("BJDC开始");
+            GetBJDC();
+            Console.WriteLine("BJDC结束");
+            Console.WriteLine("JCZQ开始");
+            GetJCZQ();
+            Console.WriteLine("JCZQ结束");
+            Console.WriteLine("JCLQ开始");
+            GetJCLQ();
+            Console.WriteLine("JCLQ结束");
         }
-
-        public void GetJCLQ()
+        private void GetBJDC()
+        {
+            var IssueList = _SportService.GetIssuNoList("zqdc");
+            var Past_IssueNo = _SportService.GetIssueInResult();
+            IssueList = IssueList.Where(x => x > Past_IssueNo).ToList();
+            foreach (var item in IssueList)
+            {
+                var DataList = GetBJDCList(item.ToString());
+                int m = _SportService.AddCaiKeBJDC(DataList, item.ToString());
+                Console.WriteLine($"BJDC更新{m}条数据");
+            }
+        }
+        private void GetJCZQ()
         {
             try
             {
-                //0.从数据库拿到最后采集的日期，从该日开始采集(这一天必采，然后就开始按照返回的数据中的日期采集)
-                //1.彩客数据的日期是往前一天算的(正常11号，彩客10号)20190114
-                //2.根据数据判断是否要插入
-                //3
-                #region 先彩旧数据
-                var JCDate = _SportService.GetJCLQ_JCDate();
+                var JCDate = _SportService.GetJCZQ_JCDate();
                 var OldDate = Convert.ToDateTime(JCDate).AddDays(-1).ToString("yyyyMMdd");
-                var OldList = GetJclqList(OldDate);
-
-                #endregion
-                #region 根据返回的日期继续采集
-
-                #endregion
+                TimeSpan ts = DateTime.Now - Convert.ToDateTime(JCDate).AddDays(-1);
+                for (int i = 0; i < Math.Ceiling(ts.TotalDays); i++)
+                {
+                    var OldList = GetJczqList(OldDate);
+                    int m = _SportService.AddCaikeJCZQ(OldList, Convert.ToDateTime(JCDate).AddDays(i).ToString("yyyyMMdd"), Convert.ToDateTime(JCDate).AddDays(1));
+                    Console.WriteLine($"JCZQ更新{m}条数据");
+                }
             }
             catch (Exception ex)
             {
-
-                throw;
+                throw new Exception(ex.Message);
             }
         }
-
-        /// <summary>
-        /// 获取分页的竞猜篮球数据
-        /// </summary>
-        /// <returns></returns>
+        private void GetJCLQ()
+        {
+            try
+            {
+               
+                var JCDate = _SportService.GetJCLQ_JCDate();
+                var OldDate = Convert.ToDateTime(JCDate).AddDays(-1).ToString("yyyyMMdd");
+                TimeSpan ts = DateTime.Now - Convert.ToDateTime(JCDate).AddDays(-1);
+                for (int i = 0; i < Math.Ceiling(ts.TotalDays); i++)
+                {
+                    var OldList = GetJclqList(OldDate);
+                    int m = _SportService.AddCaiKeJCLQ(OldList, Convert.ToDateTime(JCDate).AddDays(i).ToString("yyyyMMdd"), Convert.ToDateTime(JCDate).AddDays(1));
+                    Console.WriteLine($"JCLQ更新{m}条数据");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
         private Caike_Body GetJclqList(string matchDateCode="")
         {
-            var jclq_url = "Trade/DrawInfo/jingjiDraw.aspx?lotteryType=10012";
-            if (string.IsNullOrEmpty(matchDateCode))
+            try
             {
-                jclq_url += "&matchDateCode" + matchDateCode;
-            }
-            var url = Url_Caike + jclq_url;
-            var page = "1";
-            var result = new Caike_Body() { matchDates = new List<Caike_matchDates>() };
-            while (true)
-            {
-                var str = CommonHelper.Post(url, "action=loaddata;"+ "page="+ page, Encoding.UTF8, CollectionUrlEnum.url_caike);
-                if (!string.IsNullOrEmpty(str))
+                var jclq_url = "Trade/DrawInfo/jingjiDraw.aspx?lotteryType=10012";
+                if (!string.IsNullOrEmpty(matchDateCode))
                 {
-                    var model = JsonHelper.Deserialize<CaikeCommonCollection>(str);
-                    if (model != null)
+                    jclq_url += "&matchDateCode=" + matchDateCode;
+                }
+                var url = Url_Caike + jclq_url;
+                int page = 1;
+                var result = new Caike_Body() { matchDates = new List<Caike_matchDates>() };
+                while (true)
+                {
+                    var str = CommonHelper.Post(url, "action=loaddata&" + "pageIndex=" + page, Encoding.UTF8, CollectionUrlEnum.url_caike);
+                    if (!string.IsNullOrEmpty(str))
                     {
-                        result.matchDates = model.body.matchDates;
-                        result.records.AddRange(model.body.records);
-                        if (!model.body.hasNext)
+                        var model = JsonHelper.Deserialize<CaikeCommonCollection>(str);
+                        if (model != null)
                         {
-                            return result;
-                        }
-                        else
-                        {
-                            page = model.body.afterPage;
+                            result.matchDates = model.body.matchDates;
+                            result.records.AddRange(model.body.records);
+                            if (!model.body.hasNext)
+                            {
+                                return result;
+                            }
+                            else
+                            {
+                                page++;
+                            }
                         }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message + ":" + ex.StackTrace);
+                return null;
+            }
+            
+        }
+        private Caike_Body GetJczqList(string matchDateCode = "")
+        {
+            try
+            {
+                var jczq_url = "Trade/DrawInfo/jingjiDraw.aspx?lotteryType=10011";
+                if (!string.IsNullOrEmpty(matchDateCode))
+                {
+                    jczq_url += "&matchDateCode=" + matchDateCode;
+                }
+                var url = Url_Caike + jczq_url;
+                int page = 1;
+                var result = new Caike_Body() { matchDates = new List<Caike_matchDates>() };
+                while (true)
+                {
+                    var str = CommonHelper.Post(url, "action=loaddata&" + "pageIndex=" + page, Encoding.UTF8, CollectionUrlEnum.url_caike);
+                    if (!string.IsNullOrEmpty(str))
+                    {
+                        var model = JsonHelper.Deserialize<CaikeCommonCollection>(str);
+                        if (model != null)
+                        {
+                            result.matchDates = model.body.matchDates;
+                            result.records.AddRange(model.body.records);
+                            if (!model.body.hasNext)
+                            {
+                                return result;
+                            }
+                            else
+                            {
+                                page++;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message + ":" + ex.StackTrace);
+                return null;
+            }
+
+        }
+        private Caike_Body GetBJDCList(string matchDateCode = "")
+        {
+            try
+            {
+                var BJDC_url = "Trade/DrawInfo/jingjiDraw.aspx?lotteryType=20011";
+                if (!string.IsNullOrEmpty(matchDateCode))
+                {
+                    BJDC_url += "&matchDateCode=" + matchDateCode;
+                }
+                var url = Url_Caike + BJDC_url;
+                int page = 1;
+                var result = new Caike_Body() { matchDates = new List<Caike_matchDates>() };
+                while (true)
+                {
+                    
+                    var str = CommonHelper.Post(url, "action=loaddata&" + "pageIndex=" + page, Encoding.UTF8, CollectionUrlEnum.url_caike);
+                    if (!string.IsNullOrEmpty(str))
+                    {
+                        var model = JsonHelper.Deserialize<CaikeCommonCollection>(str);
+                        if (model != null)
+                        {
+                            result.matchDates = model.body.matchDates;
+                            result.records.AddRange(model.body.records);
+                            if (!model.body.hasNext)
+                            {
+                                return result;
+                            }
+                            else
+                            {
+                                page++;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message + ":" + ex.StackTrace);
+                return null;
             }
         }
     }

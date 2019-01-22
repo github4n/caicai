@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using EntityModel.Model;
 using Lottery.Modes.Entity;
+using Lottery.Modes.OtherModel;
 
 namespace Lottery.Services.Abstractions
 {
@@ -16,5 +17,10 @@ namespace Lottery.Services.Abstractions
         string GetNowIssuNo(string GameCode);
         string GetJCZQ_JCDate();
         string GetJCLQ_JCDate();
+        int AddCaiKeJCLQ(Caike_Body caike_Body,string matchDateCode, DateTime dateTime);
+        int AddCaikeJCZQ(Caike_Body caike_Body, string matchDateCode, DateTime dateTime);
+        int AddCaiKeBJDC(Caike_Body caike_Body, string matchDateCode);
+        List<int> GetIssuNoList(string GameCode);
+        int GetIssueInResult();
     }
 }
