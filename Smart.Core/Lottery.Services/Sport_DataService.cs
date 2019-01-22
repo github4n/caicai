@@ -321,17 +321,19 @@ namespace Lottery.Services
                 int m = 0;
                 caike_Body.records.ForEach((record) =>
                 {
-                    jclq_result _Result = new jclq_result();
-                    _Result.MatchId = matchDateCode + record.matchNo;
-                    _Result.MatchDate = "";
-                    _Result.MatchNumber = record.matchNo;
-                    _Result.HomeTeam = record.homeTeam;
-                    _Result.GuestTeam = record.guestTeam;
-                    _Result.LeagueName = record.leagueName;
-                    _Result.FullScore = record.scoreText.Substring(record.scoreText.IndexOf(">") + 1, record.scoreText.Substring(record.scoreText.IndexOf(">") + 1).IndexOf("<")).Replace("-", ":");
-                    _Result.AvgEu_SP = "123456";
-                    _Result.JCDate = dateTime.ToString("yyyy-MM-dd");
-                    _Result.CreateTime = DateTime.Now;
+                    jclq_result _Result = new jclq_result
+                    {
+                        MatchId = matchDateCode + record.matchNo,
+                        MatchDate = "",
+                        MatchNumber = record.matchNo,
+                        HomeTeam = record.homeTeam,
+                        GuestTeam = record.guestTeam,
+                        LeagueName = record.leagueName,
+                        FullScore = record.scoreText.Substring(record.scoreText.IndexOf(">") + 1, record.scoreText.Substring(record.scoreText.IndexOf(">") + 1).IndexOf("<")).Replace("-", ":"),
+                        AvgEu_SP = "123456",
+                        JCDate = dateTime.ToString("yyyy-MM-dd"),
+                        CreateTime = DateTime.Now
+                    };
                     int i = 0;
                     record.details.ForEach((detail) =>
                     {
@@ -386,15 +388,17 @@ namespace Lottery.Services
                 int m = 0;
                 caike_Body.records.ForEach((record) =>
                 {
-                    jczq_result _Result = new jczq_result();
-                    _Result.MatchId = matchDateCode + record.matchNo;
-                    _Result.MatchDate = "";
-                    _Result.MatchNumber = record.matchNo;
-                    _Result.HomeTeam = record.homeTeam;
-                    _Result.GuestTeam = record.guestTeam;
-                    _Result.HalfScore = record.hScoreText;
-                    _Result.FullScore = record.scoreText.Substring(record.scoreText.IndexOf(">") + 1, record.scoreText.Substring(record.scoreText.IndexOf(">") + 1).IndexOf("<")).Replace("-",":");
-                    _Result.LeagueName = record.leagueName;
+                    jczq_result _Result = new jczq_result
+                    {
+                        MatchId = matchDateCode + record.matchNo,
+                        MatchDate = "",
+                        MatchNumber = record.matchNo,
+                        HomeTeam = record.homeTeam,
+                        GuestTeam = record.guestTeam,
+                        HalfScore = record.hScoreText,
+                        FullScore = record.scoreText.Substring(record.scoreText.IndexOf(">") + 1, record.scoreText.Substring(record.scoreText.IndexOf(">") + 1).IndexOf("<")).Replace("-", ":"),
+                        LeagueName = record.leagueName
+                    };
                     int i = 0;
                     record.details.ForEach((detail) =>
                     {
@@ -456,16 +460,18 @@ namespace Lottery.Services
                 int m = 0;
                 caike_Body.records.ForEach((record) =>
                 {
-                    bjdc_result _Result = new bjdc_result();
-                    _Result.MatchId = matchDateCode + record.matchNo;
-                    _Result.MatchDate = "";
-                    _Result.MatchNumber = record.matchNo;
-                    _Result.HomeTeam = record.homeTeam;
-                    _Result.GuestTeam = record.guestTeam;
-                    _Result.HalfScore = record.hScoreText.Replace("-", ":");
-                    _Result.FullScore = record.scoreText.Substring(record.scoreText.IndexOf(">") + 1, record.scoreText.Substring(record.scoreText.IndexOf(">") + 1).IndexOf("<")).Replace("-", ":");
-                    _Result.LeagueName = record.leagueName;
-                    _Result.AvgEu_SP = "123456";
+                    bjdc_result _Result = new bjdc_result
+                    {
+                        MatchId = matchDateCode + record.matchNo,
+                        MatchDate = "",
+                        MatchNumber = record.matchNo,
+                        HomeTeam = record.homeTeam,
+                        GuestTeam = record.guestTeam,
+                        HalfScore = record.hScoreText.Replace("-", ":"),
+                        FullScore = record.scoreText.Substring(record.scoreText.IndexOf(">") + 1, record.scoreText.Substring(record.scoreText.IndexOf(">") + 1).IndexOf("<")).Replace("-", ":"),
+                        LeagueName = record.leagueName,
+                        AvgEu_SP = "123456"
+                    };
                     int i = 0;
                     record.details.ForEach((detail) =>
                     {
@@ -503,26 +509,47 @@ namespace Lottery.Services
                             }
                         }
                     });
+                    if (!string.IsNullOrEmpty(_Result.RQSPF_Result) && _Result.RQSPF_Result != "-" &&
+                       !string.IsNullOrEmpty(_Result.ZJQ_Result) && _Result.ZJQ_Result != "-" &&
+                       !string.IsNullOrEmpty(_Result.FullScore) && _Result.FullScore != "-" &&
+                       !string.IsNullOrEmpty(_Result.SXDS_Result) && _Result.SXDS_Result != "-" &&
+                       !string.IsNullOrEmpty(_Result.BQC_Result) && _Result.BQC_Result != "-")
+                    {
+                        _Result.IsFinish = true;
+                    }
+                    else
+                    {
+                        _Result.IsFinish = false;
+                    }
                     var model = db.Queryable<bjdc_result>().Where(x => x.MatchId == _Result.MatchId).First();
                     if (model == null)
                     {
                         db.Insertable(_Result).ExecuteCommand();
                         m++;
                     }
+                    else
+                    {
+                        if (!model.IsFinish)
+                        {
+                            db.Updateable(_Result).ExecuteCommand();
+                        }
+                    }
                 });
-
                 var lottery = db.Queryable<sys_lottery>().Where(x => x.LotteryCode == "zqdc").First();
                 caike_Body.matchDates.ForEach((matchDate) =>
                 {
-                    sys_issue _sys_Issue = new sys_issue();
-                    _sys_Issue.LotteryId = lottery.Lottery_Id;
-                    _sys_Issue.IssueNo = matchDate.code;
-                    _sys_Issue.LotteryCode = lottery.LotteryCode;
-                    _sys_Issue.CreateTime = DateTime.Now;
-                    var Model = db.Queryable<sys_issue>().Where(x => x.LotteryId == _sys_Issue.LotteryId && x.LotteryCode == _sys_Issue.LotteryCode && x.IssueNo == _sys_Issue.IssueNo).First();
-                    if (Model == null)
+                    if (matchDate.code == matchDateCode)
                     {
-                        db.Insertable(_sys_Issue).ExecuteCommand();
+                        sys_issue _sys_Issue = new sys_issue();
+                        _sys_Issue.LotteryId = lottery.Lottery_Id;
+                        _sys_Issue.IssueNo = matchDate.code;
+                        _sys_Issue.LotteryCode = lottery.LotteryCode;
+                        _sys_Issue.CreateTime = DateTime.Now;
+                        var Model = db.Queryable<sys_issue>().Where(x => x.LotteryId == _sys_Issue.LotteryId && x.LotteryCode == _sys_Issue.LotteryCode && x.IssueNo == _sys_Issue.IssueNo).First();
+                        if (Model == null)
+                        {
+                            db.Insertable(_sys_Issue).ExecuteCommand();
+                        }
                     }
                 });
                 return m;

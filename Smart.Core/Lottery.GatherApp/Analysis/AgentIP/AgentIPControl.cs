@@ -79,11 +79,11 @@ namespace Lottery.GatherApp
                     string UserAgent = "Mozilla / 5.0(Windows NT 10.0; Win64; x64) AppleWebKit / 537.36(KHTML, like Gecko) Chrome / 71.0.3578.98 Safari / 537.36";
                     if (UseAgent==1&&CurrentIP == null)
                     {
-                        return RequestHelper<HtmlDocument>.DoRequest(URl, Type, null, false,"","", UserAgent, string.Empty, Method.Get,null);
+                        return RequestHelper<HtmlDocument>.DoRequest(URl, null, false,"","", UserAgent, string.Empty, Method.Get,null);
                     }
                     else
                     {
-                        return RequestHelper<HtmlDocument>.DoRequest(URl, Type, null, true, CurrentIP.IPAddress, CurrentIP.Port, UserAgent, string.Empty, Method.Get, null);
+                        return RequestHelper<HtmlDocument>.DoRequest(URl, null, true, CurrentIP.IPAddress, CurrentIP.Port, UserAgent, string.Empty, Method.Get, null);
                     }
                 }
                 catch (Exception ex)

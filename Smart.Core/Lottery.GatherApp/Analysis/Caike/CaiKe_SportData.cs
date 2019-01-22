@@ -36,9 +36,6 @@ namespace Lottery.GatherApp.Analysis.Caike
         }
         private void GetBJDC()
         {
-            //var IssueList = _SportService.GetIssuNoList("zqdc");
-            //var Past_IssueNo = _SportService.GetIssueInResult();
-            //IssueList = IssueList.Where(x => x > Past_IssueNo).ToList();
             var BJDC_url = "Trade/DrawInfo/jingjiDraw.aspx?lotteryType=20011";
             var url = Url_Caike + BJDC_url;
             var str = CommonHelper.Post(url, "action=loaddata&pageIndex=1", Encoding.UTF8, CollectionUrlEnum.url_caike);
@@ -53,12 +50,10 @@ namespace Lottery.GatherApp.Analysis.Caike
             }
             foreach (var item in matchDates)
             {
-                var DataList = GetBJDCList(item.ToString());
-                int m = _SportService.AddCaiKeBJDC(DataList, item.ToString());
+                var DataList = GetBJDCList(item.name.ToString());
+                int m = _SportService.AddCaiKeBJDC(DataList, item.name.ToString());
                 Console.WriteLine($"BJDC更新{m}条数据");
             }
-                    
-            //}
         }
         private void GetJCZQ()
         {
