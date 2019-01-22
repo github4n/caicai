@@ -593,11 +593,13 @@ namespace Lottery.GatherApp.Analysis.LotteryDetail
                 var jObject = JObject.Parse(htmlDoc.Text);
                 lotterydetail.expect = jObject["IssueNum"].ToString().Remove(0, 2);
 
+
                 var IssueNo = _ILotteryDetailService.GetIssue(lotterydetail.expect);
-                if (IssueNo != null)
+                if (IssueNo == null)
                 {
-                    lotterydetail.Sys_IssueId = IssueNo.Id;
+                    break;
                 }
+                lotterydetail.Sys_IssueId = IssueNo.Id;
                 lotterydetail.openTime = jObject["AwardTime"].ToString();
                 lotterydetail.endTime = jObject["CashInStopTime"].ToString();
                 lotterydetail.Url_Type = (int)CollectionUrlEnum.url_caike;
