@@ -27,24 +27,38 @@ namespace Lottery.GatherApp.Analysis.Caike
             Console.WriteLine("BJDC开始");
             GetBJDC();
             Console.WriteLine("BJDC结束");
-            Console.WriteLine("JCZQ开始");
-            GetJCZQ();
-            Console.WriteLine("JCZQ结束");
-            Console.WriteLine("JCLQ开始");
-            GetJCLQ();
-            Console.WriteLine("JCLQ结束");
+            //Console.WriteLine("JCZQ开始");
+            //GetJCZQ();
+            //Console.WriteLine("JCZQ结束");
+            //Console.WriteLine("JCLQ开始");
+            //GetJCLQ();
+            //Console.WriteLine("JCLQ结束");
         }
         private void GetBJDC()
         {
-            var IssueList = _SportService.GetIssuNoList("zqdc");
-            var Past_IssueNo = _SportService.GetIssueInResult();
-            IssueList = IssueList.Where(x => x > Past_IssueNo).ToList();
-            foreach (var item in IssueList)
+            //var IssueList = _SportService.GetIssuNoList("zqdc");
+            //var Past_IssueNo = _SportService.GetIssueInResult();
+            //IssueList = IssueList.Where(x => x > Past_IssueNo).ToList();
+            var BJDC_url = "Trade/DrawInfo/jingjiDraw.aspx?lotteryType=20011";
+            var url = Url_Caike + BJDC_url;
+            var str = CommonHelper.Post(url, "action=loaddata&pageIndex=1", Encoding.UTF8, CollectionUrlEnum.url_caike);
+            List<Caike_matchDates> matchDates = new List<Caike_matchDates>();
+            if (!string.IsNullOrEmpty(str))
+            {
+                var model = JsonHelper.Deserialize<CaikeCommonCollection>(str);
+                if (model != null)
+                {
+                    matchDates = model.body.matchDates;
+                }
+            }
+            foreach (var item in matchDates)
             {
                 var DataList = GetBJDCList(item.ToString());
                 int m = _SportService.AddCaiKeBJDC(DataList, item.ToString());
                 Console.WriteLine($"BJDC更新{m}条数据");
             }
+                    
+            //}
         }
         private void GetJCZQ()
         {

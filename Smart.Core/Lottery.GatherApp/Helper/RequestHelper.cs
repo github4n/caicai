@@ -31,15 +31,15 @@ namespace Lottery.GatherApp
         /// <param name="Method">请求方式Get/Post</param>
         /// <param name="parameters">Post参数</param>
         /// <returns></returns>
-        public static T DoRequest(string URI, RequestType requestType, Dictionary<string, string> HeaderDic, bool UseIPAgent, string IP, string port, string UserAgent, string ContentType, Method method, IDictionary<string, string> parameters)
+        public static T DoRequest(string URI, Dictionary<string, string> HeaderDic, bool UseIPAgent, string IP, string port, string UserAgent, string ContentType, Method method, IDictionary<string, string> parameters)
         {
             try
             {
                 string StreamResult = string.Empty;
-                var request = CreateRequest(URI,requestType, UserAgent,ContentType,method);
+                var request = CreateRequest(URI, UserAgent, ContentType, method, out bool IsHttps);
                 if (UseIPAgent)
                 {
-                    request.Proxy = IsUseAgent(IP,port, requestType);
+                    request.Proxy = IsUseAgent(IP, port, IsHttps);
                 }
                 if (HeaderDic != null)
                 {
@@ -123,14 +123,16 @@ namespace Lottery.GatherApp
                 throw new Exception(ex.Message + ":" + ex.StackTrace);
             }
         }
-        private static HttpWebRequest CreateRequest(string URI,RequestType requestType, string UserAgent, string ContentType, Method method)
+        private static HttpWebRequest CreateRequest(string URI, string UserAgent, string ContentType, Method method,out bool ishttps)
         {
+            ishttps = false;
             HttpWebRequest request;
-            if (requestType == RequestType.HTTPS)
+            if (URI.ToLower().Contains("https"))
             {
                 ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(OnRemoteCertificateValidationCallback);
                 request = (HttpWebRequest)WebRequest.Create(URI);
                 request.ProtocolVersion = HttpVersion.Version10;
+                ishttps = true;
             }
             else
             {
@@ -148,10 +150,10 @@ namespace Lottery.GatherApp
             request.ServicePoint.ConnectionLimit = int.MaxValue;
             return request;
         }
-        private static WebProxy IsUseAgent(string IP, string port, RequestType type)
+        private static WebProxy IsUseAgent(string IP, string port,bool IsHttps)
         {
             WebProxy webProxy = null;
-            if (CheckIPAgent(new WebProxy(IP, Convert.ToInt32(port)), type))
+            if (CheckIPAgent(new WebProxy(IP, Convert.ToInt32(port)),IsHttps))
             {
                 return new WebProxy(IP, Convert.ToInt32(port));
             }
@@ -160,11 +162,11 @@ namespace Lottery.GatherApp
                 return null;
             }
         }
-        public static bool CheckIPAgent(WebProxy web, RequestType type)
+        public static bool CheckIPAgent(WebProxy web,bool IsHttps)
         {
             try
             {
-                if (type == RequestType.HTTPS)
+                if (IsHttps)
                 {
                     ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(OnRemoteCertificateValidationCallback);
                 }
@@ -209,5 +211,11 @@ namespace Lottery.GatherApp
         Post,
         Get,
     }
-    
+    public class ContentType
+    {
+        const string stream = "application/octet-stream";
+        const string applicationX_001="application/x-001";
+    }
+
+
 }
