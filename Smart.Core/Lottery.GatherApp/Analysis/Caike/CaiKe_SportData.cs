@@ -24,15 +24,15 @@ namespace Lottery.GatherApp.Analysis.Caike
         }
         public void Start()
         {
-            Console.WriteLine("BJDC开始");
+            log.Info(Url_Caike+"BJDC开始");
             GetBJDC();
-            Console.WriteLine("BJDC结束");
-            //Console.WriteLine("JCZQ开始");
-            //GetJCZQ();
-            //Console.WriteLine("JCZQ结束");
-            //Console.WriteLine("JCLQ开始");
-            //GetJCLQ();
-            //Console.WriteLine("JCLQ结束");
+            log.Info(Url_Caike + "BJDC结束");
+            log.Info(Url_Caike + "JCZQ开始");
+            GetJCZQ();
+            log.Info(Url_Caike + "JCZQ结束");
+            log.Info(Url_Caike + "JCLQ开始");
+            GetJCLQ();
+            log.Info(Url_Caike + "JCLQ结束");
         }
         private void GetBJDC()
         {
@@ -52,7 +52,8 @@ namespace Lottery.GatherApp.Analysis.Caike
             {
                 var DataList = GetBJDCList(item.name.ToString());
                 int m = _SportService.AddCaiKeBJDC(DataList, item.name.ToString());
-                Console.WriteLine($"BJDC更新{m}条数据");
+                log.Info(Url_Caike + $"BJDC更新{m}条数据");
+               
             }
         }
         private void GetJCZQ()
@@ -66,7 +67,8 @@ namespace Lottery.GatherApp.Analysis.Caike
                 {
                     var OldList = GetJczqList(OldDate);
                     int m = _SportService.AddCaikeJCZQ(OldList, Convert.ToDateTime(JCDate).AddDays(i).ToString("yyyyMMdd"), Convert.ToDateTime(JCDate).AddDays(1));
-                    Console.WriteLine($"JCZQ更新{m}条数据");
+                    log.Info(Url_Caike + $"JCZQ更新{m}条数据");
+              
                 }
             }
             catch (Exception ex)
@@ -86,7 +88,8 @@ namespace Lottery.GatherApp.Analysis.Caike
                 {
                     var OldList = GetJclqList(OldDate);
                     int m = _SportService.AddCaiKeJCLQ(OldList, Convert.ToDateTime(JCDate).AddDays(i).ToString("yyyyMMdd"), Convert.ToDateTime(JCDate).AddDays(1));
-                    Console.WriteLine($"JCLQ更新{m}条数据");
+                    log.Info(Url_Caike + $"JCLQ更新{m}条数据");
+                    
                 }
             }
             catch (Exception ex)

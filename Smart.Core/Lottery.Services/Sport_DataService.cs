@@ -332,7 +332,8 @@ namespace Lottery.Services
                         FullScore = record.scoreText.Substring(record.scoreText.IndexOf(">") + 1, record.scoreText.Substring(record.scoreText.IndexOf(">") + 1).IndexOf("<")).Replace("-", ":"),
                         AvgEu_SP = "123456",
                         JCDate = dateTime.ToString("yyyy-MM-dd"),
-                        CreateTime = DateTime.Now
+                        CreateTime = DateTime.Now,
+                        Url_Type = (int)CollectionUrlEnum.url_caike
                     };
                     int i = 0;
                     record.details.ForEach((detail) =>
@@ -397,7 +398,9 @@ namespace Lottery.Services
                         GuestTeam = record.guestTeam,
                         HalfScore = record.hScoreText,
                         FullScore = record.scoreText.Substring(record.scoreText.IndexOf(">") + 1, record.scoreText.Substring(record.scoreText.IndexOf(">") + 1).IndexOf("<")).Replace("-", ":"),
-                        LeagueName = record.leagueName
+                        LeagueName = record.leagueName,
+                        Url_Type = (int)CollectionUrlEnum.url_caike
+
                     };
                     int i = 0;
                     record.details.ForEach((detail) =>
@@ -470,7 +473,8 @@ namespace Lottery.Services
                         HalfScore = record.hScoreText.Replace("-", ":"),
                         FullScore = record.scoreText.Substring(record.scoreText.IndexOf(">") + 1, record.scoreText.Substring(record.scoreText.IndexOf(">") + 1).IndexOf("<")).Replace("-", ":"),
                         LeagueName = record.leagueName,
-                        AvgEu_SP = "123456"
+                        AvgEu_SP = "123456",
+                        Url_Type = (int)CollectionUrlEnum.url_caike
                     };
                     int i = 0;
                     record.details.ForEach((detail) =>
